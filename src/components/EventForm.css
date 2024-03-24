@@ -1,0 +1,15 @@
+form {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+form label {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+}
+
+form label input[type="date"] {
+    width: auto;
+}
