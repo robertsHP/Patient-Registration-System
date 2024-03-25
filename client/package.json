@@ -2,7 +2,6 @@
   "name": "client",
   "private": true,
   "version": "0.0.0",
-  "proxy": "http://localhost:3000",
   "type": "module",
   "scripts": {
     "dev": "vite",
@@ -16,14 +15,9 @@
     "@fullcalendar/interaction": "^6.1.11",
     "@fullcalendar/react": "^6.1.11",
     "@fullcalendar/timegrid": "^6.1.11",
-    "@rollup/wasm-node": "^4.13.0",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-router-dom": "^6.22.3"
-  },
-  "resolutions": {
-    "rollup": "npm:@rollup/wasm-node",
-    "@rollup/wasm-node": "4.13.0"
   },
   "devDependencies": {
     "@types/react": "^18.2.66",
