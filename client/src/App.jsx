@@ -8,19 +8,37 @@ import './App.css'
 function App() {
   const [data, setData] = useState(null);
 
-  useEffect(() => {
-    fetch('/api')
-      .then(response => {
-          if (!response.ok) {
-              throw new Error('Network response was not ok');
-          }
-          return response.json();
-      })
-      .then(data => console.log(data))
-      .catch(error => {
-        console.error('There has been a problem with your fetch operation:', error);
-      });
-  }, []);
+  //GET
+  // useEffect(() => {
+  //   fetch(`${import.meta.env.VITE_SERVER_ORIGIN}/api`)
+  //   .then(response => {
+  //       if (!response.ok) {
+  //           throw new Error('Network response was not ok');
+  //       }
+  //       return response.json();
+  //   })
+  //   .then(data => console.log(data))
+  //   .catch(error => {
+  //     console.error('There has been a problem with your fetch operation:', error);
+  //   });
+  // }, []);
+
+
+  //POST
+  let test = { key1: 'value1', key2: 'value2' }; // replace with your data
+
+  fetch(`${import.meta.env.VITE_SERVER_ORIGIN}/api`, {
+    method: 'POST', 
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify(test),
+  })
+  .then(response => response.json())
+  .then(test => console.log(test))
+  .catch((error) => {
+    console.error('Error:', error);
+  });
 
   return (
     <>

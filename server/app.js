@@ -1,7 +1,13 @@
 const express = require('express');
+const path = require('path')
 const app = express();
+const bodyParser = require('body-parser');
+
 const port = 5000;
 
+app.use(bodyParser.json());
+// app.use(express.static('public')) //serve public folder
+// app.use(express.static(path.join(__dirname, 'client/build')));
 //Remove in production
 app.use((req, res, next) => {
     res.header('Access-Control-Allow-Origin', '*');
@@ -9,6 +15,11 @@ app.use((req, res, next) => {
     next();
 });
 //
+
+
+
+
+
 
 app.get('/', (req, res) => {
     res.send('Hello World!');
@@ -21,6 +32,11 @@ app.get("/api", (req, res) => {
         courses: ["Math", "Science", "English"]
     });
 });
+app.post('/api', (req, res) => {
+    console.log(req.body);
+});
+
+
 
 app.listen(port, () => {
     console.log(`Server running at http://localhost:${port}`);

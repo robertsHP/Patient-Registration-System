@@ -9,9 +9,9 @@
     "concurrently": "^8.2.2"
   },
   "scripts": {
-    "start": "concurrently \"yarn --cwd server start\" \"yarn --cwd client start\"",
-    "dev": "concurrently \"yarn --cwd client run dev\" \"yarn --cwd server run dev\"",
-    "build": "concurrently \"yarn --cwd client build\" \"yarn --cwd server build\"",
-    "test": "concurrently \"yarn --cwd client test\" \"yarn --cwd server test\""
+    "start": "concurrently \"cd server && yarn start\" \"cd client && yarn start\"",
+    "dev": "concurrently \"cd server && yarn run dev\" \"cd client && yarn run dev\"",
+    "build": "concurrently \"cd server && yarn build\" \"cd client && yarn build\"",
+    "test": "concurrently \"cd server && yarn test\" \"cd client && yarn test\""
   }
 }
