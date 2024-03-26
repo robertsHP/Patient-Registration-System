@@ -1,13 +1,11 @@
 const express = require('express');
 const path = require('path')
 const app = express();
-const bodyParser = require('body-parser');
 
 const port = 5000;
 
-app.use(bodyParser.json());
-// app.use(express.static('public')) //serve public folder
-// app.use(express.static(path.join(__dirname, 'client/build')));
+//----------------USING----------------------
+app.use(express.json());
 //Remove in production
 app.use((req, res, next) => {
     res.header('Access-Control-Allow-Origin', '*');
@@ -16,16 +14,18 @@ app.use((req, res, next) => {
 });
 //
 
+//----------------LISTEN----------------------
+app.listen(port, () => {
+    console.log(`Server running at http://localhost:${port}`);
+});
 
-
-
-
+//----------------API----------------------
 
 app.get('/', (req, res) => {
     res.send('Hello World!');
 });
 
-app.get("/api", (req, res) => {
+app.get('/api', (req, res) => {
     res.json({
         name: "John Doe",
         age: 20,
@@ -36,8 +36,24 @@ app.post('/api', (req, res) => {
     console.log(req.body);
 });
 
+app.get('/data', async (req, res) => {
+    try {
+        // const result = await pool.query('SELECT * FROM your_table');
+        // res.json(result.rows);
+    } catch (err) {
+        console.error(err);
+        res.send("Error " + err);
+    }
+});
 
-
-app.listen(port, () => {
-    console.log(`Server running at http://localhost:${port}`);
+app.post('/data', async (req, res) => {
+    try {
+        // const text = 'INSERT INTO your_table(column1, column2) VALUES($1, $2)';
+        // const values = [req.body.value1, req.body.value2];
+        // await pool.query(text, values);
+        // res.json({ status: 'success' });
+    } catch (err) {
+        console.error(err);
+        res.send("Error " + err);
+    }
 });

@@ -10,7 +10,7 @@ function App() {
 
   //GET
   // useEffect(() => {
-  //   fetch(`${import.meta.env.VITE_SERVER_ORIGIN}/api`)
+  //   fetch(`${import.meta.env.SERVER_ORIGIN}/api`)
   //   .then(response => {
   //       if (!response.ok) {
   //           throw new Error('Network response was not ok');
@@ -25,20 +25,20 @@ function App() {
 
 
   //POST
-  let test = { key1: 'value1', key2: 'value2' }; // replace with your data
+  // let test = { key1: 'value1', key2: 'value2' }; // replace with your data
 
-  fetch(`${import.meta.env.VITE_SERVER_ORIGIN}/api`, {
-    method: 'POST', 
-    headers: {
-      'Content-Type': 'application/json',
-    },
-    body: JSON.stringify(test),
-  })
-  .then(response => response.json())
-  .then(test => console.log(test))
-  .catch((error) => {
-    console.error('Error:', error);
-  });
+  // fetch(`${import.meta.env.SERVER_ORIGIN}/api`, {
+  //   method: 'POST', 
+  //   headers: {
+  //     'Content-Type': 'application/json',
+  //   },
+  //   body: JSON.stringify(test),
+  // })
+  // .then(response => response.json())
+  // .then(test => console.log(test))
+  // .catch((error) => {
+  //   console.error('Error:', error);
+  // });
 
   return (
     <>
