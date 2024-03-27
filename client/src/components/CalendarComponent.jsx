@@ -20,20 +20,30 @@ function CalendarComponent ({ events, handleDateSelect, handleEventClick, handle
     return (
         <FullCalendar
             plugins={[ dayGridPlugin, timeGridPlugin, interactionPlugin ]}
-            initialView="dayGridMonth"
+
             editable={true}
             droppable={true}
             selectable={true}
             eventResizableFromStart={true}
+
             select={handleDateSelect}
             eventClick={handleEventClick}
             eventDrop={handleEventDrop}
             eventResize={handleEventResize}
             events={events}
+
+            locale='lv'
+
             headerToolbar={{
-                left: 'prev,next',
+                left: 'prev,next today',
                 center: 'title',
-                right: 'dayGridMonth, timeGridWeek, timeGridDay'
+                right: 'dayGridMonth,timeGridWeek,timeGridDay'
+            }}
+            buttonText={{
+                today: 'Šodiena',
+                month: 'Mēneši',
+                week: 'Nedēļas',
+                day: 'Dienas'
             }}
         />
     )

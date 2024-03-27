@@ -16,8 +16,10 @@
 .calendar {
     flex: 10;
     overflow: auto;
+    padding: 10px;
 }
 .event-form {
     flex: 5;
     overflow: auto;
+    padding: 10px;
 }

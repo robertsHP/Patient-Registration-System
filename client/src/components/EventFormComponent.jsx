@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
 
-import './EventForm.css'
+import './EventFormComponent.css'
 
-function EventForm ({ events, selEventID, onEventUpdate }) {
+function EventFormComponent ({ events, selEventID, onEventUpdate }) {
     var event = events[selEventID];
 
     const [formState, setFormState] = useState({
@@ -54,6 +54,10 @@ function EventForm ({ events, selEventID, onEventUpdate }) {
         setFormState(updatedEvent);
         onEventUpdate(updatedEvent);
     };
+
+    const handleClick = () => {
+        console.log('Button clicked!');
+    };
     
     return (
         <>
@@ -99,8 +103,14 @@ function EventForm ({ events, selEventID, onEventUpdate }) {
                     <input type="date" name="hotelStayDate" value={formState.hotelStayDate} onChange={handleChange} />
                 </label> */}
             </form>
+            <button onClick={handleClick}>
+                Atjaunot
+            </button>
+            <button onClick={handleClick}>
+                Dzēst
+            </button>
         </>
     );
 }
 
-export default EventForm
+export default EventFormComponent

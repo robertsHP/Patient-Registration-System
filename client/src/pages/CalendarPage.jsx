@@ -2,8 +2,9 @@ import React, { useState } from 'react';
 
 import { formatDate } from '@fullcalendar/core';
 
+import SearchComponent from '../components/SearchComponent.jsx';
 import CalendarComponent from '../components/CalendarComponent.jsx';
-import EventForm from '../components/EventForm.jsx';
+import EventFormComponent from '../components/EventFormComponent.jsx';
 
 import './CalendarPage.css'
 
@@ -91,6 +92,7 @@ function CalendarPage() {
         <div className="row-wrapper">
             <div className="column-wrapper">
                 <div className="calendar">
+                    <SearchComponent />
                     <CalendarComponent 
                         events={events}
                         handleDateSelect={handleDateSelect}
@@ -103,7 +105,7 @@ function CalendarPage() {
                     {/* //In JavaScript, the && operator returns the first falsy value if there is one.
                     //So if selectedEvent is null or undefined then nothing will be rendered. */}
                     {events[selEventID] && 
-                        <EventForm 
+                        <EventFormComponent 
                             events={events} 
                             selEventID={selEventID}
                             onEventUpdate={handleEventUpdate}
