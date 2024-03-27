@@ -8,9 +8,11 @@ import './App.css'
 function App() {
   const [data, setData] = useState(null);
 
-  //GET
+  // console.log(import.meta.env.VITE_SERVER_ORIGIN);
+
+  // //// GET
   // useEffect(() => {
-  //   fetch(`${import.meta.env.SERVER_ORIGIN}/api`)
+  //   fetch(`${import.meta.env.VITE_SERVER_ORIGIN}/data`)
   //   .then(response => {
   //       if (!response.ok) {
   //           throw new Error('Network response was not ok');
@@ -24,10 +26,10 @@ function App() {
   // }, []);
 
 
-  //POST
+  // ////POST
   // let test = { key1: 'value1', key2: 'value2' }; // replace with your data
 
-  // fetch(`${import.meta.env.SERVER_ORIGIN}/api`, {
+  // fetch(`${import.meta.env.VITE_SERVER_ORIGIN}/data`, {
   //   method: 'POST', 
   //   headers: {
   //     'Content-Type': 'application/json',

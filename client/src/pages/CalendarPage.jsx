@@ -1,5 +1,7 @@
 import React, { useState } from 'react';
 
+import { formatDate } from '@fullcalendar/core';
+
 import CalendarComponent from '../components/CalendarComponent.jsx';
 import EventForm from '../components/EventForm.jsx';
 
@@ -10,7 +12,7 @@ function CalendarPage() {
         { id: 0, title: 'Event 1', start: '2024-03-01', end: '2024-03-01' },
         { id: 1, title: 'Event 2', start: '2024-03-02', end: '2024-03-05' }
     ]);
-    const [selEventIndex, setSelEventIndex] = useState(-1);
+    const [selEventID, setSelEventID] = useState(-1);
 
     const handleDateSelect = (selectInfo) => {
         let calendarApi = selectInfo.view.calendar;
@@ -28,34 +30,60 @@ function CalendarPage() {
             calendarApi.addEvent(newEvent);
             setEvents([...events, newEvent]); // add the new event to the events array
         } else {
-            setSelEventIndex(-1)
+            setSelEventID(-1)
         }
     };
 
     const handleEventClick = (clickInfo) => {
-        setSelEventIndex(clickInfo.event.id); // set the clicked event as the selected event
+        console.log("handleEventClick");
+        setSelEventID(clickInfo.event.id); // set the clicked event as the selected event
     };
 
     const handleEventDrop = (dropInfo) => {
-        setSelEventIndex(dropInfo.event.id); // update the selected event if it was dragged
+        console.log("handleEventDrop");
+
+        var startDate = dropInfo.event.start; // This is the new start date
+        var endDate = dropInfo.event.end; // This is the new end date
+
+        var formattedStartDate = formatDate(startDate, {
+            month: '2-digit',
+            day: '2-digit',
+            year: 'numeric',
+            delimiter: '-'
+        });
+        
+        var formattedEndDate = formatDate(endDate, {
+            month: '2-digit',
+            day: '2-digit',
+            year: 'numeric',
+            delimiter: '-'
+        });
+
+        console.log('New Start Date: ' + formattedStartDate);
+        console.log('New End Date: ' + formattedEndDate);
+
+        setEvents(events.map(event => {
+            if (event.id === dropInfo.event.id) {
+              return { ...event, start: formattedStartDate, end: formattedEndDate };
+            } else {
+              return event;
+            }
+        }));
     };
     
     const handleEventResize = (info) => {
+        console.log("handleEventResize");
         setEvents(events.map(event => {
             if (event.id === info.event.id) {
-                // Update the start and end dates of the event
-                return {
-                    ...event,
-                    start: info.event.startStr,
-                    end: info.event.endStr
-                };
+              return { ...event, start: formattedStartDate, end: formattedEndDate };
             } else {
-                return event;
+              return event;
             }
         }));
     }
 
     const handleEventUpdate = (updatedEvent) => {
+        console.log("handleEventUpdate");
         setEvents(events.map(event => event.id === updatedEvent.id ? updatedEvent : event));
     };
     
@@ -74,9 +102,10 @@ function CalendarPage() {
                 <div className="event-form">
                     {/* //In JavaScript, the && operator returns the first falsy value if there is one.
                     //So if selectedEvent is null or undefined then nothing will be rendered. */}
-                    {events[selEventIndex] && 
+                    {events[selEventID] && 
                         <EventForm 
-                            event={events[selEventIndex]} 
+                            events={events} 
+                            selEventID={selEventID}
                             onEventUpdate={handleEventUpdate}
                         />
                     }

@@ -2,7 +2,9 @@ import React, { useState, useEffect } from 'react';
 
 import './EventForm.css'
 
-function EventForm ({ event, onEventUpdate }) {
+function EventForm ({ events, selEventID, onEventUpdate }) {
+    var event = events[selEventID];
+
     const [formState, setFormState] = useState({
         id: '',
         title: '',
@@ -33,6 +35,8 @@ function EventForm ({ event, onEventUpdate }) {
     }, [event]);
     
     const handleChange = (event) => {
+        console.log("handleChange");
+
         const updatedEvent = {
             ...formState,
             [event.target.name]: event.target.value
@@ -40,57 +44,60 @@ function EventForm ({ event, onEventUpdate }) {
 
         // If the start date is after the end date, swap them
         if (updatedEvent.start > updatedEvent.end) {
-            [updatedEvent.start, updatedEvent.end] = [updatedEvent.end, updatedEvent.start];
+            var newStart = updatedEvent.start;
+            var newEnd = updatedEvent.end;
+
+            updatedEvent.start = newEnd;
+            updatedEvent.end = newStart;
         }
 
         setFormState(updatedEvent);
         onEventUpdate(updatedEvent);
     };
-
     
     return (
         <>
             <form>
                 <label>
-                    Event Name:
+                    ID:
                     <input type="text" name="id" value={formState.id} onChange={handleChange} />
                 </label>
                 <label>
-                    Event Name:
+                    Nosaukums:
                     <input type="text" name="title" value={formState.title} onChange={handleChange} />
                 </label>
                 <label>
-                    From Date:
+                    Sākuma datums:
                     <input type="date" name="start" value={formState.start} onChange={handleChange} />
                 </label>
                 <label>
-                    To Date:
+                    Beigu datums:
                     <input type="date" name="end" value={formState.end} onChange={handleChange} />
                 </label>
                 <label>
-                    Room:
+                    Telpas Nr.:
                     <input type="text" name="room" value={formState.room} onChange={handleChange} />
                 </label>
                 <label>
-                    Bed Name:
+                    Gulta:
                     <input type="text" name="bedName" value={formState.bedName} onChange={handleChange} />
                 </label>
                 <label>
-                    Description:
+                    Apraksts:
                     <textarea name="description" value={formState.description} onChange={handleChange} />
                 </label>
                 <label>
-                    Patient Name:
+                    Pacients:
                     <input type="text" name="patientName" value={formState.patientName} onChange={handleChange} />
                 </label>
                 <label>
-                    Doctor Name:
+                    Ārsts:
                     <input type="text" name="doctorName" value={formState.doctorName} onChange={handleChange} />
                 </label>
-                <label>
-                    Hotel Time Frame:
+                {/* <label>
+                    Viesnīcas datums:
                     <input type="date" name="hotelStayDate" value={formState.hotelStayDate} onChange={handleChange} />
-                </label>
+                </label> */}
             </form>
         </>
     );

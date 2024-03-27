@@ -6,7 +6,8 @@
   "author": "robertsHP",
   "license": "MIT",
   "dependencies": {
-    "concurrently": "^8.2.2"
+    "concurrently": "^8.2.2",
+    "dotenv": "^16.4.5"
   },
   "scripts": {
     "start": "concurrently \"cd server && yarn start\" \"cd client && yarn start\"",

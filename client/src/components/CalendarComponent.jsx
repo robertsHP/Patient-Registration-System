@@ -33,7 +33,7 @@ function CalendarComponent ({ events, handleDateSelect, handleEventClick, handle
             headerToolbar={{
                 left: 'prev,next',
                 center: 'title',
-                right: 'dayGridMonth,timeGridWeek,timeGridDay'
+                right: 'dayGridMonth, timeGridWeek, timeGridDay'
             }}
         />
     )

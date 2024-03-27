@@ -1,7 +1,8 @@
 const express = require('express');
-const path = require('path')
 const app = express();
+require('dotenv').config();
 
+// const port = process.env.SERVER_PORT;
 const port = 5000;
 
 //----------------USING----------------------
@@ -25,18 +26,18 @@ app.get('/', (req, res) => {
     res.send('Hello World!');
 });
 
-app.get('/api', (req, res) => {
+app.get('/data', (req, res) => {
     res.json({
         name: "John Doe",
         age: 20,
         courses: ["Math", "Science", "English"]
     });
 });
-app.post('/api', (req, res) => {
+app.post('/data', (req, res) => {
     console.log(req.body);
 });
 
-app.get('/data', async (req, res) => {
+app.get('/api', async (req, res) => {
     try {
         // const result = await pool.query('SELECT * FROM your_table');
         // res.json(result.rows);
@@ -45,8 +46,7 @@ app.get('/data', async (req, res) => {
         res.send("Error " + err);
     }
 });
-
-app.post('/data', async (req, res) => {
+app.post('/api', async (req, res) => {
     try {
         // const text = 'INSERT INTO your_table(column1, column2) VALUES($1, $2)';
         // const values = [req.body.value1, req.body.value2];
