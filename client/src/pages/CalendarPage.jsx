@@ -6,40 +6,56 @@ import EventFormComponent from '../components/EventFormComponent.jsx';
 
 import './CalendarPage.css'
 
-function CalendarPage() {
-    const [events, setEvents] = useState([
-        { id: '0', title: 'Event 1', start: '2024-03-01', end: '2024-03-01' },
-        { id: '1', title: 'Event 2', start: '2024-03-02', end: '2024-03-05' }
-    ]);
-    const [selEventID, setSelEventID] = useState(-1);
-    
-    return (
-        <div className="row-wrapper">
-            <div className="column-wrapper">
-                <div className="calendar">
-                    {/* <SearchComponent /> */}
-                    <CalendarComponent 
-                        events={events}
-                        setEvents={setEvents}
-                        selEventID={selEventID}
-                        setSelEventID={setSelEventID}
-                    />
-                </div>
-                <div className="event-form">
-                    {/* //In JavaScript, the && operator returns the first falsy value if there is one.
-                    //So if selectedEvent is null or undefined then nothing will be rendered. */}
-                    {events[selEventID] && 
-                        <EventFormComponent 
+class CalendarPage extends React.Component {
+    constructor(props) {
+        super(props);
+        this.state = {
+            events: [
+                { id: '0', title: 'Event 1', start: '2024-03-01', end: '2024-03-01' },
+                { id: '1', title: 'Event 2', start: '2024-03-02', end: '2024-03-05' }
+            ],
+            selEventID: -1
+        };
+    }
+
+    setEvents = (newEvents) => {
+        this.setState({ events: newEvents });
+    }
+
+    setSelEventID = (newID) => {
+        this.setState({ selEventID: newID });
+    }
+
+    render() {
+        const { events, selEventID } = this.state;
+        return (
+            <div className="row-wrapper">
+                <div className="column-wrapper">
+                    <div className="calendar">
+                        {/* <SearchComponent /> */}
+                        <CalendarComponent 
                             events={events}
-                            setEvents={setEvents}
+                            setEvents={this.setEvents}
                             selEventID={selEventID}
-                            setSelEventID={setSelEventID}
+                            setSelEventID={this.setSelEventID}
                         />
-                    }
+                    </div>
+                    <div className="event-form">
+                        {/* //In JavaScript, the && operator returns the first falsy value if there is one.
+                        //So if selectedEvent is null or undefined then nothing will be rendered. */}
+                        {events[selEventID] && 
+                            <EventFormComponent 
+                                events={events}
+                                setEvents={this.setEvents}
+                                selEventID={selEventID}
+                                setSelEventID={this.setSelEventID}
+                            />
+                        }
+                    </div>
                 </div>
             </div>
-        </div>
-    )
+        )
+    }
 }
 
 export default CalendarPage

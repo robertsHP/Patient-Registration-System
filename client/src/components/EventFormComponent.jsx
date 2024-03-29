@@ -2,41 +2,102 @@ import React, { useState, useEffect } from 'react';
 
 import './EventFormComponent.css'
 
-function EventFormComponent ({ events, setEvents, selEventID, setSelEventID }) {
-    const [formState, setFormState] = useState({
-        id: '',
-        title: '',
-        start: '',
-        end: '',
-        room: '',
-        bedName: '',
-        description: '',
-        patientName: '',
-        doctorName: '',
-        hotelStayDate: ''
-    });
+class EventFormComponent extends React.Component {
+    constructor(props) {
+        super(props);
+        var selectedEvent = this.props.events[this.props.selEventID];
+        this.state = {
+            formState: {
+                id: selectedEvent.id || '',
+                title: selectedEvent.title || '',
+                start: selectedEvent.start || '',
+                end: selectedEvent.end || '',
+                room: selectedEvent.room || '',
+                bedName: selectedEvent.bedName || '',
+                description: selectedEvent.description || '',
+                patientName: selectedEvent.patientName || '',
+                doctorName: selectedEvent.doctorName || '',
+                hotelStayDate: selectedEvent.hotelStayDate || ''
+            }
+        };
+    }
 
-    // Update formState when event prop changes
-    useEffect(() => {
-        setFormState({
-            id: events[selEventID].id || '',
-            title: events[selEventID].title || '',
-            start: events[selEventID].start || '',
-            end: events[selEventID].end || '',
-            room: events[selEventID].room || '',
-            bedName: events[selEventID].bedName || '',
-            description: events[selEventID].description || '',
-            patientName: events[selEventID].patientName || '',
-            doctorName: events[selEventID].doctorName || '',
-            hotelStayDate: events[selEventID].hotelStayDate || ''
-        });
-    }, [events[selEventID]]);
-    
-    const handleInputUpdate = (event) => {
+    componentDidUpdate(prevProps) {
+        if (this.props.events[this.props.selEventID] !== prevProps.events[prevProps.selEventID]) {
+            var selectedEvent = this.props.events[this.props.selEventID];
+            this.setState({
+                formState: {
+                    id: selectedEvent.id || '',
+                    title: selectedEvent.title || '',
+                    start: selectedEvent.start || '',
+                    end: selectedEvent.end || '',
+                    room: selectedEvent.room || '',
+                    bedName: selectedEvent.bedName || '',
+                    description: selectedEvent.description || '',
+                    patientName: selectedEvent.patientName || '',
+                    doctorName: selectedEvent.doctorName || '',
+                    hotelStayDate: selectedEvent.hotelStayDate || ''
+                }
+            });
+        }
+    }
+
+    render() {
+        return (
+            <>
+                <form>
+                    <label>
+                        Nosaukums:
+                        <input type="text" name="title" value={this.state.formState.title} onChange={this.handleInputUpdate} />
+                    </label>
+                    <label>
+                        Sākuma datums:
+                        <input type="date" name="start" value={this.state.formState.start} onChange={this.handleInputUpdate} />
+                    </label>
+                    <label>
+                        Beigu datums:
+                        <input type="date" name="end" value={this.state.formState.end} onChange={this.handleInputUpdate} />
+                    </label>
+                    <label>
+                        Telpas Nr.:
+                        <input type="text" name="room" value={this.state.formState.room} onChange={this.handleInputUpdate} />
+                    </label>
+                    <label>
+                        Gulta:
+                        <input type="text" name="bedName" value={this.state.formState.bedName} onChange={this.handleInputUpdate} />
+                    </label>
+                    <label>
+                        Apraksts:
+                        <textarea name="description" value={this.state.formState.description} onChange={this.handleInputUpdate} />
+                    </label>
+                    <label>
+                        Pacients:
+                        <input type="text" name="patientName" value={this.state.formState.patientName} onChange={this.handleInputUpdate} />
+                    </label>
+                    <label>
+                        Ārsts:
+                        <input type="text" name="doctorName" value={this.state.formState.doctorName} onChange={this.handleInputUpdate} />
+                    </label>
+                    {/* <label>
+                        Viesnīcas datums:
+                        <input type="date" name="hotelStayDate" value={this.state.formState.hotelStayDate} onChange={this.handleInputUpdate} />
+                    </label> */}
+                </form>
+                <button onClick={this.handleClick}>
+                    Atjaunot
+                </button>
+                <button onClick={this.handleClick}>
+                    Dzēst
+                </button>
+            </>
+        );
+    }
+
+    handleInputUpdate = (event) => {
         console.log("handleInputUpdate");
 
         const updatedEvent = {
-            ...formState,
+            ...this.state.formState,
             [event.target.name]: event.target.value
         };
 
@@ -49,62 +110,13 @@ function EventFormComponent ({ events, setEvents, selEventID, setSelEventID }) {
             updatedEvent.end = newStart;
         }
 
-        setFormState(updatedEvent);
-        setEvents(events.map(event => event.id === updatedEvent.id ? updatedEvent : event));
+        this.setState({ formState: updatedEvent });
+        this.props.setEvents(this.props.events.map(event => event.id === updatedEvent.id ? updatedEvent : event));
     };
 
-    const handleClick = () => {
+    handleClick = () => {
         console.log('Button clicked!');
     };
-    
-    return (
-        <>
-            <form>
-                <label>
-                    Nosaukums:
-                    <input type="text" name="title" value={formState.title} onChange={handleInputUpdate} />
-                </label>
-                <label>
-                    Sākuma datums:
-                    <input type="date" name="start" value={formState.start} onChange={handleInputUpdate} />
-                </label>
-                <label>
-                    Beigu datums:
-                    <input type="date" name="end" value={formState.end} onChange={handleInputUpdate} />
-                </label>
-                <label>
-                    Telpas Nr.:
-                    <input type="text" name="room" value={formState.room} onChange={handleInputUpdate} />
-                </label>
-                <label>
-                    Gulta:
-                    <input type="text" name="bedName" value={formState.bedName} onChange={handleInputUpdate} />
-                </label>
-                <label>
-                    Apraksts:
-                    <textarea name="description" value={formState.description} onChange={handleInputUpdate} />
-                </label>
-                <label>
-                    Pacients:
-                    <input type="text" name="patientName" value={formState.patientName} onChange={handleInputUpdate} />
-                </label>
-                <label>
-                    Ārsts:
-                    <input type="text" name="doctorName" value={formState.doctorName} onChange={handleInputUpdate} />
-                </label>
-                {/* <label>
-                    Viesnīcas datums:
-                    <input type="date" name="hotelStayDate" value={formState.hotelStayDate} onChange={handleInputUpdate} />
-                </label> */}
-            </form>
-            <button onClick={handleClick}>
-                Atjaunot
-            </button>
-            <button onClick={handleClick}>
-                Dzēst
-            </button>
-        </>
-    );
 }
 
 export default EventFormComponent
