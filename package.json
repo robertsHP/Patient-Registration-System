@@ -10,9 +10,9 @@
     "dotenv": "^16.4.5"
   },
   "scripts": {
-    "start": "concurrently \"cd server && yarn start\" \"cd client && yarn start\"",
-    "dev": "concurrently \"cd server && yarn run dev\" \"cd client && yarn run dev\"",
-    "build": "concurrently \"cd server && yarn build\" \"cd client && yarn build\"",
-    "test": "concurrently \"cd server && yarn test\" \"cd client && yarn test\""
+    "start": "concurrently \"cd server && yarn start\" \"cd client && yarn start\" \"cd client/admin && yarn start\"",
+    "dev": "concurrently \"cd server && yarn run dev\" \"cd client && yarn run dev\" \"cd client/admin && yarn run dev\"",
+    "build": "concurrently \"cd server && yarn build\" \"cd client && yarn build\" \"cd client/admin && yarn build\"",
+    "test": "concurrently \"cd server && yarn test\" \"cd client && yarn test\" \"cd client/admin && yarn test\""
   }
 }

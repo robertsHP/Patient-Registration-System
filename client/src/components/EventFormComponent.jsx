@@ -2,9 +2,7 @@ import React, { useState, useEffect } from 'react';
 
 import './EventFormComponent.css'
 
-function EventFormComponent ({ events, selEventID, onEventUpdate }) {
-    var event = events[selEventID];
-
+function EventFormComponent ({ events, setEvents, selEventID, setSelEventID }) {
     const [formState, setFormState] = useState({
         id: '',
         title: '',
@@ -21,21 +19,21 @@ function EventFormComponent ({ events, selEventID, onEventUpdate }) {
     // Update formState when event prop changes
     useEffect(() => {
         setFormState({
-            id: event.id || '',
-            title: event.title || '',
-            start: event.start || '',
-            end: event.end || '',
-            room: event.room || '',
-            bedName: event.bedName || '',
-            description: event.description || '',
-            patientName: event.patientName || '',
-            doctorName: event.doctorName || '',
-            hotelStayDate: event.hotelStayDate || ''
+            id: events[selEventID].id || '',
+            title: events[selEventID].title || '',
+            start: events[selEventID].start || '',
+            end: events[selEventID].end || '',
+            room: events[selEventID].room || '',
+            bedName: events[selEventID].bedName || '',
+            description: events[selEventID].description || '',
+            patientName: events[selEventID].patientName || '',
+            doctorName: events[selEventID].doctorName || '',
+            hotelStayDate: events[selEventID].hotelStayDate || ''
         });
-    }, [event]);
+    }, [events[selEventID]]);
     
-    const handleChange = (event) => {
-        console.log("handleChange");
+    const handleInputUpdate = (event) => {
+        console.log("handleInputUpdate");
 
         const updatedEvent = {
             ...formState,
@@ -52,7 +50,7 @@ function EventFormComponent ({ events, selEventID, onEventUpdate }) {
         }
 
         setFormState(updatedEvent);
-        onEventUpdate(updatedEvent);
+        setEvents(events.map(event => event.id === updatedEvent.id ? updatedEvent : event));
     };
 
     const handleClick = () => {
@@ -63,44 +61,40 @@ function EventFormComponent ({ events, selEventID, onEventUpdate }) {
         <>
             <form>
                 <label>
-                    ID:
-                    <input type="text" name="id" value={formState.id} onChange={handleChange} />
-                </label>
-                <label>
                     Nosaukums:
-                    <input type="text" name="title" value={formState.title} onChange={handleChange} />
+                    <input type="text" name="title" value={formState.title} onChange={handleInputUpdate} />
                 </label>
                 <label>
                     Sākuma datums:
-                    <input type="date" name="start" value={formState.start} onChange={handleChange} />
+                    <input type="date" name="start" value={formState.start} onChange={handleInputUpdate} />
                 </label>
                 <label>
                     Beigu datums:
-                    <input type="date" name="end" value={formState.end} onChange={handleChange} />
+                    <input type="date" name="end" value={formState.end} onChange={handleInputUpdate} />
                 </label>
                 <label>
                     Telpas Nr.:
-                    <input type="text" name="room" value={formState.room} onChange={handleChange} />
+                    <input type="text" name="room" value={formState.room} onChange={handleInputUpdate} />
                 </label>
                 <label>
                     Gulta:
-                    <input type="text" name="bedName" value={formState.bedName} onChange={handleChange} />
+                    <input type="text" name="bedName" value={formState.bedName} onChange={handleInputUpdate} />
                 </label>
                 <label>
                     Apraksts:
-                    <textarea name="description" value={formState.description} onChange={handleChange} />
+                    <textarea name="description" value={formState.description} onChange={handleInputUpdate} />
                 </label>
                 <label>
                     Pacients:
-                    <input type="text" name="patientName" value={formState.patientName} onChange={handleChange} />
+                    <input type="text" name="patientName" value={formState.patientName} onChange={handleInputUpdate} />
                 </label>
                 <label>
                     Ārsts:
-                    <input type="text" name="doctorName" value={formState.doctorName} onChange={handleChange} />
+                    <input type="text" name="doctorName" value={formState.doctorName} onChange={handleInputUpdate} />
                 </label>
                 {/* <label>
                     Viesnīcas datums:
-                    <input type="date" name="hotelStayDate" value={formState.hotelStayDate} onChange={handleChange} />
+                    <input type="date" name="hotelStayDate" value={formState.hotelStayDate} onChange={handleInputUpdate} />
                 </label> */}
             </form>
             <button onClick={handleClick}>
