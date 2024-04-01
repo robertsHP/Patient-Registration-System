@@ -3,6 +3,8 @@ import AdminJS from 'adminjs'
 import AdminJSExpress from '@adminjs/express'
 import { Adapter, Resource, Database } from '@adminjs/sql'
 
+require('dotenv').config({ path: '../.env' });
+
 // AdminJS.registerAdapter({
 //   Database,
 //   Resource,

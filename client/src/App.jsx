@@ -5,6 +5,9 @@ import CalendarPage from './pages/CalendarPage';
 
 import './App.css'
 
+
+require('dotenv').config({ path: '../.env' });
+
 function App() {
   const [data, setData] = useState(null);
 
