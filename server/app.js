@@ -4,16 +4,15 @@ const { Pool } = require('pg');
 
 require('dotenv').config();
 
-// const pool = new Pool({
-//     user:       process.env.POSTGRES_USER,
-//     password:   process.env.POSTGRES_PASSWORD,
-//     host:       process.env.POSTGRES_HOST,
-//     port:       process.env.POSTGRES_PORT,
-//     database:   process.env.POSTGRES_DB
-// });
+const pool = new Pool({
+    user:       process.env.POSTGRES_USER,
+    password:   process.env.POSTGRES_PASSWORD,
+    host:       process.env.POSTGRES_HOST,
+    port:       process.env.POSTGRES_PORT,
+    database:   process.env.POSTGRES_DB
+});
 
-// const port = process.env.SERVER_PORT;
-const port = 5000;
+const port = process.env.SERVER_PORT;
 
 //----------------USING----------------------
 app.use(express.json());
@@ -33,7 +32,7 @@ app.listen(port, () => {
 //----------------API----------------------
 
 app.get('/', (req, res) => {
-    res.send('asfasf World!');
+    res.send('Hello World!');
 });
 
 app.get('/data', (req, res) => {
@@ -49,8 +48,8 @@ app.post('/data', (req, res) => {
 
 app.get('/api', async (req, res) => {
     try {
-        // const result = await pool.query('SELECT * FROM your_table');
-        // res.json(result.rows);
+        const result = await pool.query('SELECT * FROM your_table');
+        res.json(result.rows);
     } catch (err) {
         console.error(err);
         res.send("Error " + err);
