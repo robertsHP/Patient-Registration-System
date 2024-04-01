@@ -1,6 +1,16 @@
 const express = require('express');
 const app = express();
+const { Pool } = require('pg');
+
 require('dotenv').config();
+
+// const pool = new Pool({
+//     user:       process.env.POSTGRES_USER,
+//     password:   process.env.POSTGRES_PASSWORD,
+//     host:       process.env.POSTGRES_HOST,
+//     port:       process.env.POSTGRES_PORT,
+//     database:   process.env.POSTGRES_DB
+// });
 
 // const port = process.env.SERVER_PORT;
 const port = 5000;
@@ -23,7 +33,7 @@ app.listen(port, () => {
 //----------------API----------------------
 
 app.get('/', (req, res) => {
-    res.send('Hello World!');
+    res.send('asfasf World!');
 });
 
 app.get('/data', (req, res) => {
