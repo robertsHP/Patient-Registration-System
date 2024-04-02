@@ -7,12 +7,12 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "node app",
-    "dev": "nodemon -L --inspect=0.0.0.0 app.js"
+    "dev": "nodemon app.js"
   },
   "dependencies": {
     "@adminjs/express": "^6.1.0",
     "@adminjs/sql": "^2.2.1",
-    "adminjs": "^7.7.4",
+    "adminjs": "^7.6.1",
     "express": "^4.19.2",
     "express-formidable": "^1.2.0",
     "express-session": "^1.18.0",
