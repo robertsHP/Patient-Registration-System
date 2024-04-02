@@ -10,6 +10,7 @@ import './CalendarComponent.css'
 class CalendarComponent extends React.Component {
     constructor(props) {
         super(props);
+
         this.handleDateSelect = this.handleDateSelect.bind(this);
         this.handleEventClick = this.handleEventClick.bind(this);
         this.handleEventDrop = this.handleEventDrop.bind(this);
@@ -50,23 +51,24 @@ class CalendarComponent extends React.Component {
     }
 
     handleDateSelect(info) {
-        let calendarApi = info.view.calendar;
+        console.log("handleDateSelect");
 
+        let calendarApi = info.view.calendar;
         calendarApi.unselect(); // clear date selection
 
-        if (info) {
-            let newEvent = {
-                id: this.props.events.length, // use the current timestamp as a unique id
-                title: '',
-                start: info.startStr,
-                end: info.endStr,
-                allDay: info.allDay
-            };
-            calendarApi.addEvent(newEvent);
-            this.props.setEvents([...this.props.events, newEvent]); // add the new event to the events array
-        } else {
-            this.props.setSelEventID(-1)
-        }
+        let id = this.props.events.length;
+
+        let newEvent = {
+            id: id, // use the current timestamp as a unique id
+            title: '',
+            start: info.startStr,
+            end: info.endStr,
+            allDay: info.allDay
+        };
+        calendarApi.addEvent(newEvent);
+
+        this.props.setEvents([...this.props.events, newEvent]); // add the new event to the events array
+        this.props.setSelEventID(id);
     }
 
     handleEventClick(info) {
@@ -76,21 +78,28 @@ class CalendarComponent extends React.Component {
 
     formatDate (date) {
         date.setDate(date.getDate() + 1);
-
         return date.toISOString().split('T')[0];
     }
 
     handleEventDrop(info) {
         console.log("handleEventDrop");
 
-        var formattedStartDate = this.formatDate(info.event.start);
-        var formattedEndDate = this.formatDate(info.event.end);
+        //Dabū notikumu datumus no tā, kas tika pārcelts 
+        var startDate = info.event.start;
+        var endDate = info.event.end;
 
-        console.log(formattedStartDate);
-        console.log(formattedEndDate);
+        //pārbaude gadījumā ja sākuma datums ir vienāds ar beigu (pārvēršas par null)
+        if(endDate === null) {
+            endDate = startDate;
+        }
 
+        //pārveido atbilstošā formātā
+        var formattedStartDate = this.formatDate(startDate);
+        var formattedEndDate = this.formatDate(endDate);
+
+        //maina konkrēto notikumu
         this.props.setEvents(this.props.events.map(event => {
-            if (event.id === info.event.id) {
+            if (event.id == info.event.id) {
                 return { ...event, start: formattedStartDate, end: formattedEndDate };
             } else {
                 return event;
@@ -105,7 +114,7 @@ class CalendarComponent extends React.Component {
         var formattedEndDate = this.formatDate(info.event.end);
 
         this.props.setEvents(this.props.events.map(event => {
-            if (event.id === info.event.id) {
+            if (event.id == info.event.id) {
               return { ...event, start: formattedStartDate, end: formattedEndDate };
             } else {
               return event;

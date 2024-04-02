@@ -4,13 +4,13 @@ const { Pool } = require('pg');
 
 require('dotenv').config({ path: '../.env' });
 
-// const pool = new Pool({
-//     user:       process.env.POSTGRES_USER,
-//     password:   process.env.POSTGRES_PASSWORD,
-//     host:       process.env.POSTGRES_HOST,
-//     port:       process.env.POSTGRES_PORT,
-//     database:   process.env.POSTGRES_DB
-// });
+const pool = new Pool({
+    user:       process.env.POSTGRES_USER,
+    password:   process.env.POSTGRES_PASSWORD,
+    host:       process.env.POSTGRES_HOST,
+    port:       process.env.POSTGRES_PORT,
+    database:   process.env.POSTGRES_DB
+});
 
 const port = process.env.SERVER_PORT;
 
@@ -35,26 +35,42 @@ app.get('/', (req, res) => {
     res.send('Hello World!');
 });
 
-app.get('/data', (req, res) => {
-    res.json({
-        name: "John Doe",
-        age: 20,
-        courses: ["Math", "Science", "English"]
-    });
-});
-app.post('/data', (req, res) => {
-    console.log(req.body);
-});
+// app.get('/data', (req, res) => {
+//     res.json({
+//         name: "John Doe",
+//         age: 20,
+//         courses: ["Math", "Science", "English"]
+//     });
+// });
+// app.post('/data', (req, res) => {
+//     console.log(req.body);
+// });
 
-app.get('/api', async (req, res) => {
+app.get('/users', async (req, res) => {
     try {
-        const result = await pool.query('SELECT * FROM your_table');
-        res.json(result.rows);
+        let column = req.column;
+        let value = req.value;
+        if(typeof column === 'string' && typeof value === 'string') {
+            let sql = `SELECT * FROM users WHERE ${column} = $1`;
+            pool.query(sql, [value], (err, results) => {
+                if(err) throw err;
+                res.send(results);
+            });
+        }
     } catch (err) {
         console.error(err);
         res.send("Error " + err);
     }
 });
+app.delete('/users/:id', (req, res) => {
+    let sql = 'DELETE FROM users WHERE id = ?';
+    let id = req.params.id;
+    pool.query(sql, id, (err, result) => {
+        if (err) throw err;
+        res.send(`User with ID ${id} deleted.`);
+    });
+  });
+
 app.post('/api', async (req, res) => {
     try {
         // const text = 'INSERT INTO your_table(column1, column2) VALUES($1, $2)';

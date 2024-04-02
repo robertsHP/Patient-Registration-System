@@ -9,13 +9,14 @@ import './App.css'
 // require('dotenv').config({ path: '../.env' });
 
 function App() {
-  const [data, setData] = useState(null);
-
   // console.log(import.meta.env.VITE_SERVER_ORIGIN);
 
-  // //// GET
+  var column = 'username';
+  var value = 'user2';
+
+  // GET
   // useEffect(() => {
-  //   fetch(`${import.meta.env.VITE_SERVER_ORIGIN}/data`)
+  //   fetch(`${import.meta.env.VITE_SERVER_ORIGIN}/users?column=${column}&value=${value}`)
   //   .then(response => {
   //       if (!response.ok) {
   //           throw new Error('Network response was not ok');
@@ -52,10 +53,6 @@ function App() {
           <Route path="/" element={<CalendarPage />} />
         </Routes>
       </Router>
-      
-      <div>
-        {data && <div>{JSON.stringify(data)}</div>}
-      </div>
     </>
   )
 }

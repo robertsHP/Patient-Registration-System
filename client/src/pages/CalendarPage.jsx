@@ -11,8 +11,8 @@ class CalendarPage extends React.Component {
         super(props);
         this.state = {
             events: [
-                { id: '0', title: 'Event 1', start: '2024-03-01', end: '2024-03-01' },
-                { id: '1', title: 'Event 2', start: '2024-03-02', end: '2024-03-05' }
+                { id: 0, title: 'Event 1', start: '2024-03-01', end: '2024-03-01' },
+                { id: 1, title: 'Event 2', start: '2024-03-02', end: '2024-03-05' }
             ],
             selEventID: -1
         };
@@ -28,6 +28,7 @@ class CalendarPage extends React.Component {
 
     render() {
         const { events, selEventID } = this.state;
+
         return (
             <div className="row-wrapper">
                 <div className="column-wrapper">

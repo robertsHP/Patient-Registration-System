@@ -5,7 +5,9 @@ import './EventFormComponent.css'
 class EventFormComponent extends React.Component {
     constructor(props) {
         super(props);
+
         var selectedEvent = this.props.events[this.props.selEventID];
+
         this.state = {
             formState: {
                 id: selectedEvent.id || '',
@@ -23,8 +25,11 @@ class EventFormComponent extends React.Component {
     }
 
     componentDidUpdate(prevProps) {
+        //atjauno notikuma informāciju gadījuma, ja ir veiktas kādas izmaiņas
         if (this.props.events[this.props.selEventID] !== prevProps.events[prevProps.selEventID]) {
+
             var selectedEvent = this.props.events[this.props.selEventID];
+
             this.setState({
                 formState: {
                     id: selectedEvent.id || '',
@@ -66,10 +71,10 @@ class EventFormComponent extends React.Component {
                         Gulta:
                         <input type="text" name="bedName" value={this.state.formState.bedName} onChange={this.handleInputUpdate} />
                     </label>
-                    <label>
+                    {/* <label>
                         Apraksts:
                         <textarea name="description" value={this.state.formState.description} onChange={this.handleInputUpdate} />
-                    </label>
+                    </label> */}
                     <label>
                         Pacients:
                         <input type="text" name="patientName" value={this.state.formState.patientName} onChange={this.handleInputUpdate} />
@@ -78,15 +83,15 @@ class EventFormComponent extends React.Component {
                         Ārsts:
                         <input type="text" name="doctorName" value={this.state.formState.doctorName} onChange={this.handleInputUpdate} />
                     </label>
-                    {/* <label>
-                        Viesnīcas datums:
+                    <label>
+                        Viesnīca:
                         <input type="date" name="hotelStayDate" value={this.state.formState.hotelStayDate} onChange={this.handleInputUpdate} />
-                    </label> */}
+                    </label>
                 </form>
-                <button onClick={this.handleClick}>
-                    Atjaunot
+                <button onClick={this.handleSaveClick}>
+                    Saglabāt
                 </button>
-                <button onClick={this.handleClick}>
+                <button onClick={this.handleDeleteClick}>
                     Dzēst
                 </button>
             </>
@@ -96,12 +101,15 @@ class EventFormComponent extends React.Component {
     handleInputUpdate = (event) => {
         console.log("handleInputUpdate");
 
+        //Kā tiek kāda vērtība mainīta ievades formā, tā arī izveido jaunu notikumu
         const updatedEvent = {
             ...this.state.formState,
             [event.target.name]: event.target.value
         };
+        
+        console.log(updatedEvent);
 
-        // If the start date is after the end date, swap them
+        //Ja sākuma datums ir pēc beigu datuma tad samaina
         if (updatedEvent.start > updatedEvent.end) {
             var newStart = updatedEvent.start;
             var newEnd = updatedEvent.end;
@@ -111,11 +119,17 @@ class EventFormComponent extends React.Component {
         }
 
         this.setState({ formState: updatedEvent });
-        this.props.setEvents(this.props.events.map(event => event.id === updatedEvent.id ? updatedEvent : event));
+        this.props.setEvents(this.props.events.map(
+            event => event.id == updatedEvent.id ? updatedEvent : event
+        ));
+        console.log(this.props.events);
     };
 
-    handleClick = () => {
-        console.log('Button clicked!');
+    handleSaveClick = () => {
+        console.log('Save clicked!');
+    };
+    handleDeleteClick = () => {
+        console.log('Delete clicked!');
     };
 }
 
