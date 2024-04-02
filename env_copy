@@ -1,0 +1,15 @@
+POSTGRES_USER=root
+POSTGRES_PASSWORD=root
+POSTGRES_HOST=localhost
+POSTGRES_PORT=
+POSTGRES_DB=patient_reg_system
+
+PGADMIN_EMAIL=admin@admin.com
+PGADMIN_PASSWORD=root
+PGADMIN_PORT=
+
+NODE_ENV=development
+SERVER_PORT=
+CLIENT_PORT=
+
+VITE_SERVER_ORIGIN=http://localhost:
