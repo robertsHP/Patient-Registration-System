@@ -30,29 +30,29 @@ class CalendarPage extends React.Component {
         const { events, selEventID } = this.state;
 
         return (
-            <div className="row-wrapper">
-                <div className="column-wrapper">
-                    <div className="calendar">
-                        {/* <SearchComponent /> */}
-                        <CalendarComponent 
+            <div className="flex-container">
+                <div className="search">
+                    <SearchComponent />
+                </div>
+                <div className="calendar">
+                    <CalendarComponent 
+                        events={events}
+                        setEvents={this.setEvents}
+                        selEventID={selEventID}
+                        setSelEventID={this.setSelEventID}
+                    />
+                </div>
+                <div className="event-form">
+                    {/* //In JavaScript, the && operator returns the first falsy value if there is one.
+                    //So if selectedEvent is null or undefined then nothing will be rendered. */}
+                    {events[selEventID] && 
+                        <EventFormComponent 
                             events={events}
                             setEvents={this.setEvents}
                             selEventID={selEventID}
                             setSelEventID={this.setSelEventID}
                         />
-                    </div>
-                    <div className="event-form">
-                        {/* //In JavaScript, the && operator returns the first falsy value if there is one.
-                        //So if selectedEvent is null or undefined then nothing will be rendered. */}
-                        {events[selEventID] && 
-                            <EventFormComponent 
-                                events={events}
-                                setEvents={this.setEvents}
-                                selEventID={selEventID}
-                                setSelEventID={this.setSelEventID}
-                            />
-                        }
-                    </div>
+                    }
                 </div>
             </div>
         )

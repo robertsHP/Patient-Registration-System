@@ -1,5 +1,7 @@
 import React, { useState } from 'react';
 
+import './SearchComponent.css'
+
 function SearchComponent () {
     const [term, setTerm] = useState('');
 
@@ -20,6 +22,12 @@ function SearchComponent () {
                 onChange={onInputChange} 
                 placeholder="Search..."
             />
+            <div className="row-container">
+                <div className="row-item">Row 1</div>
+                <div className="row-item">Row 2</div>
+                <div className="row-item">Row 3</div>
+                {/* Add more rows as needed */}
+            </div>
         </form>
     );
 }

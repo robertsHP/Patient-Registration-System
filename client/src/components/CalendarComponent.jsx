@@ -15,6 +15,7 @@ class CalendarComponent extends React.Component {
         this.handleEventClick = this.handleEventClick.bind(this);
         this.handleEventDrop = this.handleEventDrop.bind(this);
         this.handleEventResize = this.handleEventResize.bind(this);
+        this.eventAllow = this.eventAllow.bind(this);
     }
 
     render() {
@@ -31,6 +32,8 @@ class CalendarComponent extends React.Component {
                 eventClick={this.handleEventClick}
                 eventDrop={this.handleEventDrop}
                 eventResize={this.handleEventResize}
+                eventAllow={this.eventAllow}
+
                 events={this.props.events}
 
                 locale='lv'
@@ -48,6 +51,20 @@ class CalendarComponent extends React.Component {
                 }}
             />
         )
+    }
+
+    // Callback to validate event addition or modification
+    eventAllow (info, event) {
+        console.log("eventAllow");
+
+        var disallowedStart = new Date('2024-04-10'); // Start date of disallowed range
+        var disallowedEnd = new Date('2024-04-15'); // End date of disallowed range
+
+        var startAcceptable = info.start < disallowedStart || info.start > disallowedEnd;
+        var endAcceptable = info.end < disallowedStart || info.end > disallowedEnd;
+        
+        // Check if the event's start date falls within the disallowed range
+        return startAcceptable && endAcceptable;
     }
 
     handleDateSelect(info) {
