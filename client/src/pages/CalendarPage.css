@@ -36,11 +36,11 @@
 }
 
 .search {
-    flex: 5;
+    flex: 3;
     padding: 10px;
 }
 .calendar {
-    flex: 10;
+    flex: 4;
     padding: 10px;
 }
 .event-form {

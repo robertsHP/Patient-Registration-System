@@ -1,4 +1,4 @@
-import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
+import { BrowserRouter as Router, Route, Routes, Navigate } from 'react-router-dom';
 import React, { useEffect, useState } from 'react';
 
 import CalendarPage from './pages/CalendarPage';
@@ -49,7 +49,16 @@ function App() {
     <>
       <Router>
         <Routes>
-          <Route path="/" element={<CalendarPage />} />
+          <Route path="/gultas" element={
+            <CalendarPage tableName="gultas" title="Gultas" />
+          } />
+          <Route path="/gultas4" element={
+            <CalendarPage tableName="gultas4" title="Gultas4" />
+          } />
+          <Route path="/pirts" element={
+            <CalendarPage tableName="pirts" title= "Pirts" />
+          } />
+          <Route path="/" element={<Navigate to="/gultas" />} />
         </Routes>
       </Router>
     </>
