@@ -33,9 +33,9 @@ export default function CalendarPage (props) {
 }
 
 function CalendarModule ({tableName}) {
-    console.log(tableName);
+    // console.log(tableName);
 
-    const { events, setEvents, eventID, setEventID, getEventByID } = useEventManagementHook(
+    const { events, setEvents, eventID, setEventID, getEvent, setEvent } = useEventManagementHook(
         [
             { id: 0, title: 'Event 1', start: '2024-03-01', end: '2024-03-01' },
             { id: 1, title: 'Event 2', start: '2024-03-02', end: '2024-03-05' },
@@ -62,12 +62,13 @@ function CalendarModule ({tableName}) {
                 <div className="event-form">
                     {/* //In JavaScript, the && operator returns the first falsy value if there is one.
                     //So if selectedEvent is null or undefined then nothing will be rendered. */}
-                    {getEventByID(eventID) && 
+                    {getEvent(eventID) && 
                         <EventFormComponent 
                             events={events}
                             setEvents={setEvents}
                             eventID={eventID}
-                            getEventByID={getEventByID}
+                            getEvent={getEvent}
+                            setEvent={setEvent}
                         />
                     }
                 </div>

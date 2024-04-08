@@ -1,12 +1,13 @@
 import React, { useState, useEffect } from 'react';
 
+import '../../../global.css'
 import './EventFormComponent.css'
 
 export default class EventFormComponent extends React.Component {
     constructor(props) {
         super(props);
 
-        var selectedEvent = this.props.getEventByID(this.props.eventID);
+        var selectedEvent = this.props.getEvent(this.props.eventID);
 
         this.state = {
             formState: {
@@ -25,7 +26,7 @@ export default class EventFormComponent extends React.Component {
     }
 
     componentDidUpdate(prevProps) {
-        var selectedEvent = this.props.getEventByID(this.props.eventID);
+        var selectedEvent = this.props.getEvent(this.props.eventID);
 
         //atjauno notikuma informāciju gadījuma, ja ir veiktas kādas izmaiņas
         if (selectedEvent !== prevProps.events[prevProps.eventID]) {
@@ -48,7 +49,7 @@ export default class EventFormComponent extends React.Component {
 
     render() {
         return (
-            <>
+            <div className="global-component">
                 <form>
                     <label>
                         Nosaukums:
@@ -93,7 +94,7 @@ export default class EventFormComponent extends React.Component {
                 <button onClick={this.handleDeleteClick}>
                     Dzēst
                 </button>
-            </>
+            </div>
         );
     }
 
@@ -116,9 +117,7 @@ export default class EventFormComponent extends React.Component {
         }
 
         this.setState({ formState: updatedEvent });
-        this.props.setEvents(this.props.events.map(
-            event => event.id == updatedEvent.id ? updatedEvent : event
-        ));
+        this.props.setEvent(updatedEvent);
     };
 
     handleSaveClick = () => {

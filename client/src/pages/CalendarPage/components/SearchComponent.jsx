@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 
+import '../../../global.css'
 import './SearchComponent.css'
 
 export default function SearchComponent () {
@@ -15,19 +16,21 @@ export default function SearchComponent () {
     };
 
     return (
-        <form onSubmit={onFormSubmit}>
-            <input 
-                type="text" 
-                value={term} 
-                onChange={onInputChange} 
-                placeholder="Search..."
-            />
-            <div className="row-container">
-                <div className="row-item">Row 1</div>
-                <div className="row-item">Row 2</div>
-                <div className="row-item">Row 3</div>
-                {/* Add more rows as needed */}
-            </div>
-        </form>
+        <div className="global-component">
+            <form onSubmit={onFormSubmit}>
+                <input 
+                    type="text" 
+                    value={term} 
+                    onChange={onInputChange} 
+                    placeholder="Search..."
+                />
+                <div className="row-container">
+                    <div className="row-item">Row 1</div>
+                    <div className="row-item">Row 2</div>
+                    <div className="row-item">Row 3</div>
+                    {/* Add more rows as needed */}
+                </div>
+            </form>
+        </div>
     );
 }

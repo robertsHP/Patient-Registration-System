@@ -11,6 +11,11 @@ export default class CalendarComponent extends React.Component {
     constructor(props) {
         super(props);
 
+        this.disallowedDates = [
+            {start: '2024-04-10', end: '2024-04-15'},
+            {start: '2024-04-17', end: '2024-04-20'}
+        ];
+
         this.handleDateSelect = this.handleDateSelect.bind(this);
         this.handleEventClick = this.handleEventClick.bind(this);
         this.handleEventDrop = this.handleEventDrop.bind(this);
@@ -56,14 +61,21 @@ export default class CalendarComponent extends React.Component {
     eventAllow (info, event) {
         console.log("eventAllow");
 
-        var disallowedStart = new Date('2024-04-10'); // Start date of disallowed range
-        var disallowedEnd = new Date('2024-04-15'); // End date of disallowed range
+        var allowed = false;
 
-        var startAcceptable = info.start < disallowedStart || info.start > disallowedEnd;
-        var endAcceptable = info.end < disallowedStart || info.end > disallowedEnd;
-        
-        // Check if the event's start date falls within the disallowed range
-        return startAcceptable && endAcceptable;
+        for (let i = 0; i < this.disallowedDates.length; i++) {
+            var disallowedStart = new Date(this.disallowedDates[i].start);
+            var disallowedEnd = new Date(this.disallowedDates[i].end);
+    
+            allowed = info.start < disallowedEnd && info.end > disallowedStart;
+    
+            // If the event overlaps with this disallowed range, return false
+            if (allowed) {
+                return false;
+            }
+        }
+
+        return true;
     }
 
     handleDateSelect(info) {
