@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from 'react';
 
+import { formData } from '../data/formData.jsx';
+
 import '../../../global.css'
 import './EventFormComponent.css'
 
@@ -48,8 +50,16 @@ export default class EventFormComponent extends React.Component {
     }
 
     render() {
+        const NosaukumsComponent = formData.beds.title.tag;
+
         return (
             <div className="global-component">
+                {/* <NosaukumsComponent
+                    value={this.state.formState.title} 
+                    onChange={this.handleInputUpdate}
+                /> */}
+
+
                 <form>
                     <label>
                         Nosaukums:

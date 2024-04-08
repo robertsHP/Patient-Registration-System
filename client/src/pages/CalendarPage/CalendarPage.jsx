@@ -6,14 +6,10 @@ import useEventManagementHook from './hooks/useEventManagementHook.jsx';
 
 import PageSelectComponent from './components/PageSelectComponent.jsx';
 import SearchComponent from './components/SearchComponent.jsx';
-import MainViewPickerComponent from './components/MainViewPickerComponent.jsx';
+import CalendarComponent from './components/CalendarComponent.jsx';
 import EventFormComponent from './components/EventFormComponent.jsx';
 
 import './CalendarPage.css'
-
-//Gultas
-//Gultas 4. stāvs
-//Pirts
 
 export default function CalendarPage (props) {
     var pages = [
@@ -52,7 +48,7 @@ function CalendarModule ({tableName}) {
                     <SearchComponent />
                 </div>
                 <div className="main-view-picker">
-                    <MainViewPickerComponent 
+                    <CalendarComponent 
                         events={events}
                         setEvents={setEvents}
                         eventID={eventID}

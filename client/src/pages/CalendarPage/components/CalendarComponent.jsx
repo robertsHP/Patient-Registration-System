@@ -5,27 +5,39 @@ import dayGridPlugin from '@fullcalendar/daygrid';
 import timeGridPlugin from '@fullcalendar/timegrid';
 import interactionPlugin from '@fullcalendar/interaction';
 
+import { exportExcel } from '../service/exportExcel.jsx';
+
 import './CalendarComponent.css'
 
 export default class CalendarComponent extends React.Component {
     constructor(props) {
         super(props);
 
-        this.disallowedDates = [
-            {start: '2024-04-10', end: '2024-04-15'},
-            {start: '2024-04-17', end: '2024-04-20'}
-        ];
+        let currentDate = new Date();
+
+        this.state = {
+            calendarRef: React.createRef(),
+            month: currentDate.getMonth(),
+            year: currentDate.getYear(),
+            disallowedDates: [
+                {start: '2024-04-10', end: '2024-04-15'},
+                {start: '2024-04-17', end: '2024-04-20'}
+            ]
+        }
 
         this.handleDateSelect = this.handleDateSelect.bind(this);
         this.handleEventClick = this.handleEventClick.bind(this);
         this.handleEventDrop = this.handleEventDrop.bind(this);
         this.handleEventResize = this.handleEventResize.bind(this);
         this.eventAllow = this.eventAllow.bind(this);
+        this.datesSet = this.datesSet.bind(this);
+        this.excelButton = this.excelButton.bind(this);
     }
 
     render() {
         return (
             <FullCalendar
+                ref={this.state.calendarRef}
                 plugins={[ dayGridPlugin, timeGridPlugin, interactionPlugin ]}
 
                 editable={true}
@@ -38,34 +50,66 @@ export default class CalendarComponent extends React.Component {
                 eventDrop={this.handleEventDrop}
                 eventResize={this.handleEventResize}
                 eventAllow={this.eventAllow}
+                datesSet={this.datesSet}
 
                 events={this.props.events}
 
                 locale='lv'
 
+                customButtons={{
+                    excel: {
+                        text: 'Excel',
+                        click: this.excelButton
+                    }
+                }}
+
                 headerToolbar={{
-                    left: 'prev,next today',
+                    left: 'prev,next excel',
                     center: 'title',
-                    right: 'dayGridMonth,timeGridWeek,timeGridDay'
+                    right: 'today'
                 }}
                 buttonText={{
-                    today: 'Šodienas mēnesis',
-                    month: 'Mēneši',
-                    week: 'Nedēļas',
-                    day: 'Dienas'
+                    today: 'Šodiena'
                 }}
             />
         )
     }
+    datesSet () {
+        if(this.state.calendarRef.current != null) {
+            let calendarApi = this.state.calendarRef.current.getApi();
+            let date = calendarApi.getDate();
+            let month = date.getMonth(); // Note: January is 0, February is 1, and so on.
+            let year = date.getFullYear();
+        
+            this.state.month = month;
+            this.state.year = year;
 
+            console.log(`Currently viewed month: ${month}, year: ${year}`);
+        }
+    }
+    excelButton () {
+        console.log("excelButton");
+
+        console.log(this.props.events);
+
+        exportExcel(this.state.month, this.state.year, this.props.events);
+    }
+    renderEventContent(eventInfo) {
+        return (
+            <>
+              <b>{eventInfo.event.title}</b>
+              <div>{eventInfo.event.extendedProps.description}</div>
+            </>
+        );
+    }
     eventAllow (info, event) {
         console.log("eventAllow");
 
         var allowed = false;
 
-        for (let i = 0; i < this.disallowedDates.length; i++) {
-            var disallowedStart = new Date(this.disallowedDates[i].start);
-            var disallowedEnd = new Date(this.disallowedDates[i].end);
+        for (let i = 0; i < this.state.disallowedDates.length; i++) {
+            var disallowedStart = new Date(this.state.disallowedDates[i].start);
+            var disallowedEnd = new Date(this.state.disallowedDates[i].end);
     
             allowed = info.start < disallowedEnd && info.end > disallowedStart;
     
@@ -148,14 +192,5 @@ export default class CalendarComponent extends React.Component {
               return event;
             }
         }));
-    }
-
-    renderEventContent(eventInfo) {
-        return (
-            <>
-              <b>{eventInfo.event.title}</b>
-              <div>{eventInfo.event.extendedProps.description}</div>
-            </>
-        );
     }
 }
