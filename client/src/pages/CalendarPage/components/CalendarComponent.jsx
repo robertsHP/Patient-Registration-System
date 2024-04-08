@@ -7,7 +7,7 @@ import interactionPlugin from '@fullcalendar/interaction';
 
 import './CalendarComponent.css'
 
-class CalendarComponent extends React.Component {
+export default class CalendarComponent extends React.Component {
     constructor(props) {
         super(props);
 
@@ -53,7 +53,6 @@ class CalendarComponent extends React.Component {
         )
     }
 
-    // Callback to validate event addition or modification
     eventAllow (info, event) {
         console.log("eventAllow");
 
@@ -85,12 +84,12 @@ class CalendarComponent extends React.Component {
         calendarApi.addEvent(newEvent);
 
         this.props.setEvents([...this.props.events, newEvent]); // add the new event to the events array
-        this.props.setSelEventID(id);
+        this.props.setEventID(id);
     }
 
     handleEventClick(info) {
         console.log("handleEventClick");
-        this.props.setSelEventID(info.event.id); // set the clicked event as the selected event
+        this.props.setEventID(info.event.id); // set the clicked event as the selected event
     }
 
     formatDate (date) {
@@ -148,6 +147,3 @@ class CalendarComponent extends React.Component {
         );
     }
 }
-
-
-export default CalendarComponent

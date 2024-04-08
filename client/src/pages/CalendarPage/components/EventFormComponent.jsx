@@ -2,11 +2,11 @@ import React, { useState, useEffect } from 'react';
 
 import './EventFormComponent.css'
 
-class EventFormComponent extends React.Component {
+export default class EventFormComponent extends React.Component {
     constructor(props) {
         super(props);
 
-        var selectedEvent = this.props.events[this.props.selEventID];
+        var selectedEvent = this.props.getEventByID(this.props.eventID);
 
         this.state = {
             formState: {
@@ -25,11 +25,10 @@ class EventFormComponent extends React.Component {
     }
 
     componentDidUpdate(prevProps) {
+        var selectedEvent = this.props.getEventByID(this.props.eventID);
+
         //atjauno notikuma informāciju gadījuma, ja ir veiktas kādas izmaiņas
-        if (this.props.events[this.props.selEventID] !== prevProps.events[prevProps.selEventID]) {
-
-            var selectedEvent = this.props.events[this.props.selEventID];
-
+        if (selectedEvent !== prevProps.events[prevProps.eventID]) {
             this.setState({
                 formState: {
                     id: selectedEvent.id || '',
@@ -107,8 +106,6 @@ class EventFormComponent extends React.Component {
             [event.target.name]: event.target.value
         };
         
-        console.log(updatedEvent);
-
         //Ja sākuma datums ir pēc beigu datuma tad samaina
         if (updatedEvent.start > updatedEvent.end) {
             var newStart = updatedEvent.start;
@@ -122,7 +119,6 @@ class EventFormComponent extends React.Component {
         this.props.setEvents(this.props.events.map(
             event => event.id == updatedEvent.id ? updatedEvent : event
         ));
-        console.log(this.props.events);
     };
 
     handleSaveClick = () => {
@@ -132,5 +128,3 @@ class EventFormComponent extends React.Component {
         console.log('Delete clicked!');
     };
 }
-
-export default EventFormComponent

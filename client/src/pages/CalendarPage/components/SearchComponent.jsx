@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 
 import './SearchComponent.css'
 
-function SearchComponent () {
+export default function SearchComponent () {
     const [term, setTerm] = useState('');
 
     const onInputChange = (event) => {
@@ -31,5 +31,3 @@ function SearchComponent () {
         </form>
     );
 }
-
-export default SearchComponent;
