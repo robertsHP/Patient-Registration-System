@@ -44,7 +44,7 @@ export default class CalendarComponent extends React.Component {
                     right: 'dayGridMonth,timeGridWeek,timeGridDay'
                 }}
                 buttonText={{
-                    today: 'Šodien',
+                    today: 'Šodienas mēnesis',
                     month: 'Mēneši',
                     week: 'Nedēļas',
                     day: 'Dienas'

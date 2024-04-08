@@ -49,7 +49,7 @@ function App() {
     <>
       <Router>
         <Routes>
-          <Route path="/" element={<CalendarPage />} />
+          <Route path="/*" element={<CalendarPage />} />
         </Routes>
       </Router>
     </>
