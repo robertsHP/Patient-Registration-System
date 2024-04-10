@@ -1,17 +1,29 @@
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 import React, { useEffect, useState } from 'react';
 
+import AdminPanel from './pages/AdminPanel/AdminPanel.jsx';
 import CalendarPage from './pages/CalendarPage/CalendarPage.jsx';
 
 import './App.css'
 
 // require('dotenv').config({ path: '../.env' });
 
-function App() {
+export default function App() {
+  return (
+    <>
+      <Router>
+        <Routes>
+          <Route path="/*" element={<CalendarPage />} />
+          {/* <Route path="/admin/*" element={<AdminPanel />} /> */}
+        </Routes>
+      </Router>
+    </>
+  )
+
   // console.log(import.meta.env.VITE_SERVER_ORIGIN);
 
-  var column = 'username';
-  var value = 'user2';
+  // var column = 'username';
+  // var value = 'user2';
 
   // GET
   // useEffect(() => {
@@ -45,15 +57,4 @@ function App() {
   //   console.error('Error:', error);
   // });
 
-  return (
-    <>
-      <Router>
-        <Routes>
-          <Route path="/*" element={<CalendarPage />} />
-        </Routes>
-      </Router>
-    </>
-  )
 }
-
-export default App

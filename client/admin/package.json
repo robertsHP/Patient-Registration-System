@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "description": "",
   "type": "module",
-  "main": "index.js",
+  "main": "app.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "node app",
@@ -12,7 +12,8 @@
   "dependencies": {
     "@adminjs/express": "^6.1.0",
     "@adminjs/sql": "^2.2.1",
-    "adminjs": "^7.6.1",
+    "adminjs": "^7.8.1",
+    "dotenv": "^16.4.5",
     "express": "^4.19.2",
     "express-formidable": "^1.2.0",
     "express-session": "^1.18.0",

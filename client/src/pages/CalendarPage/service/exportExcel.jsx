@@ -52,12 +52,12 @@ export const exportExcel = async (month, year, events) => {
     // worksheet.addRow({ num: 23, item: 'sofa', name: '' });
     // worksheet.addRow({ num: 24, item: 'big bed', name: 'Jane Doe' });
     
-    // // Save workbook to file
-    // workbook.xlsx.writeBuffer()
-    //     .then((buffer) => {
-    //         saveAs(new Blob([buffer]), "MyFile.xlsx");
-    //     })
-    //     .catch((err) => {
-    //         console.error(err);
-    //     });
+    // Save workbook to file
+    workbook.xlsx.writeBuffer()
+        .then((buffer) => {
+            saveAs(new Blob([buffer]), "MyFile.xlsx");
+        })
+        .catch((err) => {
+            console.error(err);
+        });
 };
