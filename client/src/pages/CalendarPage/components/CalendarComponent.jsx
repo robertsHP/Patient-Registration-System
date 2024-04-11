@@ -21,7 +21,7 @@ export default class CalendarComponent extends React.Component {
             year: currentDate.getYear(),
             disallowedDates: [
                 {start: '2024-04-10', end: '2024-04-15'},
-                {start: '2024-04-17', end: '2024-04-20'}
+                // {start: '2024-04-17', end: '2024-04-20'}
             ]
         }
 
@@ -32,6 +32,8 @@ export default class CalendarComponent extends React.Component {
         this.eventAllow = this.eventAllow.bind(this);
         this.datesSet = this.datesSet.bind(this);
         this.excelButton = this.excelButton.bind(this);
+        // this.dayCellContent = this.dayCellContent.bind(this);
+        this.dayCellDidMount = this.dayCellDidMount.bind(this);
     }
 
     render() {
@@ -51,6 +53,9 @@ export default class CalendarComponent extends React.Component {
                 eventResize={this.handleEventResize}
                 eventAllow={this.eventAllow}
                 datesSet={this.datesSet}
+                // dayCellContent={this.dayCellContent}
+
+                dayCellDidMount={this.dayCellDidMount}
 
                 events={this.props.events}
 
@@ -69,7 +74,7 @@ export default class CalendarComponent extends React.Component {
                     right: 'today'
                 }}
                 buttonText={{
-                    today: 'Šodiena'
+                    today: 'Šodien'
                 }}
             />
         )
@@ -89,18 +94,9 @@ export default class CalendarComponent extends React.Component {
     }
     excelButton () {
         console.log("excelButton");
-
         console.log(this.props.events);
 
         exportExcel(this.state.month, this.state.year, this.props.events);
-    }
-    renderEventContent(eventInfo) {
-        return (
-            <>
-              <b>{eventInfo.event.title}</b>
-              <div>{eventInfo.event.extendedProps.description}</div>
-            </>
-        );
     }
     eventAllow (info, event) {
         console.log("eventAllow");
@@ -111,7 +107,7 @@ export default class CalendarComponent extends React.Component {
             var disallowedStart = new Date(this.state.disallowedDates[i].start);
             var disallowedEnd = new Date(this.state.disallowedDates[i].end);
     
-            allowed = info.start < disallowedEnd && info.end > disallowedStart;
+            allowed = info.start <= disallowedEnd && info.end >= disallowedStart;
     
             // If the event overlaps with this disallowed range, return false
             if (allowed) {
@@ -120,6 +116,25 @@ export default class CalendarComponent extends React.Component {
         }
 
         return true;
+    }
+    dayCellDidMount (info) {
+        var date = info.date;
+
+        for (let i = 0; i < this.state.disallowedDates.length; i++) {
+            var disallowedStart = new Date(this.state.disallowedDates[i].start);
+            var disallowedEnd = new Date(this.state.disallowedDates[i].end);
+
+            disallowedStart.setDate(disallowedStart.getDate() - 1);
+    
+            var allowed = date <= disallowedEnd && date >= disallowedStart;
+    
+            // If the event overlaps with this disallowed range, return false
+            if (allowed) {
+                info.el.style.backgroundColor = '#FF9B9B';
+                return;
+            }
+        }
+        info.el.style.backgroundColor = '#FFFFFF';
     }
 
     handleDateSelect(info) {

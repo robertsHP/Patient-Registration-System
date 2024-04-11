@@ -1,7 +1,6 @@
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 import React, { useEffect, useState } from 'react';
 
-import AdminPanel from './pages/AdminPanel/AdminPanel.jsx';
 import CalendarPage from './pages/CalendarPage/CalendarPage.jsx';
 
 import './App.css'

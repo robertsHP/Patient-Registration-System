@@ -33,11 +33,11 @@ function CalendarModule ({tableName}) {
 
     const { events, setEvents, eventID, setEventID, getEvent, setEvent } = useEventManagementHook(
         [
-            { id: 0, title: 'Event 1', start: '2024-03-01', end: '2024-03-01' },
-            { id: 1, title: 'Event 2', start: '2024-03-02', end: '2024-03-05' },
-            { id: 2, title: 'aaaaaa', start: '2024-04-07', end: '2024-04-20' },
-            { id: 3, title: 'bbbbbbb', start: '2024-04-28', end: '2024-04-30' },
-            { id: 4, title: 'cccccc', start: '2024-04-01', end: '2024-04-08' }
+            { id: 0, title: 'Jānis Bērziņš', start: '2024-04-01', end: '2024-04-01' },
+            { id: 1, title: 'Jana Ozoliņa', start: '2024-04-02', end: '2024-04-05' },
+            // { id: 2, title: 'aaaaaa', start: '2024-04-07', end: '2024-04-20' },
+            // { id: 3, title: 'bbbbbbb', start: '2024-04-28', end: '2024-04-30' },
+            // { id: 4, title: 'cccccc', start: '2024-04-01', end: '2024-04-08' }
         ], -1
     );
 

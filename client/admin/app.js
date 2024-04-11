@@ -1,7 +1,10 @@
 import AdminJS from 'adminjs'
 import express from 'express'
-import Plugin from '@adminjs/express'
+import Plugin, { buildAuthenticatedRouter } from '@adminjs/express'
 import { Adapter, Database, Resource } from '@adminjs/sql'
+
+import { DefaultAuthProvider } from 'adminjs'
+
 
 // require('dotenv').config({ path: '../../.env' });
 // const PORT = process.env.CLIENT_PORT;
@@ -12,12 +15,19 @@ AdminJS.registerAdapter({
     Resource,
 })
 
+const authenticate = async (email, password) => {
+    if (email === 'admin@example.com' && password === 'password') {
+      return { email }
+    }
+    return null
+}
+
 const start = async () => {
   const app = express()
 
   const db = await new Adapter('postgresql', {
-    connectionString: 'postgres://postgres:postgres@localhost:5432/patient_reg_system',
-    database: 'patient_reg_system',
+    connectionString: 'postgres://postgres:postgres@localhost:5432/calendar_system',
+    database: 'calendar_system',
   }).init();
 
   const admin = new AdminJS({
@@ -40,6 +50,12 @@ const start = async () => {
   });
 
   admin.watch()
+
+//   const router = buildAuthenticatedRouter(admin, {
+//     authenticate,
+//     cookieName: 'username',
+//     cookiePassword: 'password',
+//   })
 
   const router = Plugin.buildRouter(admin)
 
