@@ -3,7 +3,7 @@ import React, { useState } from 'react';
 import '../../../global.css'
 import './SearchComponent.css'
 
-export default function SearchComponent () {
+export default function SearchComponent ({events}) {
     const [term, setTerm] = useState('');
 
     const onInputChange = (event) => {
@@ -15,22 +15,30 @@ export default function SearchComponent () {
         // You can do something with term here like sending it to an API
     };
 
+    // Filter the events based on the search term
+    const filteredEvents = Object.keys(events).filter(key => 
+        events[key].name.toLowerCase().includes(term.toLowerCase()) ||
+        events[key].start.toLowerCase().includes(term.toLowerCase()) ||
+        events[key].end.toLowerCase().includes(term.toLowerCase())
+    );
+
     return (
         <div className="global-component">
-            <form onSubmit={onFormSubmit}>
-                <input 
-                    type="text" 
-                    value={term} 
-                    onChange={onInputChange} 
-                    placeholder="Search..."
-                />
-                <div className="row-container">
-                    <div className="row-item">Row 1</div>
-                    <div className="row-item">Row 2</div>
-                    <div className="row-item">Row 3</div>
-                    {/* Add more rows as needed */}
-                </div>
-            </form>
+            <input 
+                type="text" 
+                value={term} 
+                onChange={onInputChange} 
+                placeholder="Search..."
+            />
+            <div className="row-container">
+                {filteredEvents.map((key) => (
+                    <a>
+                        <div className="row-item" key={key}>
+                            {events[key].name+", "+events[key].start+", "+events[key].end}
+                        </div>
+                    </a>
+                ))}
+            </div>
         </div>
     );
 }

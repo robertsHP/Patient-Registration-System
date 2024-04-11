@@ -19,6 +19,8 @@ export default class CalendarComponent extends React.Component {
             calendarRef: React.createRef(),
             month: currentDate.getMonth(),
             year: currentDate.getYear(),
+            eventMode: 'add',
+
             disallowedDates: [
                 {start: '2024-04-10', end: '2024-04-15'},
                 // {start: '2024-04-17', end: '2024-04-20'}
@@ -34,50 +36,66 @@ export default class CalendarComponent extends React.Component {
         this.excelButton = this.excelButton.bind(this);
         // this.dayCellContent = this.dayCellContent.bind(this);
         this.dayCellDidMount = this.dayCellDidMount.bind(this);
+        this.eventContent = this.eventContent.bind(this);
+        this.dateClick = this.dateClick.bind(this);
     }
 
     render() {
         return (
-            <FullCalendar
-                ref={this.state.calendarRef}
-                plugins={[ dayGridPlugin, timeGridPlugin, interactionPlugin ]}
+            <>
+                <FullCalendar
+                    ref={this.state.calendarRef}
+                    plugins={[ dayGridPlugin, timeGridPlugin, interactionPlugin ]}
 
-                editable={true}
-                droppable={true}
-                selectable={true}
-                eventResizableFromStart={true}
+                    editable={true}
+                    droppable={true}
+                    selectable={true}
+                    eventResizableFromStart={true}
 
-                select={this.handleDateSelect}
-                eventClick={this.handleEventClick}
-                eventDrop={this.handleEventDrop}
-                eventResize={this.handleEventResize}
-                eventAllow={this.eventAllow}
-                datesSet={this.datesSet}
-                // dayCellContent={this.dayCellContent}
+                    select={this.handleDateSelect}
+                    eventClick={this.handleEventClick}
+                    eventDrop={this.handleEventDrop}
+                    eventResize={this.handleEventResize}
+                    eventAllow={this.eventAllow}
+                    datesSet={this.datesSet}
+                    dayCellDidMount={this.dayCellDidMount}
+                    eventContent={this.eventContent}
+                    dateClick={this.dateClick}
 
-                dayCellDidMount={this.dayCellDidMount}
+                    events={this.props.events}
 
-                events={this.props.events}
+                    locale='lv'
 
-                locale='lv'
+                    customButtons={{
+                        excel: {
+                            text: 'Excel',
+                            click: this.excelButton
+                        },
+                        unavailability: {
+                            text: 'Nepieejamība',
+                            click: this.unavailabilityButton
+                        }
+                    }}
 
-                customButtons={{
-                    excel: {
-                        text: 'Excel',
-                        click: this.excelButton
-                    }
-                }}
-
-                headerToolbar={{
-                    left: 'prev,next excel',
-                    center: 'title',
-                    right: 'today'
-                }}
-                buttonText={{
-                    today: 'Šodien'
-                }}
-            />
+                    headerToolbar={{
+                        left: 'prev,next today',
+                        center: 'title',
+                        right: 'excel unavailability'
+                    }}
+                    buttonText={{
+                        today: 'Šodien'
+                    }}
+                />
+            </>
         )
+    }
+    dateClick (info) {
+        if (mode === 'add') {
+            this.props.setEvents([...events, { title: 'New Event', start: info.dateStr }]);
+        } else if (mode === 'unavailable') {
+            // this.props.setEvents([...events, { title: 'Unavailable', start: info.dateStr, color: 'red' }]);
+            console.log("busta");
+        }
     }
     datesSet () {
         if(this.state.calendarRef.current != null) {
@@ -97,6 +115,9 @@ export default class CalendarComponent extends React.Component {
         console.log(this.props.events);
 
         exportExcel(this.state.month, this.state.year, this.props.events);
+    }
+    unavailabilityButton () {
+        this.state.eventMode = (this.state.eventMode == 'add') ? 'unavailability' : 'add';
     }
     eventAllow (info, event) {
         console.log("eventAllow");
@@ -135,6 +156,26 @@ export default class CalendarComponent extends React.Component {
             }
         }
         info.el.style.backgroundColor = '#FFFFFF';
+    }
+    eventContent (info) {
+        var eventValues = this.props.getEvent(info.event.id);
+        var title = '';
+
+        const exists = (value) => {
+            return typeof value != 'undefined' && value != '' && value != null;
+        };
+
+        if(typeof eventValues != 'undefined') {
+            title += exists(eventValues.name) ? eventValues.name+' ' : '-';
+            title += exists(eventValues.room) ? eventValues.room+' ' : '';
+            title += exists(eventValues.bedName) ? eventValues.bedName+' ' : '';
+        } else {
+            title = '-';
+        }
+
+        console.log(title);
+
+        return {html: title};
     }
 
     handleDateSelect(info) {

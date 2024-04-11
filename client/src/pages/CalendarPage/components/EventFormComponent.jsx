@@ -14,17 +14,20 @@ export default class EventFormComponent extends React.Component {
         this.state = {
             formState: {
                 id: selectedEvent.id || '',
-                title: selectedEvent.title || '',
+                name: selectedEvent.name || '',
                 start: selectedEvent.start || '',
                 end: selectedEvent.end || '',
                 room: selectedEvent.room || '',
                 bedName: selectedEvent.bedName || '',
                 description: selectedEvent.description || '',
-                patientName: selectedEvent.patientName || '',
                 doctorName: selectedEvent.doctorName || '',
                 hotelStayDate: selectedEvent.hotelStayDate || ''
             }
         };
+
+        this.handleInputUpdate = this.handleInputUpdate.bind(this);
+        this.handleSaveClick = this.handleSaveClick.bind(this);
+        this.handleDeleteClick = this.handleDeleteClick.bind(this);
     }
 
     componentDidUpdate(prevProps) {
@@ -35,13 +38,12 @@ export default class EventFormComponent extends React.Component {
             this.setState({
                 formState: {
                     id: selectedEvent.id || '',
-                    title: selectedEvent.title || '',
+                    name: selectedEvent.name || '',
                     start: selectedEvent.start || '',
                     end: selectedEvent.end || '',
                     room: selectedEvent.room || '',
                     bedName: selectedEvent.bedName || '',
                     description: selectedEvent.description || '',
-                    patientName: selectedEvent.patientName || '',
                     doctorName: selectedEvent.doctorName || '',
                     hotelStayDate: selectedEvent.hotelStayDate || ''
                 }
@@ -50,20 +52,18 @@ export default class EventFormComponent extends React.Component {
     }
 
     render() {
-        const NosaukumsComponent = formData.beds.title.tag;
+        // const NosaukumsComponent = formData.beds.title.tag;
 
         return (
             <div className="global-component">
-                {/* <NosaukumsComponent
-                    value={this.state.formState.title} 
-                    onChange={this.handleInputUpdate}
-                /> */}
-
-
                 <form>
+                    {/* <NosaukumsComponent
+                        value={this.state.formState.title} 
+                        onChange={this.handleInputUpdate}
+                    /> */}
                     <label>
-                        Nosaukums:
-                        <input type="text" name="title" value={this.state.formState.title} onChange={this.handleInputUpdate} />
+                        Pacienta vārds un uzvārds:
+                        <input type="text" name="name" value={this.state.formState.name} onChange={this.handleInputUpdate} />
                     </label>
                     <label>
                         Sākuma datums:
@@ -78,6 +78,10 @@ export default class EventFormComponent extends React.Component {
                         <input type="text" name="room" value={this.state.formState.room} onChange={this.handleInputUpdate} />
                     </label>
                     <label>
+                        :
+                        <input type="date" name="hotelStayDate" value={this.state.formState.hotelStayDate} onChange={this.handleInputUpdate} />
+                    </label>
+                    <label>
                         Gulta:
                         <input type="text" name="bedName" value={this.state.formState.bedName} onChange={this.handleInputUpdate} />
                     </label>
@@ -85,10 +89,6 @@ export default class EventFormComponent extends React.Component {
                         Apraksts:
                         <textarea name="description" value={this.state.formState.description} onChange={this.handleInputUpdate} />
                     </label> */}
-                    <label>
-                        Pacients:
-                        <input type="text" name="patientName" value={this.state.formState.patientName} onChange={this.handleInputUpdate} />
-                    </label>
                     <label>
                         Ārsts:
                         <input type="text" name="doctorName" value={this.state.formState.doctorName} onChange={this.handleInputUpdate} />

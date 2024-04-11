@@ -5,10 +5,10 @@ export const formData = {
         title: {
             tag: (value, onChange) => {
                 return (
-                    <>
-                        <label>Nosaukums</label>
-                        <input type="text" name="id" value={value} onChange={onChange} />
-                    </>
+                    <label>
+                        Nosaukums
+                        <input type="text" name="title" value={value} onChange={onChange} />
+                    </label>
                 )
             }
         },

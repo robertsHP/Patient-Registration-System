@@ -33,8 +33,8 @@ function CalendarModule ({tableName}) {
 
     const { events, setEvents, eventID, setEventID, getEvent, setEvent } = useEventManagementHook(
         [
-            { id: 0, title: 'Jānis Bērziņš', start: '2024-04-01', end: '2024-04-01' },
-            { id: 1, title: 'Jana Ozoliņa', start: '2024-04-02', end: '2024-04-05' },
+            { id: 0, name: 'Jānis Bērziņš', start: '2024-04-01', end: '2024-04-02' },
+            { id: 1, name: 'Jana Ozoliņa', start: '2024-04-02', end: '2024-04-05' },
             // { id: 2, title: 'aaaaaa', start: '2024-04-07', end: '2024-04-20' },
             // { id: 3, title: 'bbbbbbb', start: '2024-04-28', end: '2024-04-30' },
             // { id: 4, title: 'cccccc', start: '2024-04-01', end: '2024-04-08' }
@@ -45,13 +45,16 @@ function CalendarModule ({tableName}) {
         <>
             <div className="flex-container">
                 <div className="search">
-                    <SearchComponent />
+                    <SearchComponent 
+                        events={events}
+                    />
                 </div>
                 <div className="main-view-picker">
                     <CalendarComponent 
                         events={events}
                         setEvents={setEvents}
                         eventID={eventID}
+                        getEvent={getEvent}
                         setEventID={setEventID}
                     />
                 </div>
