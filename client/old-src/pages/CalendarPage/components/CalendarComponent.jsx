@@ -7,6 +7,8 @@ import interactionPlugin from '@fullcalendar/interaction';
 
 import { exportExcel } from '../service/exportExcel.jsx';
 
+import CalendarOptions from './CalendarOptions.jsx';
+
 import './CalendarComponent.css'
 
 export default class CalendarComponent extends React.Component {
@@ -19,7 +21,9 @@ export default class CalendarComponent extends React.Component {
             calendarRef: React.createRef(),
             month: currentDate.getMonth(),
             year: currentDate.getYear(),
+
             eventMode: 'add',
+            selectedRoom: '0',
 
             disallowedDates: [
                 {start: '2024-04-10', end: '2024-04-15'},
@@ -33,11 +37,9 @@ export default class CalendarComponent extends React.Component {
         this.handleEventResize = this.handleEventResize.bind(this);
         this.eventAllow = this.eventAllow.bind(this);
         this.datesSet = this.datesSet.bind(this);
-        this.excelButton = this.excelButton.bind(this);
         // this.dayCellContent = this.dayCellContent.bind(this);
         this.dayCellDidMount = this.dayCellDidMount.bind(this);
         this.eventContent = this.eventContent.bind(this);
-        this.dateClick = this.dateClick.bind(this);
     }
 
     render() {
@@ -66,36 +68,20 @@ export default class CalendarComponent extends React.Component {
 
                     locale='lv'
 
-                    customButtons={{
-                        excel: {
-                            text: 'Excel',
-                            click: this.excelButton
-                        },
-                        unavailability: {
-                            text: 'Nepieejamība',
-                            click: this.unavailabilityButton
-                        }
-                    }}
-
                     headerToolbar={{
                         left: 'prev,next today',
                         center: 'title',
-                        right: 'excel unavailability'
+                        right: ''
                     }}
                     buttonText={{
                         today: 'Šodien'
                     }}
                 />
+                <CalendarOptions 
+
+                />
             </>
         )
-    }
-    dateClick (info) {
-        if (mode === 'add') {
-            this.props.setEvents([...events, { title: 'New Event', start: info.dateStr }]);
-        } else if (mode === 'unavailable') {
-            // this.props.setEvents([...events, { title: 'Unavailable', start: info.dateStr, color: 'red' }]);
-            console.log("busta");
-        }
     }
     datesSet () {
         if(this.state.calendarRef.current != null) {
@@ -109,15 +95,6 @@ export default class CalendarComponent extends React.Component {
 
             console.log(`Currently viewed month: ${month}, year: ${year}`);
         }
-    }
-    excelButton () {
-        console.log("excelButton");
-        console.log(this.props.events);
-
-        exportExcel(this.state.month, this.state.year, this.props.events);
-    }
-    unavailabilityButton () {
-        this.state.eventMode = (this.state.eventMode == 'add') ? 'unavailability' : 'add';
     }
     eventAllow (info, event) {
         console.log("eventAllow");

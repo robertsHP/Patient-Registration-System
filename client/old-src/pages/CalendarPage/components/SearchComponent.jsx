@@ -28,12 +28,12 @@ export default function SearchComponent ({events}) {
                 type="text" 
                 value={term} 
                 onChange={onInputChange} 
-                placeholder="Search..."
+                placeholder="Meklēt..."
             />
             <div className="row-container">
                 {filteredEvents.map((key) => (
-                    <a>
-                        <div className="row-item" key={key}>
+                    <a key={key}>
+                        <div className="row-item">
                             {events[key].name+", "+events[key].start+", "+events[key].end}
                         </div>
                     </a>

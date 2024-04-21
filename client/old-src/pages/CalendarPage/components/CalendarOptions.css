@@ -1,0 +1,27 @@
+.buttonStyle {
+    margin: 10px;
+    padding: 10px;
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+}
+
+.selectStyle {
+    margin: 10px;
+    padding: 10px;
+    background-color: #f8f8f8;
+    color: black;
+}
+
+.container {
+    display: flex;
+    justify-content: space-between;
+}
+
+.container-left {
+    display: flex;
+}
+.container-right {
+    display: flex;
+    justify-content: right;
+}
