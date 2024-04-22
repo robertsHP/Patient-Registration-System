@@ -5,24 +5,23 @@ import { Route, Routes, Link, Navigate } from 'react-router-dom';
 // import '../../../global.css'
 import './HeaderSelectComponent.css'
 
-export default function PageSelectComponent ({pageData, component: Component}) {
-    const [path, setPath] = useState(null);
+export default function HeaderSelectComponent({pages}) {
+    const [path, setPath] = useState(`/${pages[0].urlName}`);
 
     useEffect(() => {
-        setPath(`/${pageData[0].urlName}`);
-    }, [pageData]);
+    }, [pages]);
 
     return (
         <>
-            {pageData.map((d) => (
-                <Link key={`${d.urlName}_link_button`} to={`/${d.urlName}`}>
-                    <button className="vertical-button">{d.title}</button>
+            {pages.map(({urlName, title}) => (
+                <Link key={`${urlName}_link_button`} to={`/${urlName}`}>
+                    <button className="vertical-button">{title}</button>
                 </Link>
             ))}
             <Routes>
-                {pageData.map((d) => (
-                    <Route key={d.urlName} path={`/${d.urlName}/*`} element={
-                        <Component pageData={d} />
+                {pages.map(({urlName, component: Component}) => (
+                    <Route key={`${urlName}_route`} path={`/${urlName}/*`} element={
+                        <Component />
                     } />
                 ))}
                 <Route path="*" element={<Navigate to={path} replace />} />
@@ -30,3 +29,5 @@ export default function PageSelectComponent ({pageData, component: Component}) {
         </>
     );
 }
+
+

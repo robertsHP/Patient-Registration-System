@@ -19,17 +19,22 @@ export default function useEventManagementHook (initialEvents, initialEventID) {
         setEvents(events.map(
             event => event.id == id ? updatedEvent : event
         ));
-        if(id == selectedEvent.id) {
-            setSelectedEvent(updatedEvent);
+
+        if(selectedEvent != null) {
+            if(id == selectedEvent.id) {
+                setSelectedEvent(updatedEvent);
+            }
         }
     }
 
     const deleteEvent = (id) => {
         setEvents(prevEvents => prevEvents.filter(event => event.id !== id));
 
-        if(id == selectedEvent.id) {
-            _setEventID(-1);
-            setSelectedEvent(null);
+        if(selectedEvent != null) {
+            if(id == selectedEvent.id) {
+                _setEventID(-1);
+                setSelectedEvent(null);
+            }
         }
     }
 
@@ -41,11 +46,14 @@ export default function useEventManagementHook (initialEvents, initialEventID) {
             : 
             event
         ));
-        if(id == selectedEvent.id) {
-            console.log({...selectedEvent, ...values});
-            setSelectedEvent(
-                {...selectedEvent, ...values}
-            );
+
+        if(selectedEvent != null) {
+            if(id == selectedEvent.id) {
+                console.log({...selectedEvent, ...values});
+                setSelectedEvent(
+                    {...selectedEvent, ...values}
+                );
+            }
         }
     }
 

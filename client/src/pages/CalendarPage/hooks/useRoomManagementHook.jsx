@@ -1,18 +1,18 @@
 import React, { useEffect, useState } from 'react';
 
-// export default function useEventManagementHook (initialEvents, initialEventID) {
-//     const [events, setEvents] = useState(initialEvents);
-//     const [eventID, setEventID] = useState(initialEventID);
+export default function useRoomManagementHook (initialRooms, initialRoomID) {
+    const [rooms, setRooms] = useState(initialRooms);
+    const [roomID, setRoomID] = useState(initialRoomID);
 
-//     const getEvent = (id) => {
-//         return events.find(event => event.id == id);
-//     }
+    const getRoom = (id) => {
+        return rooms.find(room => room.id == id);
+    }
 
-//     const setEvent = (updatedEvent) => {
-//         setEvents(events.map(
-//             event => event.id == updatedEvent.id ? updatedEvent : event
-//         ));
-//     }
+    const setRoom = (updateRoom) => {
+        setEvents(rooms.map(
+            room => room.id == updateRoom.id ? updateRoom : room
+        ));
+    }
 
-//     return { events, setEvents, eventID, setEventID, getEvent, setEvent };
-// }
+    return { rooms, setRooms, roomID, setRoomID, getRoom, setRoom };
+}

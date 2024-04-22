@@ -3,7 +3,7 @@ import React, { useState, useEffect } from 'react';
 import './EventFormComponent.css'
 
 export default function EventFormComponent(
-    { tags, eventID, getEvent, setEvent, deleteEvent, selectedEvent, setSelectedEvent }
+    { events, tags, eventID, setEventID, getEvent, setEvent, deleteEvent, selectedEvent, setSelectedEvent }
 ) {
     useEffect(() => {
         const event = getEvent(eventID);
@@ -12,6 +12,8 @@ export default function EventFormComponent(
 
     const [form, setForm] = useState(() => {
         return tags.reduce((form, tag) => {
+            console.log(events);
+            
             const label = tag.name;
             const value = selectedEvent[label] || '';
 
@@ -42,6 +44,10 @@ export default function EventFormComponent(
         console.log(selectedEvent);
     };
 
+    const handleCloseButtonClick = () => {
+        setEventID(-1);
+    };
+
     const handleSaveClick = () => {
         setEvent(selectedEvent.id, selectedEvent);
         console.log('Save clicked!');
@@ -54,6 +60,11 @@ export default function EventFormComponent(
 
     return (
         <div className="global-component">
+            <div style={{ top: '10px', left: '10px' }}>
+                <button onClick={handleCloseButtonClick}>
+                    X
+                </button>
+            </div>
             <form>
                 {tags.map((tag, index) => {
                     const TagComponent = tag.component;
