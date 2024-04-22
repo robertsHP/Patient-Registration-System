@@ -4,6 +4,8 @@ import { Router, Route, Routes } from 'react-router-dom';
 import bedsData from './data/bedsData.jsx';
 
 import HeaderSelectComponent from './components/HeaderSelectComponent.jsx';
+import SearchComponent from './components/SearchComponent.jsx';
+import CalendarComponent from './components/CalendarComponent/CalendarComponent.jsx';
 import EventFormComponent from './components/EventFormComponent.jsx';
 
 import useEventManagementHook from './hooks/useEventManagementHook.jsx';
@@ -16,18 +18,17 @@ export default function CalendarPage () {
         ///
         //
         const { 
-            events, 
-            setEvents, 
-            eventID, 
-            setEventID, 
-            getEvent, 
-            setEvent 
+            events, setEvents, 
+            eventID, setEventID, 
+            getEvent, setEvent, 
+            updateEvent, deleteEvent,
+            selectedEvent, setSelectedEvent
         } = useEventManagementHook(
             [
-                { id: 0, patientName: 'aaaaaa', start: '2024-04-07', end: '2024-04-20' },
-                { id: 1, patientName: 'bbbbbbb', start: '2024-04-28', end: '2024-04-30' },
-                { id: 2, patientName: 'cccccc', start: '2024-04-01', end: '2024-04-08' }
-            ], 0
+                { id: 0, room: 201, patientName: 'aaaaaa', start: '2024-04-19', end: '2024-04-21' },
+                { id: 1, room: 203, patientName: 'bbbbbbb', start: '2024-04-28', end: '2024-04-30' },
+                { id: 2, room: 204, patientName: 'cccccc', start: '2024-04-01', end: '2024-04-08' }
+            ], -1
         );
         ///
 
@@ -41,11 +42,13 @@ export default function CalendarPage () {
                     </div>
                     <div className="main-view-picker">
                         <CalendarComponent 
+                            pageData={pageData}
                             events={events}
                             setEvents={setEvents}
                             eventID={eventID}
-                            getEvent={getEvent}
                             setEventID={setEventID}
+                            getEvent={getEvent}
+                            updateEvent={updateEvent}
                         />
                     </div>
                     <div className="event-form">
@@ -53,12 +56,14 @@ export default function CalendarPage () {
                         //So if selectedEvent is null or undefined then nothing will be rendered. */}
                         {getEvent(eventID) && 
                             <EventFormComponent 
-                                pageData={pageData}
-                                events={events}
+                                tags={pageData.tags}
                                 setEvents={setEvents}
                                 eventID={eventID}
                                 getEvent={getEvent}
                                 setEvent={setEvent}
+                                deleteEvent={deleteEvent}
+                                selectedEvent={selectedEvent}
+                                setSelectedEvent={setSelectedEvent}
                             />
                         }
                     </div>

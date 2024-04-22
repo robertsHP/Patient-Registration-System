@@ -2,23 +2,32 @@ import React, { useState, useEffect } from 'react';
 
 import './EventFormComponent.css'
 
-export default function EventFormComponent({ pageData, eventID, getEvent, setEvent }) {
-    const [form, setForm] = useState(() => {
-        const selectedEvent = getEvent(eventID);
+export default function EventFormComponent(
+    { tags, eventID, getEvent, setEvent, deleteEvent, selectedEvent, setSelectedEvent }
+) {
+    useEffect(() => {
+        const event = getEvent(eventID);
+        setSelectedEvent(event);
+    }, [eventID]);
 
-        return pageData.tags.reduce((form, tag) => {
+    const [form, setForm] = useState(() => {
+        return tags.reduce((form, tag) => {
             const label = tag.name;
             const value = selectedEvent[label] || '';
 
             form[label] = value;
 
             return form;
-        }, {})
+        }, {});
     });
 
     const handleInputUpdate = (event) => {
         const { name, value } = event.target;
-        const updatedEvent = { ...form, [name]: value };
+        const updatedEvent = { 
+            id: selectedEvent.id, 
+            ...form, 
+            [name]: value 
+        };
 
         // Swap start and end dates if needed
         if (updatedEvent.start && updatedEvent.end && updatedEvent.start > updatedEvent.end) {
@@ -27,29 +36,33 @@ export default function EventFormComponent({ pageData, eventID, getEvent, setEve
             updatedEvent.end = start;
         }
 
+        setSelectedEvent(updatedEvent);
         setForm(updatedEvent);
-        setEvent(updatedEvent);
+
+        console.log(selectedEvent);
     };
 
     const handleSaveClick = () => {
+        setEvent(selectedEvent.id, selectedEvent);
         console.log('Save clicked!');
     };
 
     const handleDeleteClick = () => {
+        deleteEvent(selectedEvent.id);
         console.log('Delete clicked!');
     };
 
     return (
         <div className="global-component">
             <form>
-                {pageData.tags.map((tag, index) => {
+                {tags.map((tag, index) => {
                     const TagComponent = tag.component;
 
                     return (
                         <TagComponent 
                             key={index} 
                             name={tag.name} 
-                            value={form[tag.name] || ""} 
+                            value={selectedEvent[tag.name] || ""} 
                             onChange={handleInputUpdate} 
                         />
                     );

@@ -98,5 +98,51 @@ export default {
                 )
             }
         }
+    ],
+    rooms: [
+        {
+            room: 201,
+            beds: [
+                'lielā gulta',
+                'dīvāns'
+            ]
+        },
+        {
+            room: 202,
+            beds: [
+                'lielā gulta',
+                'izv.dīv.'
+            ]
+        },
+        {
+            room: 203,
+            beds: [
+                '',
+                '4 vienv.g.',
+                '',
+                ''
+            ]
+        },
+        {
+            room: 204,
+            beds: [
+                'gulta',
+                'gulta'
+            ]
+        },
+        {
+            room: 205,
+            beds: [
+                'ģim.gulta',
+                'Izv.d.'
+            ]
+        },
+        {
+            room: 206,
+            beds: [
+                'gulta',
+                'gulta'
+            ]
+        }
     ]
 }
