@@ -1,14 +1,16 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 
 import bedsForm from './data/bedsForm.jsx';
 import unavailabilityForm from './data/unavailabilityForm.jsx';
 
-import SearchComponent from '../components/CalendarComponent/SearchComponent.jsx';
+import SearchComponent from '../components/SearchComponent.jsx';
 import CalendarUIComponent from '../components/CalendarComponent/CalendarUIComponent.jsx';
-import EventFormComponent from '../components/CalendarComponent/EventFormComponent.jsx';
+import EventFormComponent from '../components/EventFormComponent.jsx';
+
+import CalendarOptions from '../components/CalendarComponent/CalendarOptions.jsx';
 
 import useEventManagementHook from '../hooks/useEventManagementHook.jsx';
-import useEventModeHook from '../hooks/useEventManagementHook.jsx';
+import useActionStateHook, { ActionState } from '../hooks/useActionStateHook.jsx';
 import useRoomManagementHook from '../hooks/useRoomManagementHook.jsx';
 
 export default function BedsPage () {
@@ -49,7 +51,7 @@ export default function BedsPage () {
         { id: 1, room: 201, start: '2024-03-18', end: '2024-03-20' }
     ]);
 
-    const [eventMode, setEventMode] = useState("add");
+    const {actionState, setActionState} = useActionStateHook(ActionState.ADD);
     const [calendarRef, setCalendarRef] = useState(React.createRef());
 
     return (
@@ -62,11 +64,22 @@ export default function BedsPage () {
                     />
                 </div>
                 <div className="main-view-picker">
+                    <CalendarOptions 
+                        actionState={actionState}
+                        setActionState={setActionState}
+
+                        rooms={rooms}
+                        roomID={roomID}
+                        setRoomID={setRoomID}
+                    />
                     <CalendarUIComponent 
                         calendarRef={calendarRef}
 
                         disallowedDates={disallowedDates}
-                        eventMode={eventMode}
+
+                        actionState={actionState}
+                        setActionState={setActionState}
+
                         roomID={roomID}
                         getRoom={getRoom}
 

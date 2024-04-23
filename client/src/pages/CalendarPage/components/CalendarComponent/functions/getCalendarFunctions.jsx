@@ -5,8 +5,10 @@ function formatDate (date) {
     return date.toISOString().split('T')[0];
 }
 
-export default function addFunctions (props) {
+export default function getCalendarFunctions (props) {
     const eventContent = (info) => {
+        console.log("eventContent");
+
         var eventValues = props.getEvent(info.event.id);
         var title = '';
 
@@ -122,8 +124,10 @@ export default function addFunctions (props) {
         }
     }
     const dayCellDidMount = (info) => {
-        var date = info.date;
+        console.log("dayCellDidMount");
 
+        var date = info.date;
+        
         for (let i = 0; i < props.disallowedDates.length; i++) {
             var disallowedStart = new Date(props.disallowedDates[i].start);
             var disallowedEnd = new Date(props.disallowedDates[i].end);
@@ -134,7 +138,7 @@ export default function addFunctions (props) {
     
             // If the event overlaps with this disallowed range, return false
             if (allowed) {
-                info.el.style.backgroundColor = '#FF9B9B';
+                info.el.style.backgroundColor = props.color2;
                 return;
             }
         }
@@ -142,13 +146,13 @@ export default function addFunctions (props) {
     }
 
     return {
-        handleDateSelect,
-        handleEventClick,
-        handleEventDrop,
-        handleEventResize,
-        eventAllow,
-        datesSet,
-        dayCellDidMount,
-        eventContent
+        handleDateSelect: handleDateSelect,
+        handleEventClick: handleEventClick,
+        handleEventDrop: handleEventDrop,
+        handleEventResize: handleEventResize,
+        eventAllow: eventAllow,
+        datesSet: datesSet,
+        dayCellDidMount: dayCellDidMount,
+        eventContent: eventContent
     };
 }
