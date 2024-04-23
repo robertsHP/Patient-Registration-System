@@ -8,14 +8,14 @@ export const ActionState = {
     ADD: {
         name: 'add', 
         description: 'Pievienot pierakstu',
-        color1: '#3788D8',
+        color1: '#DB7800',
         color2: '#FF9B9B'
     },
     UNAVAILABILITY: {
         name: 'update', 
         description: 'Nepieejamo datumu pievienošana',
         color1: '#FF9B9B',
-        color2: '#3788D8'
+        color2: '#DB7800'
     }
 };
 

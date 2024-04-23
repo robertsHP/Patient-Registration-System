@@ -58,7 +58,10 @@ export default function CalendarUIComponent(props) {
         calendarApi.next();
         calendarApi.prev();
         ///
-    }, [props.actionState])
+
+        console.log("----UPDATE-----");
+
+    }, [props.actionState, props.roomID])
 
     return (
         <>
@@ -74,9 +77,9 @@ export default function CalendarUIComponent(props) {
                 locale='lv'
 
                 headerToolbar={{
-                    left: 'prev,next',
+                    left: 'prev',
                     center: 'title',
-                    right: 'today'
+                    right: 'next'
                 }}
 
                 events={events}

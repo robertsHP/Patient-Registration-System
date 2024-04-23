@@ -127,6 +127,8 @@ export default function getCalendarFunctions (props) {
         console.log("dayCellDidMount");
 
         var date = info.date;
+
+        // console.log(date);
         
         for (let i = 0; i < props.disallowedDates.length; i++) {
             var disallowedStart = new Date(props.disallowedDates[i].start);

@@ -8,11 +8,15 @@ export default function useRoomManagementHook (initialRooms, initialRoomID) {
         return rooms.find(room => room.id == id);
     }
 
-    const setRoom = (updateRoom) => {
-        setEvents(rooms.map(
-            room => room.id == updateRoom.id ? updateRoom : room
+    const getRoomWithNumber = (num) => {
+        return rooms.find(room => room.num == num);
+    }
+
+    const setRoom = (id, updateRoom) => {
+        setRooms(rooms.map(
+            room => room.id == id ? updateRoom : room
         ));
     }
 
-    return { rooms, setRooms, roomID, setRoomID, getRoom, setRoom };
+    return { rooms, setRooms, roomID, setRoomID, getRoom, getRoomWithNumber, setRoom };
 }

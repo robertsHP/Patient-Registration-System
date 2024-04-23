@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 
 import { ActionState } from '../../hooks/useActionStateHook.jsx';
 
@@ -8,20 +8,23 @@ export default function CalendarOptions(props) {
     const roomSelect = (event) => {
         const id = event.target.value;
         props.setRoomID(id);
+        props.setEventID(-1);
     };
     const actionSelect = (event) => {
         const selectedOption = Object.values(ActionState).find(
             option => option.name === event.target.value
         );
         props.setActionState(selectedOption);
+        props.setEventID(-1);
     };
     const excelButton = () => {
         console.log("excelButton");
     };
+    
     return (
         <>
             <label>
-                <select className="selectStyle" onChange={roomSelect} defaultValue={props.roomID}>
+                <select className="selectStyle" onChange={roomSelect} value={props.roomID}>
                     {props.rooms.map(room => (
                         <option key={room.id} value={room.id}>
                             {room.num}

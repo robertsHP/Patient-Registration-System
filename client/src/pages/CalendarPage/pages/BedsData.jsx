@@ -37,12 +37,14 @@ export default function BedsPage () {
     const { 
         rooms, setRooms, 
         roomID, setRoomID, 
-        getRoom, setRoom
+        getRoom, getRoomWithNumber,
+        setRoom
     } = useRoomManagementHook(
         [
             { id: 0, num: 201, beds: [ 'lielā gulta', 'dīvāns' ] },
             { id: 1, num: 202, beds: [ 'lielā gulta', 'izv.dīv.' ] },
             { id: 2, num: 203, beds: [ '', '4 vienv.g.', '', '' ] },
+            { id: 3, num: 204, beds: [ 'gulta', '', '', 'gulta' ] },
         ], 0
     );
 
@@ -61,12 +63,18 @@ export default function BedsPage () {
                     <SearchComponent 
                         events={events}
                         calendarRef={calendarRef}
+
+                        setRoom={setRoom}
+                        setRoomID={setRoomID}
+                        getRoomWithNumber={getRoomWithNumber}
                     />
                 </div>
                 <div className="main-view-picker">
                     <CalendarOptions 
                         actionState={actionState}
                         setActionState={setActionState}
+
+                        setEventID={setEventID}
 
                         rooms={rooms}
                         roomID={roomID}

@@ -10,11 +10,6 @@ export default function SearchComponent (props) {
         setTerm(event.target.value);
     };
 
-    const onFormSubmit = (event) => {
-        event.preventDefault();
-        // You can do something with term here like sending it to an API
-    };
-
     // Filter the events based on the search term
     const filteredEvents = Object.keys(props.events).filter(key => 
         props.events[key].patientName.toLowerCase().includes(term.toLowerCase()) ||
@@ -22,8 +17,13 @@ export default function SearchComponent (props) {
         props.events[key].end.toLowerCase().includes(term.toLowerCase())
     );
 
-    const onClickEvent = (eventId, eventStart) => {
-        props.calendarRef.current.getApi().gotoDate(eventStart);
+    const onClickEvent = (eventId, event) => {
+        props.calendarRef.current.getApi().gotoDate(event.start);
+
+        var roomObj = props.getRoomWithNumber(event.room)
+
+        props.setRoom(roomObj.id, roomObj);
+        props.setRoomID(roomObj.id);
     };
 
     return (
@@ -38,7 +38,7 @@ export default function SearchComponent (props) {
                 {filteredEvents.map((key) => (
                     <button 
                         key={key} 
-                        onClick={() => onClickEvent(key, props.events[key].start)} 
+                        onClick={() => onClickEvent(key, props.events[key])} 
                         className="row-item"
                     >
                         {props.events[key].patientName+", "+props.events[key].start+", "+props.events[key].end}
