@@ -1,16 +1,20 @@
 import React, { useEffect, useState } from 'react';
 import { BrowserRouter as Router, Route, Routes, Navigate } from 'react-router-dom';
 
-import Sidebar from './components/Sidebar.jsx';
-
+import LoginPage from './pages/LoginPage/LoginPage.jsx';
 import CalendarPage from './pages/CalendarPage/CalendarPage.jsx';
 
 import './App.css'
 
 export default function App() {
 	const pages = [
+		// {
+        //     title: "Pieslēgties",
+        //     urlName: "",
+        //     component: LoginPage
+        // },
         {
-            title: "Calendar",
+            title: "Kalendārs",
             urlName: "calendar",
             component: CalendarPage
         }
@@ -22,8 +26,8 @@ export default function App() {
 			<Router>
 				<Routes>
 					{pages.map((page) => (
-						<Route key={page.urlName} path={`/${page.urlName}*`} element={
-							<page.component urlName={page.urlName} />
+						<Route key={page.urlName} path={`/${page.urlName}/*`} element={
+							<page.component pages={pages}/>
 						} />
 					))}
 					<Route path="*" element={<Navigate to={`/${pages[0].urlName}`} replace />} />

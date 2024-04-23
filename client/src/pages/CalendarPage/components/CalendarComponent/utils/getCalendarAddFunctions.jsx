@@ -27,7 +27,7 @@ export default function getCalendarAddFunctions ({
     } = useCalendarContext();
 
     const handleDateSelect = (info) => {
-        console.log("handleDateSelect");
+        // console.log("handleDateSelect");
 
         let calendarApi = info.view.calendar;
         calendarApi.unselect(); // clear date selection
@@ -50,12 +50,12 @@ export default function getCalendarAddFunctions ({
     }
 
     const handleEventClick = (info) => {
-        console.log("handleEventClick");
+        // console.log("handleEventClick");
         setEventID(info.event.id); // set the clicked event as the selected event
     }
 
     const handleEventDrop = (info) => {
-        console.log("handleEventDrop");
+        // console.log("handleEventDrop");
 
         //Dabū notikumu datumus no tā, kas tika pārcelts 
         var startDate = info.event.start;
@@ -79,7 +79,7 @@ export default function getCalendarAddFunctions ({
     }
 
     const handleEventResize = (info) => {
-        console.log("handleEventResize");
+        // console.log("handleEventResize");
 
         var formattedStartDate = formatDate(info.event.start);
         var formattedEndDate = formatDate(info.event.end);
@@ -91,7 +91,7 @@ export default function getCalendarAddFunctions ({
         setSelectedEvent(newEvent);
     }
     const eventAllow = (info, event) => {
-        console.log("eventAllow");
+        // console.log("eventAllow");
 
         var allowed = false;
 
@@ -110,7 +110,7 @@ export default function getCalendarAddFunctions ({
         return true;
     }
     const dayCellDidMount = (info) => {
-        console.log("dayCellDidMount");
+        // console.log("dayCellDidMount");
 
         var date = info.date;
 
@@ -133,7 +133,7 @@ export default function getCalendarAddFunctions ({
         info.el.style.backgroundColor = '#FFFFFF';
     }
     const datesSet = () => {
-        console.log("datesSet");
+        // console.log("datesSet");
 
         if(calendarRef.current != null) {
             let calendarApi = calendarRef.current.getApi();
@@ -144,11 +144,11 @@ export default function getCalendarAddFunctions ({
             setMonth(currentMonth);
             setYear(currentYear);
 
-            console.log(`Currently viewed month: ${month}, year: ${year}`);
+            // console.log(`Currently viewed month: ${month}, year: ${year}`);
         }
     }
     const eventContent = (info) => {
-        console.log("eventContent");
+        // console.log("eventContent");
 
         var eventValues = getEvent(info.event.id);
         var title = '';
@@ -158,9 +158,7 @@ export default function getCalendarAddFunctions ({
         };
 
         if(typeof eventValues != 'undefined') {
-            title += exists(eventValues.name) ? eventValues.name+' ' : '-';
-            title += exists(eventValues.room) ? eventValues.room+' ' : '';
-            title += exists(eventValues.bedName) ? eventValues.bedName+' ' : '';
+            title += exists(eventValues.patientName) ? eventValues.patientName+' ' : '-';
         } else {
             title = '-';
         }

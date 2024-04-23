@@ -11,10 +11,6 @@ export default function getEventFormFunctions ({formTags}) {
         selectedEvent, setSelectedEvent
     } = useCalendarContext();
 
-    const initialCheck = () => {
-        return getEvent(eventID);
-    }
-
     const [form, setForm] = useState(() => {
         return formTags.reduce((form, tag) => {
             const label = tag.name;
@@ -44,7 +40,7 @@ export default function getEventFormFunctions ({formTags}) {
         setSelectedEvent(updatedEvent);
         setForm(updatedEvent);
 
-        console.log(selectedEvent);
+        // console.log(selectedEvent);
     };
 
     const handleCloseButtonClick = () => {
@@ -52,24 +48,23 @@ export default function getEventFormFunctions ({formTags}) {
     };
 
     const handleSaveClick = () => {
-        console.log(events);
-        console.log(selectedEvent);
+        // console.log(events);
+        // console.log(selectedEvent);
 
         setEvent(selectedEvent.id, selectedEvent);
 
-        console.log(events);
-        console.log(selectedEvent);
+        // console.log(events);
+        // console.log(selectedEvent);
 
-        console.log('Save clicked!');
+        // console.log('Save clicked!');
     };
 
     const handleDeleteClick = () => {
         deleteEvent(selectedEvent.id);
-        console.log('Delete clicked!');
+        // console.log('Delete clicked!');
     };
 
     return {
-        initialCheck: initialCheck,
         handleInputUpdate: handleInputUpdate,
         handleCloseButtonClick: handleCloseButtonClick,
         handleSaveClick: handleSaveClick,

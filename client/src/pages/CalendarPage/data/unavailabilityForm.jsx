@@ -6,7 +6,7 @@ export default [
         component: ({value, onChange}) => {
             return (
                 <label>
-                    Pacienta vārds
+                    Apraksts:
                     <input type="text" name="description" value={value} onChange={onChange} />
                 </label>
             )

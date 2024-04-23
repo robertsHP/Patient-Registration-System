@@ -73,8 +73,6 @@ export default function CalendarUIComponent() {
         calendarApi.prev();
         ///
 
-        console.log("----UPDATE-----");
-
     }, [actionState, roomID])
 
     return (

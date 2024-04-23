@@ -6,15 +6,12 @@ import './Sidebar.css'
 export default function Sidebar ({pages}) {
     const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
-    const toggleSidebar = () => {
+    const sidebarOnClick = () => {
         setIsSidebarOpen(!isSidebarOpen);
     };
 
     return (
         <>
-            <button className="toggle-sidebar-button" onClick={toggleSidebar}>
-                Toggle Sidebar
-            </button>
             <div className={`sidebar ${isSidebarOpen ? 'open' : ''}`}>
                 {pages.map((page) => (
                     <Link key={page.urlName} to={`/${page.urlName}`}>
@@ -22,6 +19,9 @@ export default function Sidebar ({pages}) {
                     </Link>
                 ))}
             </div>
+            <button className="sidebar-button" onClick={sidebarOnClick}>
+                ...
+            </button>
         </>
     );
 }

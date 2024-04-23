@@ -1,0 +1,15 @@
+.container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.container-left {
+    display: flex;
+    align-items: center;
+}
+
+.container-right {
+    display: flex;
+    align-items: center;
+}

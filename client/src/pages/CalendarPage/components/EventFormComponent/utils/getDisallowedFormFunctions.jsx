@@ -12,10 +12,6 @@ export default function getDisallowedFormFunctions ({formTags}) {
         selectedDisallowedDate, setSelectedDisallowedDate
     } = useCalendarContext();
 
-    const initialCheck = () => {
-        return getDisallowedDate(disallowedDateID);
-    }
-
     const [form, setForm] = useState(() => {
         return formTags.reduce((form, tag) => {
             const label = tag.name;
@@ -45,7 +41,7 @@ export default function getDisallowedFormFunctions ({formTags}) {
         setSelectedDisallowedDate(updatedDate);
         setForm(updatedDate);
 
-        console.log(selectedDisallowedDate);
+        // console.log(selectedDisallowedDate);
     };
 
     const handleCloseButtonClick = () => {
@@ -57,22 +53,21 @@ export default function getDisallowedFormFunctions ({formTags}) {
 
         // console.log(events);
 
-        console.log('Save clicked!');
+        // console.log('Save clicked!');
     };
 
     const handleDeleteClick = () => {
-        console.log(disallowedDates);
-        console.log(selectedDisallowedDate.id);
+        // console.log(disallowedDates);
+        // console.log(selectedDisallowedDate.id);
         
         deleteDisallowedDate(selectedDisallowedDate.id);
 
-        console.log(selectedDisallowedDate);
+        // console.log(selectedDisallowedDate);
 
-        console.log('Delete clicked!');
+        // console.log('Delete clicked!');
     };
 
     return {
-        initialCheck: initialCheck,
         handleInputUpdate: handleInputUpdate,
         handleCloseButtonClick: handleCloseButtonClick,
         handleSaveClick: handleSaveClick,

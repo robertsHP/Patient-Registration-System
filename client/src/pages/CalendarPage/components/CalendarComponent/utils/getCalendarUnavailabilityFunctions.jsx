@@ -28,7 +28,7 @@ export default function getCalendarUnavailabilityFunctions ({
     } = useCalendarContext();
 
     const handleDateSelect = (info) => {
-        console.log("handleDateSelect");
+        // console.log("handleDateSelect");
 
         let calendarApi = info.view.calendar;
         calendarApi.unselect(); // clear date selection
@@ -47,12 +47,12 @@ export default function getCalendarUnavailabilityFunctions ({
     }
 
     const handleEventClick = (info) => {
-        console.log("handleEventClick");
+        // console.log("handleEventClick");
         setDisallowedDateID(info.event.id); // set the clicked event as the selected event
     }
 
     const handleEventDrop = (info) => {
-        console.log("handleEventDrop");
+        // console.log("handleEventDrop");
 
         //Dabū notikumu datumus no tā, kas tika pārcelts 
         var startDate = info.event.start;
@@ -76,7 +76,7 @@ export default function getCalendarUnavailabilityFunctions ({
     }
 
     const handleEventResize = (info) => {
-        console.log("handleEventResize");
+        // console.log("handleEventResize");
 
         var formattedStartDate = formatDate(info.event.start);
         var formattedEndDate = formatDate(info.event.end);
@@ -89,7 +89,7 @@ export default function getCalendarUnavailabilityFunctions ({
         setDisallowedDate(newDate);
     }
     const eventAllow = (info, event) => {
-        console.log("eventAllow");
+        // console.log("eventAllow");
 
         var allowed = false;
 
@@ -108,7 +108,7 @@ export default function getCalendarUnavailabilityFunctions ({
         return true;
     }
     const dayCellDidMount = (info) => {
-        console.log("dayCellDidMount");
+        // console.log("dayCellDidMount");
 
         var date = info.date;
 
@@ -132,7 +132,7 @@ export default function getCalendarUnavailabilityFunctions ({
     }
 
     const datesSet = () => {
-        console.log("datesSet");
+        // console.log("datesSet");
 
         if(calendarRef.current != null) {
             let calendarApi = calendarRef.current.getApi();
@@ -147,7 +147,7 @@ export default function getCalendarUnavailabilityFunctions ({
         }
     }
     const eventContent = (info) => {
-        console.log("eventContent");
+        // console.log("eventContent");
 
         var id = info.event.id;
 
@@ -159,9 +159,7 @@ export default function getCalendarUnavailabilityFunctions ({
         };
 
         if(typeof dateEventValues != 'undefined') {
-            title += exists(dateEventValues.name) ? dateEventValues.name+' ' : '-';
-            title += exists(dateEventValues.room) ? dateEventValues.room+' ' : '';
-            title += exists(dateEventValues.bedName) ? dateEventValues.bedName+' ' : '';
+            title += exists(dateEventValues.description) ? dateEventValues.description+' ' : '-';
         } else {
             title = '-';
         }
