@@ -66,7 +66,7 @@ export default function getDisallowedFormFunctions ({formTags}) {
         
         deleteDisallowedDate(selectedDisallowedDate.id);
 
-        console.log(disallowedDates);
+        console.log(selectedDisallowedDate);
 
         console.log('Delete clicked!');
     };

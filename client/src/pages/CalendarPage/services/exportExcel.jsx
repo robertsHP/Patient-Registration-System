@@ -1,8 +1,6 @@
 import ExcelJS from 'exceljs';
 import { saveAs } from 'file-saver';
 
-import { excelData } from '../data/excelData.js';
-
 function getDaysInAMonth (month, year) {
     return new Date(year, month + 1, 0).getDate();
 }
@@ -25,7 +23,7 @@ function filterEventsByMonth (year, month, events) {
     });
 }
 
-export const exportExcel = async (month, year, events) => {
+export const exportExcel = async (month, year, events, rooms) => {
     const workbook = new ExcelJS.Workbook();
     const worksheet = workbook.addWorksheet('January 2024');
 
@@ -38,13 +36,10 @@ export const exportExcel = async (month, year, events) => {
 
     var filteredEvents = filterEventsByMonth(year, month, events);
 
-    Object.entries(excelData.beds).forEach(([roomNum, beds]) => {
-
-        beds.forEach(function(bed) {
-            worksheet.addRow({ num: roomNum, bed: bed});
+    rooms.forEach(function(room) {
+        room.beds.forEach(function(bed) {
+            worksheet.addRow({ num: room.num, bed: bed});
         });
-
-        // worksheet.addRow({ num: 23, item: 'big bed', name: 'John Doe' });
     });
 
     // // Add rows. Replace with your actual data.

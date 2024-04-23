@@ -29,7 +29,7 @@
     padding: 10px;
 } */
 
-.flex-container {
+/* .flex-container {
     display: flex;
     flex-direction: row;
     justify-content: space-between;
@@ -44,6 +44,9 @@
     padding: 10px;
 }
 .event-form {
-    /* flex: 10; */
     padding: 10px;
+} */
+
+.main-container {
+    overflow: hidden;
 }

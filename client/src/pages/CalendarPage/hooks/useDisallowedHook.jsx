@@ -31,7 +31,11 @@ export default function useDisallowedHook (initialDisallowedDates, initialDisall
     }
 
     const deleteDisallowedDate = (id) => {
-        setDisallowedDates(prevDates => prevDates.filter(date => date.id !== id));
+        console.log(disallowedDates);
+
+        setDisallowedDates(prevDates => prevDates.filter(date => date.id != id));
+
+        console.log(disallowedDates);
 
         if(selectedDisallowedDate != null) {
             if(id == selectedDisallowedDate.id) {

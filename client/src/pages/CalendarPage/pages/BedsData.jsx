@@ -10,6 +10,8 @@ import CalendarOptions from '../components/CalendarComponent/CalendarOptions.jsx
 
 import { CalendarProvider } from '../contexts/CalendarContext.jsx';
 
+import './BedsData.css'
+
 export default function BedsPage () {
     var events = [
         { id: 0, room: 201, patientName: 'aaaaaa', start: '2024-04-19', end: '2024-04-21' },
@@ -41,13 +43,11 @@ export default function BedsPage () {
                 <div className="search">
                     <SearchComponent />
                 </div>
-                <div className="main-view-picker">
+                <div className="calendar-view">
                     <CalendarOptions />
                     <CalendarUIComponent />
                 </div>
                 <div className="event-form">
-                    {/* //In JavaScript, the && operator returns the first falsy value if there is one.
-                    //So if selectedEvent is null or undefined then nothing will be rendered. */}
                     <EventFormComponent formTags={bedsForm} />
                 </div>
             </div>

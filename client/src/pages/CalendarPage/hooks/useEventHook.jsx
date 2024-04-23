@@ -28,7 +28,7 @@ export default function useEventHook (initialEvents, initialEventID) {
     }
 
     const deleteEvent = (id) => {
-        setEvents(prevEvents => prevEvents.filter(event => event.id !== id));
+        setEvents(prevEvents => prevEvents.filter(event => event.id != id));
 
         if(selectedEvent != null) {
             if(id == selectedEvent.id) {

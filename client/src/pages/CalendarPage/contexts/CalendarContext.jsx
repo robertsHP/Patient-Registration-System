@@ -48,6 +48,9 @@ export const CalendarProvider = ({ children, initialStates }) => {
     const {actionState, setActionState} = useActionStateHook(ActionState.ADD);
     const [calendarRef, setCalendarRef] = useState(React.createRef());
 
+    const [month, setMonth] = useState(new Date().getMonth());
+    const [year, setYear] = useState(new Date().getFullYear());
+
     const contextValues = {
         events, setEvents, 
         eventID, setEventID, 
@@ -68,7 +71,10 @@ export const CalendarProvider = ({ children, initialStates }) => {
 
         actionState, setActionState,
 
-        calendarRef, setCalendarRef
+        calendarRef, setCalendarRef,
+
+        month, setMonth,
+        year, setYear
     };
 
     return (

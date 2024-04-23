@@ -5,8 +5,7 @@ import { formatDate } from './utilFunctions.jsx';
 export default function getCalendarAddFunctions ({
     filteredEvents,
     filteredDisallowedDates,
-    primaryColor, secondaryColor,
-    month, year,
+    primaryColor, secondaryColor
 }) {
     const { 
         calendarRef,
@@ -21,7 +20,10 @@ export default function getCalendarAddFunctions ({
         events, setEvents,
         eventID, setEventID,
         getEvent, updateEvent,
-        setSelectedEvent
+        setSelectedEvent,
+
+        month, setMonth,
+        year, setYear
     } = useCalendarContext();
 
     const handleDateSelect = (info) => {
@@ -69,9 +71,11 @@ export default function getCalendarAddFunctions ({
         var formattedEndDate = formatDate(endDate);
 
         //maina konkrēto pierakstu
-        updateEvent(
-            info.event.id, { start: formattedStartDate, end: formattedEndDate }
-        );
+        var event = getEvent(info.event.id);
+        var newEvent = {...event, start: formattedStartDate, end: formattedEndDate}
+
+        updateEvent(info.event.id, newEvent);
+        setSelectedEvent(newEvent);
     }
 
     const handleEventResize = (info) => {
@@ -80,9 +84,11 @@ export default function getCalendarAddFunctions ({
         var formattedStartDate = formatDate(info.event.start);
         var formattedEndDate = formatDate(info.event.end);
 
-        updateEvent(
-            info.event.id, { start: formattedStartDate, end: formattedEndDate }
-        );
+        var event = getEvent(info.event.id);
+        var newEvent = {...event, start: formattedStartDate, end: formattedEndDate}
+
+        updateEvent(info.event.id, newEvent);
+        setSelectedEvent(newEvent);
     }
     const eventAllow = (info, event) => {
         console.log("eventAllow");
@@ -131,12 +137,12 @@ export default function getCalendarAddFunctions ({
 
         if(calendarRef.current != null) {
             let calendarApi = calendarRef.current.getApi();
-            let date = calendarApi.getDate();
-            let month = date.getMonth(); // Note: January is 0, February is 1, and so on.
-            let year = date.getFullYear();
+            let currentDate = calendarApi.getDate();
+            let currentMonth = currentDate.getMonth(); // Note: January is 0, February is 1, and so on.
+            let currentYear = currentDate.getFullYear();
         
-            month = month;
-            year = year;
+            setMonth(currentMonth);
+            setYear(currentYear);
 
             console.log(`Currently viewed month: ${month}, year: ${year}`);
         }

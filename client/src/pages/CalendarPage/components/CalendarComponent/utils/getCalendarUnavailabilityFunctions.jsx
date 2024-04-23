@@ -5,8 +5,7 @@ import { formatDate } from './utilFunctions.jsx';
 export default function getCalendarUnavailabilityFunctions ({
     filteredEvents,
     filteredDisallowedDates,
-    primaryColor, secondaryColor,
-    month, year,
+    primaryColor, secondaryColor
 }) {
     const { 
         calendarRef,
@@ -22,8 +21,10 @@ export default function getCalendarUnavailabilityFunctions ({
         disallowedDateID, setDisallowedDateID, 
         getDisallowedDate, setDisallowedDate, 
         updateDisallowedDate, deleteDisallowedDate,
-        selectedDisallowedDate, setSelectedDisallowedDate
+        selectedDisallowedDate, setSelectedDisallowedDate,
 
+        month, setMonth,
+        year, setYear
     } = useCalendarContext();
 
     const handleDateSelect = (info) => {
@@ -67,9 +68,11 @@ export default function getCalendarUnavailabilityFunctions ({
         var formattedEndDate = formatDate(endDate);
 
         //maina konkrēto pierakstu
-        updateDisallowedDate(
-            info.event.id, { start: formattedStartDate, end: formattedEndDate }
-        );
+        var date = getDisallowedDate(info.event.id);
+        var newDate = {...date, start: formattedStartDate, end: formattedEndDate}
+
+        updateDisallowedDate(info.event.id, newDate);
+        setDisallowedDate(newDate);
     }
 
     const handleEventResize = (info) => {
@@ -78,9 +81,12 @@ export default function getCalendarUnavailabilityFunctions ({
         var formattedStartDate = formatDate(info.event.start);
         var formattedEndDate = formatDate(info.event.end);
 
-        updateDisallowedDate(
-            info.event.id, { start: formattedStartDate, end: formattedEndDate }
-        );
+        //maina konkrēto pierakstu
+        var date = getDisallowedDate(info.event.id);
+        var newDate = {...date, start: formattedStartDate, end: formattedEndDate}
+
+        updateDisallowedDate(info.event.id, newDate);
+        setDisallowedDate(newDate);
     }
     const eventAllow = (info, event) => {
         console.log("eventAllow");

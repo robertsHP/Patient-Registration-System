@@ -1,0 +1,17 @@
+
+.flex-container {
+    display: flex;
+    flex-wrap: wrap;
+}
+
+.search {
+    flex: 1;
+    padding: 20px;
+}
+.calendar-view {
+    flex: 1.2;
+    padding: 20px;
+}
+.event-form {
+    padding: 20px;
+}

@@ -1,21 +1,18 @@
 import React, { useEffect, useState } from 'react';
 
 import { ActionState } from '../../hooks/useActionStateHook.jsx';
-
 import { useCalendarContext } from '../../contexts/CalendarContext.jsx';
+
+import { exportExcel } from '../../services/exportExcel.jsx';
 
 import './CalendarOptions.css'
 
 export default function CalendarOptions(props) {
     const { 
-        actionState,
-        setActionState,
-
-        setEventID,
-
-        rooms,
-        roomID,
-        setRoomID,
+        actionState, setActionState,
+        setEventID, events,
+        rooms, roomID, setRoomID,
+        month, year
     } = useCalendarContext();
 
     const roomSelect = (event) => {
@@ -32,6 +29,7 @@ export default function CalendarOptions(props) {
     };
     const excelButton = () => {
         console.log("excelButton");
+        exportExcel(month, year, events, rooms);
     };
     
     return (

@@ -12,8 +12,6 @@ import { ActionState } from '../../hooks/useActionStateHook.jsx';
 import getCalendarAddFunctions from './utils/getCalendarAddFunctions.jsx';
 import getCalendarUnavailabilityFunctions from './utils/getCalendarUnavailabilityFunctions.jsx';
 
-// import { exportExcel } from '../../service/exportExcel.jsx';
-
 import './CalendarUIComponent.css'
 
 export default function CalendarUIComponent() {
@@ -31,9 +29,6 @@ export default function CalendarUIComponent() {
         getEvent, updateEvent,
         setSelectedEvent
     } = useCalendarContext();
-
-    const [month] = useState(new Date().getMonth());
-    const [year] = useState(new Date().getFullYear());
 
     var properties = {
         filteredEvents: events.filter(
@@ -55,8 +50,6 @@ export default function CalendarUIComponent() {
 
             functions = getCalendarAddFunctions({
                 ...properties,
-                month: month,
-                year: year
             });
             eventsInCalendar = properties.filteredEvents;
             break;
@@ -66,8 +59,6 @@ export default function CalendarUIComponent() {
 
             functions = getCalendarUnavailabilityFunctions({
                 ...properties,
-                month: month,
-                year: year
             });
             eventsInCalendar = properties.filteredDisallowedDates;
             break;

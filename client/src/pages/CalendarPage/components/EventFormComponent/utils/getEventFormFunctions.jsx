@@ -52,9 +52,13 @@ export default function getEventFormFunctions ({formTags}) {
     };
 
     const handleSaveClick = () => {
+        console.log(events);
+        console.log(selectedEvent);
+
         setEvent(selectedEvent.id, selectedEvent);
 
         console.log(events);
+        console.log(selectedEvent);
 
         console.log('Save clicked!');
     };
