@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 
-export default function useRoomManagementHook (initialRooms, initialRoomID) {
+export default function useRoomHook (initialRooms, initialRoomID) {
     const [rooms, setRooms] = useState(initialRooms);
     const [roomID, setRoomID] = useState(initialRoomID);
 

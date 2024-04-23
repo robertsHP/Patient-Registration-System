@@ -1,33 +1,28 @@
 
+import { useCalendarContext } from '../../../contexts/CalendarContext.jsx';
+import { formatDate } from './utilFunctions.jsx';
 
-function formatDate (date) {
-    date.setDate(date.getDate() + 1);
-    return date.toISOString().split('T')[0];
-}
+export default function getCalendarAddFunctions ({
+    filteredEvents,
+    filteredDisallowedDates,
+    primaryColor, secondaryColor,
+    month, year,
+}) {
+    const { 
+        calendarRef,
 
-export default function getCalendarFunctions (props) {
-    const eventContent = (info) => {
-        console.log("eventContent");
+        disallowedDates,
 
-        var eventValues = props.getEvent(info.event.id);
-        var title = '';
+        actionState, setActionState,
 
-        const exists = (value) => {
-            return typeof value != 'undefined' && value != '' && value != null;
-        };
+        roomID,
+        getRoom,
 
-        if(typeof eventValues != 'undefined') {
-            title += exists(eventValues.name) ? eventValues.name+' ' : '-';
-            title += exists(eventValues.room) ? eventValues.room+' ' : '';
-            title += exists(eventValues.bedName) ? eventValues.bedName+' ' : '';
-        } else {
-            title = '-';
-        }
-
-        console.log(title);
-
-        return {html: title};
-    }
+        events, setEvents,
+        eventID, setEventID,
+        getEvent, updateEvent,
+        setSelectedEvent
+    } = useCalendarContext();
 
     const handleDateSelect = (info) => {
         console.log("handleDateSelect");
@@ -35,11 +30,11 @@ export default function getCalendarFunctions (props) {
         let calendarApi = info.view.calendar;
         calendarApi.unselect(); // clear date selection
 
-        let id = props.events.length;
+        let id = events.length;
 
         let newEvent = {
             id: id, // use the current timestamp as a unique id
-            room: props.getRoom(props.roomID).num,
+            room: getRoom(roomID).num,
             patientName: "",
             start: info.startStr,
             end: info.endStr,
@@ -47,14 +42,14 @@ export default function getCalendarFunctions (props) {
         };
         calendarApi.addEvent(newEvent);
 
-        props.setEvents([...props.events, newEvent]); // add the new event to the events array
-        props.setEventID(id);
-        props.setSelectedEvent(newEvent);
+        setEvents([...events, newEvent]); // add the new event to the events array
+        setEventID(id);
+        setSelectedEvent(newEvent);
     }
 
     const handleEventClick = (info) => {
         console.log("handleEventClick");
-        props.setEventID(info.event.id); // set the clicked event as the selected event
+        setEventID(info.event.id); // set the clicked event as the selected event
     }
 
     const handleEventDrop = (info) => {
@@ -74,7 +69,7 @@ export default function getCalendarFunctions (props) {
         var formattedEndDate = formatDate(endDate);
 
         //maina konkrēto pierakstu
-        props.updateEvent(
+        updateEvent(
             info.event.id, { start: formattedStartDate, end: formattedEndDate }
         );
     }
@@ -85,7 +80,7 @@ export default function getCalendarFunctions (props) {
         var formattedStartDate = formatDate(info.event.start);
         var formattedEndDate = formatDate(info.event.end);
 
-        props.updateEvent(
+        updateEvent(
             info.event.id, { start: formattedStartDate, end: formattedEndDate }
         );
     }
@@ -94,9 +89,9 @@ export default function getCalendarFunctions (props) {
 
         var allowed = false;
 
-        for (let i = 0; i < props.disallowedDates.length; i++) {
-            var disallowedStart = new Date(props.disallowedDates[i].start);
-            var disallowedEnd = new Date(props.disallowedDates[i].end);
+        for (let i = 0; i < filteredDisallowedDates.length; i++) {
+            var disallowedStart = new Date(filteredDisallowedDates[i].start);
+            var disallowedEnd = new Date(filteredDisallowedDates[i].end);
     
             allowed = info.start <= disallowedEnd && info.end >= disallowedStart;
     
@@ -108,21 +103,6 @@ export default function getCalendarFunctions (props) {
 
         return true;
     }
-    const datesSet = () => {
-        console.log("datesSet");
-
-        if(props.calendarRef.current != null) {
-            let calendarApi = props.calendarRef.current.getApi();
-            let date = calendarApi.getDate();
-            let month = date.getMonth(); // Note: January is 0, February is 1, and so on.
-            let year = date.getFullYear();
-        
-            props.month = month;
-            props.year = year;
-
-            console.log(`Currently viewed month: ${month}, year: ${year}`);
-        }
-    }
     const dayCellDidMount = (info) => {
         console.log("dayCellDidMount");
 
@@ -130,9 +110,9 @@ export default function getCalendarFunctions (props) {
 
         // console.log(date);
         
-        for (let i = 0; i < props.disallowedDates.length; i++) {
-            var disallowedStart = new Date(props.disallowedDates[i].start);
-            var disallowedEnd = new Date(props.disallowedDates[i].end);
+        for (let i = 0; i < filteredDisallowedDates.length; i++) {
+            var disallowedStart = new Date(filteredDisallowedDates[i].start);
+            var disallowedEnd = new Date(filteredDisallowedDates[i].end);
 
             disallowedStart.setDate(disallowedStart.getDate() - 1);
     
@@ -140,11 +120,48 @@ export default function getCalendarFunctions (props) {
     
             // If the event overlaps with this disallowed range, return false
             if (allowed) {
-                info.el.style.backgroundColor = props.color2;
+                info.el.style.backgroundColor = secondaryColor;
                 return;
             }
         }
         info.el.style.backgroundColor = '#FFFFFF';
+    }
+    const datesSet = () => {
+        console.log("datesSet");
+
+        if(calendarRef.current != null) {
+            let calendarApi = calendarRef.current.getApi();
+            let date = calendarApi.getDate();
+            let month = date.getMonth(); // Note: January is 0, February is 1, and so on.
+            let year = date.getFullYear();
+        
+            month = month;
+            year = year;
+
+            console.log(`Currently viewed month: ${month}, year: ${year}`);
+        }
+    }
+    const eventContent = (info) => {
+        console.log("eventContent");
+
+        var eventValues = getEvent(info.event.id);
+        var title = '';
+
+        const exists = (value) => {
+            return typeof value != 'undefined' && value != '' && value != null;
+        };
+
+        if(typeof eventValues != 'undefined') {
+            title += exists(eventValues.name) ? eventValues.name+' ' : '-';
+            title += exists(eventValues.room) ? eventValues.room+' ' : '';
+            title += exists(eventValues.bedName) ? eventValues.bedName+' ' : '';
+        } else {
+            title = '-';
+        }
+
+        // console.log(title);
+
+        return {html: title};
     }
 
     return {
@@ -153,8 +170,8 @@ export default function getCalendarFunctions (props) {
         handleEventDrop: handleEventDrop,
         handleEventResize: handleEventResize,
         eventAllow: eventAllow,
-        datesSet: datesSet,
         dayCellDidMount: dayCellDidMount,
+        datesSet: datesSet,
         eventContent: eventContent
     };
 }

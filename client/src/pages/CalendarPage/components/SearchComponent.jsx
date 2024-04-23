@@ -1,9 +1,20 @@
 import React, { useState } from 'react';
 
+import { useCalendarContext } from '../contexts/CalendarContext.jsx';
+
 // import '../../../global.css'
 import './SearchComponent.css'
 
-export default function SearchComponent (props) {
+export default function SearchComponent () {
+    const { 
+        events,
+        calendarRef,
+
+        setRoom,
+        setRoomID,
+        getRoomWithNumber
+    } = useCalendarContext();
+
     const [term, setTerm] = useState('');
 
     const onInputChange = (event) => {
@@ -11,19 +22,19 @@ export default function SearchComponent (props) {
     };
 
     // Filter the events based on the search term
-    const filteredEvents = Object.keys(props.events).filter(key => 
-        props.events[key].patientName.toLowerCase().includes(term.toLowerCase()) ||
-        props.events[key].start.toLowerCase().includes(term.toLowerCase()) ||
-        props.events[key].end.toLowerCase().includes(term.toLowerCase())
+    const filteredEvents = Object.keys(events).filter(key => 
+        events[key].patientName.toLowerCase().includes(term.toLowerCase()) ||
+        events[key].start.toLowerCase().includes(term.toLowerCase()) ||
+        events[key].end.toLowerCase().includes(term.toLowerCase())
     );
 
     const onClickEvent = (eventId, event) => {
-        props.calendarRef.current.getApi().gotoDate(event.start);
+        calendarRef.current.getApi().gotoDate(event.start);
 
-        var roomObj = props.getRoomWithNumber(event.room)
+        var roomObj = getRoomWithNumber(event.room)
 
-        props.setRoom(roomObj.id, roomObj);
-        props.setRoomID(roomObj.id);
+        setRoom(roomObj.id, roomObj);
+        setRoomID(roomObj.id);
     };
 
     return (
@@ -38,10 +49,10 @@ export default function SearchComponent (props) {
                 {filteredEvents.map((key) => (
                     <button 
                         key={key} 
-                        onClick={() => onClickEvent(key, props.events[key])} 
+                        onClick={() => onClickEvent(key, events[key])} 
                         className="row-item"
                     >
-                        {props.events[key].patientName+", "+props.events[key].start+", "+props.events[key].end}
+                        {events[key].patientName+", "+events[key].start+", "+events[key].end}
                     </button>
                 ))}
             </div>

@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 
-export default function useEventManagementHook (initialEvents, initialEventID) {
+export default function useEventHook (initialEvents, initialEventID) {
     const [events, setEvents] = useState(initialEvents);
     const [eventID, _setEventID] = useState(initialEventID);
 

@@ -2,20 +2,33 @@ import React, { useEffect, useState } from 'react';
 
 import { ActionState } from '../../hooks/useActionStateHook.jsx';
 
+import { useCalendarContext } from '../../contexts/CalendarContext.jsx';
+
 import './CalendarOptions.css'
 
 export default function CalendarOptions(props) {
+    const { 
+        actionState,
+        setActionState,
+
+        setEventID,
+
+        rooms,
+        roomID,
+        setRoomID,
+    } = useCalendarContext();
+
     const roomSelect = (event) => {
         const id = event.target.value;
-        props.setRoomID(id);
-        props.setEventID(-1);
+        setRoomID(id);
+        setEventID(-1);
     };
     const actionSelect = (event) => {
         const selectedOption = Object.values(ActionState).find(
             option => option.name === event.target.value
         );
-        props.setActionState(selectedOption);
-        props.setEventID(-1);
+        setActionState(selectedOption);
+        setEventID(-1);
     };
     const excelButton = () => {
         console.log("excelButton");
@@ -23,25 +36,27 @@ export default function CalendarOptions(props) {
     
     return (
         <>
-            <label>
-                <select className="selectStyle" onChange={roomSelect} value={props.roomID}>
-                    {props.rooms.map(room => (
-                        <option key={room.id} value={room.id}>
-                            {room.num}
-                        </option>
-                    ))}
-                </select>
-            </label>
-            <label>
-                <select className="selectStyle" onChange={actionSelect} value={props.actionState?.name}>
-                    {Object.values(ActionState).map(option => (
-                        <option key={option.name} value={option.name}>
-                            {option.description}
-                        </option>
-                    ))}
-                </select>
-                <button className="buttonStyle" onClick={excelButton}>Lejupielādēt Excel</button>
-            </label>
+            <div className="container">
+                <div className="container-left">
+                    <select className="selectStyle" onChange={roomSelect} value={roomID}>
+                        {rooms.map(room => (
+                            <option key={room.id} value={room.id}>
+                                {room.num}
+                            </option>
+                        ))}
+                    </select>
+                    <select className="selectStyle" onChange={actionSelect} value={actionState?.name}>
+                        {Object.values(ActionState).map(option => (
+                            <option key={option.name} value={option.name}>
+                                {option.description}
+                            </option>
+                        ))}
+                    </select>
+                </div>
+                <div className="container-right">
+                    <button className="buttonStyle" onClick={excelButton}>Lejupielādēt Excel</button>
+                </div>
+            </div>
         </>
     );
 }

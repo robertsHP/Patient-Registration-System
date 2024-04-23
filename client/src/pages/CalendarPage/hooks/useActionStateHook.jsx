@@ -7,15 +7,11 @@ import React, { useEffect, useState } from 'react';
 export const ActionState = {
     ADD: {
         name: 'add', 
-        description: 'Pievienot pierakstu',
-        color1: '#DB7800',
-        color2: '#FF9B9B'
+        description: 'Pievienot pierakstu'
     },
     UNAVAILABILITY: {
         name: 'update', 
-        description: 'Nepieejamo datumu pievienošana',
-        color1: '#FF9B9B',
-        color2: '#DB7800'
+        description: 'Nepieejamo datumu pievienošana'
     }
 };
 

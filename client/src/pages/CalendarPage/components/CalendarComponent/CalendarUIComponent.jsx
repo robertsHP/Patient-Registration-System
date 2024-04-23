@@ -5,68 +5,91 @@ import dayGridPlugin from '@fullcalendar/daygrid';
 import timeGridPlugin from '@fullcalendar/timegrid';
 import interactionPlugin from '@fullcalendar/interaction';
 
-// import { exportExcel } from '../../service/exportExcel.jsx';
+import { useCalendarContext } from '../../contexts/CalendarContext.jsx';
 
 import { ActionState } from '../../hooks/useActionStateHook.jsx';
 
-import getCalendarFunctions from './functions/getCalendarFunctions.jsx';
+import getCalendarAddFunctions from './utils/getCalendarAddFunctions.jsx';
+import getCalendarUnavailabilityFunctions from './utils/getCalendarUnavailabilityFunctions.jsx';
+
+// import { exportExcel } from '../../service/exportExcel.jsx';
 
 import './CalendarUIComponent.css'
 
-export default function CalendarUIComponent(props) {
-    const [month, setMonth] = useState(new Date().getMonth());
-    const [year, setYear] = useState(new Date().getFullYear());
+export default function CalendarUIComponent() {
+    const { 
+        calendarRef,
 
-    let events = [];
-    let disallowedDates= [];
-    let functions = {};
+        disallowedDates,
 
-    switch (props.actionState) {
+        actionState, setActionState,
+
+        roomID, getRoom,
+
+        events, setEvents,
+        eventID, setEventID,
+        getEvent, updateEvent,
+        setSelectedEvent
+    } = useCalendarContext();
+
+    const [month] = useState(new Date().getMonth());
+    const [year] = useState(new Date().getFullYear());
+
+    var properties = {
+        filteredEvents: events.filter(
+            event => event.room === getRoom(roomID).num
+        ),
+        filteredDisallowedDates: disallowedDates.filter(
+            event => event.room === getRoom(roomID).num
+        ),
+        primaryColor: null,
+        secondaryColor: null
+    };
+    var functions = {};
+    var eventsInCalendar = [];
+
+    switch (actionState) {
         case ActionState.ADD :
-            events = props.events.filter(
-                event => event.room === props.getRoom(props.roomID).num
-            );
-            disallowedDates = props.disallowedDates.filter(
-                event => event.room === props.getRoom(props.roomID).num
-            );
+            properties.primaryColor ='#DB7800';
+            properties.secondaryColor ='#FF9B9B';
+
+            functions = getCalendarAddFunctions({
+                ...properties,
+                month: month,
+                year: year
+            });
+            eventsInCalendar = properties.filteredEvents;
             break;
         case ActionState.UNAVAILABILITY :
-            events = props.disallowedDates.filter(
-                date => date.room === props.getRoom(props.roomID).num
-            );
-            disallowedDates = props.events.filter(
-                event => event.room === props.getRoom(props.roomID).num
-            );
+            properties.primaryColor ='#FF9B9B';
+            properties.secondaryColor ='#DB7800';
+
+            functions = getCalendarUnavailabilityFunctions({
+                ...properties,
+                month: month,
+                year: year
+            });
+            eventsInCalendar = properties.filteredDisallowedDates;
             break;
     }
 
-    functions = getCalendarFunctions({
-        ...props,
-        events: events,
-        disallowedDates: disallowedDates,
-        month: month,
-        year: year,
-        color1: props.actionState.color1,
-        color2: props.actionState.color2
-    });
-
     ////Atjauno kalendāru
     useEffect(() => {
-        var calendarApi = props.calendarRef.current.getApi();
+        var calendarApi = calendarRef.current.getApi();
 
-        ///ATJAUNO KALENDĀRU TĀ KA FUNKCIJAS NO JAUNA PALAIŽ
+        ///ATJAUNO KALENDĀRU TĀ KA FULLCALENDAR FUNKCIJAS NO JAUNA PALAIŽ
         calendarApi.next();
         calendarApi.prev();
         ///
 
         console.log("----UPDATE-----");
 
-    }, [props.actionState, props.roomID])
+    }, [actionState, roomID])
 
     return (
         <>
             <FullCalendar 
-                ref={props.calendarRef}
+                ref={calendarRef}
                 plugins={[ dayGridPlugin, timeGridPlugin, interactionPlugin ]}
 
                 editable={true}
@@ -82,16 +105,16 @@ export default function CalendarUIComponent(props) {
                     right: 'next'
                 }}
 
-                events={events}
-                eventColor={props.actionState.color1}
+                events={eventsInCalendar}
+                eventColor={properties.primaryColor}
 
                 select={functions.handleDateSelect}
                 eventClick={functions.handleEventClick}
                 eventDrop={functions.handleEventDrop}
                 eventResize={functions.handleEventResize}
                 eventAllow={functions.eventAllow}
-                datesSet={functions.datesSet}
                 dayCellDidMount={functions.dayCellDidMount}
+                datesSet={functions.datesSet}
                 eventContent={functions.eventContent}
             />
         </>
