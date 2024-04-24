@@ -40,7 +40,7 @@ export default function getCalendarUnavailabilityFunctions ({
             end: info.endStr
         };
         if (selectedRoom) {
-            newEvent.room = selectedRoom.num;
+            newDate.room = selectedRoom.num;
         }
         calendarApi.addEvent(newDate);
 

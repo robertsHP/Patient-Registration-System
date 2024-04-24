@@ -8,11 +8,6 @@ import './App.css'
 
 export default function App() {
 	const pages = [
-		// {
-        //     title: "Pieslēgties",
-        //     urlName: "",
-        //     component: LoginPage
-        // },
         {
             title: "Kalendārs",
             urlName: "calendar",
@@ -22,15 +17,15 @@ export default function App() {
 
 	return (
 		<>
-			{/* <Sidebar pages={pages} /> */}
 			<Router>
 				<Routes>
+					<Route path="/login" element={<LoginPage pages={pages} />} />
 					{pages.map((page) => (
 						<Route key={page.urlName} path={`/${page.urlName}/*`} element={
 							<page.component pages={pages} page={page}/>
 						} />
 					))}
-					<Route path="*" element={<Navigate to={`/${pages[0].urlName}`} replace />} />
+					<Route path="*" element={<Navigate to={`/login`} replace />} />
 				</Routes>
 			</Router>
 		</>

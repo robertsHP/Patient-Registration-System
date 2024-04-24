@@ -14,9 +14,11 @@ export default function Sidebar ({pages}) {
         <>
             <div className={`sidebar ${isSidebarOpen ? 'open' : ''}`}>
                 {pages.map((page) => (
-                    <Link key={page.urlName} to={`/${page.urlName}`}>
-                        {page.title}
-                    </Link>
+                    <div className="sidebar-link" key={page.urlName}>
+                        <Link to={`/${page.urlName}`}>
+                            {page.title}
+                        </Link>
+                    </div>
                 ))}
             </div>
             <button className="sidebar-button" onClick={sidebarOnClick}>

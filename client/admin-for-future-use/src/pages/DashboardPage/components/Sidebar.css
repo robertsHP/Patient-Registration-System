@@ -1,0 +1,29 @@
+.sidebar {
+    width: 200px;
+    height: 100vh;
+    background-color: #333;
+    color: white;
+    padding: 20px;
+}
+
+.title {
+    color: #fff;
+}
+
+.menu {
+    list-style: none;
+    margin: 10px 0;
+}
+
+.menuItem {
+    margin-bottom: 8px;
+}
+
+.link {
+    color: #fff;
+    text-decoration: none;
+}
+
+.active {
+    color: #4CAF50;
+}

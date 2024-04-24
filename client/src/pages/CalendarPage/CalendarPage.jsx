@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Router, Route, Routes, Link, Navigate } from 'react-router-dom';
+import { useNavigate, Router, Route, Routes, Link, Navigate } from 'react-router-dom';
 
 import Sidebar from '../../components/Sidebar.jsx';
 
@@ -30,9 +30,13 @@ export default function CalendarPage ({pages, page}) {
 
     const [currentPage, setCurrentPage] = useState(subPages[0].urlName);
 
+    const navigate = useNavigate();
+
     const logoutOnClick = () => {
         // Add your logout logic here
         console.log('Logging out...');
+
+        navigate(`/login`);
     };
 
     const handlePageChange = (urlName) => {

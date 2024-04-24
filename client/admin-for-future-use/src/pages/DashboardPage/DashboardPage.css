@@ -1,0 +1,17 @@
+.dashboard-container {
+    display: flex;
+    height: 100vh; /* Use the full height of the viewport */
+}
+
+.sidebar {
+    width: 200px; /* Fixed width for the sidebar */
+    flex-shrink: 0; /* Prevent the sidebar from shrinking */
+    background-color: #333;
+    color: white;
+}
+
+.mainview {
+    flex-grow: 1; /* Takes up the remaining space */
+    background-color: #f4f4f4;
+    overflow-y: auto; /* Adds scroll to the main view if content overflows */
+}

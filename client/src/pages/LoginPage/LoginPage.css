@@ -1,7 +1,8 @@
 .login-container {
-    overflow: hidden;
+    /* overflow: hidden; */
 
     max-width: 400px;
+    max-height: 300px;
     margin: 0 auto;
     padding: 20px;
     border: 1px solid #ccc;
@@ -15,7 +16,6 @@
 
 .login-container input[type="text"],
 .login-container input[type="password"] {
-    width: 100%;
     padding: 10px;
 }
 
@@ -28,7 +28,7 @@
 
 .login-container input[type="text"],
 .login-container input[type="password"] {
-    margin-bottom: 20px;
+    margin-bottom: 10px;
 }
 
 .login-container input[type="submit"] {
