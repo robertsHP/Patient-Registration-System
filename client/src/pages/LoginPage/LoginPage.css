@@ -1,6 +1,11 @@
-.login-container {
-    /* overflow: hidden; */
+.login-page {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+}
 
+.login-container {
     max-width: 400px;
     max-height: 300px;
     margin: 0 auto;

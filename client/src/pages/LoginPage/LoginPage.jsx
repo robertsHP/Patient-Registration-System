@@ -12,8 +12,8 @@ export default function LoginPage ({pages}) {
     const handleSubmit = (event) => {
         event.preventDefault();
         // Perform login logic here
-        console.log('Username:', username);
-        console.log('Password:', password);
+        console.log('Lietotājvārds:', username);
+        console.log('Parole:', password);
 
         navigate(`/${pages[0].urlName}`);
     };
@@ -22,21 +22,21 @@ export default function LoginPage ({pages}) {
         <div className="login-page">
             <div className="login-container">
                 <form onSubmit={handleSubmit}>
-                    <label htmlFor="username">Username:</label>
+                    <label htmlFor="username">Lietotājvārds:</label>
                     <input
                         type="text"
                         id="username"
                         value={username}
                         onChange={(e) => setUsername(e.target.value)}
                     />
-                    <label htmlFor="password">Password:</label>
+                    <label htmlFor="password">Parole:</label>
                     <input
                         type="password"
                         id="password"
                         value={password}
                         onChange={(e) => setPassword(e.target.value)}
                     />
-                    <input type="submit" value="Login" />
+                    <input type="submit" value="Pieslēgties" />
                 </form>
                 <Routes>
                     <Route path="*" element={<Navigate to={``} replace />} />
