@@ -1,109 +1,147 @@
-import AdminJS from 'adminjs'
+
+import AdminJS, { DefaultAuthProvider, locales as AdminJSLocales } from 'adminjs'
 import express from 'express'
 import session from 'express-session'
 import bodyParser from 'body-parser'
-import Plugin, { buildAuthenticatedRouter } from '@adminjs/express'
+import AdminJSExpress, { buildAuthenticatedRouter } from '@adminjs/express'
 import { Adapter, Database, Resource } from '@adminjs/sql'
 
-import { DefaultAuthProvider } from 'adminjs'
+import CustomAuthProvider from './CustomAuthProvider.js';
 
-// require('dotenv').config({ path: '../../.env' });
-// const PORT = process.env.CLIENT_PORT;
+
+// import { DefaultAuthProvider } from 'adminjs'
+
 const PORT = 5173;
 
-AdminJS.registerAdapter({
-    Database,
-    Resource,
-})
+const db = await new Adapter('postgresql', {
+    connectionString: 'postgres://postgres:postgres@localhost:5432/calendar_system',
+    database: 'calendar_system',
+}).init();
 
 const start = async () => {
-    const app = express()
-    app.use(session({
-        secret: 'very secret',
-        resave: false,
-        saveUninitialized: false,
-    }))
+    const app = express();
 
-    const db = await new Adapter('postgresql', {
-        connectionString: 'postgres://postgres:postgres@localhost:5432/calendar_system',
-        database: 'calendar_system',
-    }).init();
+    // const authentication = new DefaultAuthProvider('admin', {
+    //     authenticate: async (email, password) => {
+    //         const user = await User.findOne({ where: { email } });
+    //         if (user && (await user.comparePassword(password))) {
+    //             return user;
+    //         }
+    //         return null;
+    //     },
+    //     cookiePassword: 'some-very-long-secret',
+    // });
+
+    AdminJS.registerAdapter({
+        Database,
+        Resource,
+        // authentication
+    })
 
     const admin = new AdminJS({
-        resources: [
-            {
-                resource: db.table('users'),
-                options: {
-                    properties: {
-                        role: {
-                            isRequired: true,
-                            availableValues: [
-                                { label: 'Admin', value: 'ADMIN' },
-                                { label: 'Client', value: 'CLIENT' },
-                            ],
-                        },
+        resources: [{
+            resource: db.table('users'),
+            options: {
+                properties: {
+                    role: {
+                        isRequired: true,
+                        availableValues: [
+                            { label: 'Admin', value: 'ADMIN' },
+                            { label: 'Client', value: 'CLIENT' },
+                        ],
                     },
                 },
             },
-        ]
-    })
-
-    admin.watch()
-
-    const loginRouter = express.Router()
-
-    const authenticate = async (db, username, password) => {
-        const user = await db.table('users').findOne({ where: { username } })
-    
-        if (user && (await bcrypt.compare(password, user.password))) {
-            return { id: user.id, username: user.username }
-        }
-    
-        return null
-    }
-
-    loginRouter.post('/login', bodyParser.json(), async (req, res) => {
-        const { username, password } = req.body
-
-        const user = await authenticate(db, username, password)
-
-        if (user) {
-            req.session.user = user
-            res.redirect('/admin')
-        } else {
-            res.send('Invalid username or password')
-        }
-    })
-
-    loginRouter.get('/logout', (req, res) => {
-        req.session.destroy()
-        res.redirect('/login')
-    })
-
-    const router = buildAuthenticatedRouter(admin, {
-        authenticate: async (db, username, password) => {
-            const user = await authenticate(db, username, password)
-
-            if (user) {
-                req.session.user = user
-                return user
-            }
-
-            return null
+        }],
+        auth: {
+            authenticate: async (email, password) => {
+              return CustomAuthProvider.authenticate({ payload: { email, password } });
+            },
+            logout: async () => {
+              return CustomAuthProvider.logout({ payload: {} });
+            },
         },
+        // rootPath: '/admin',
+    });
+    admin.watch();
+
+    // const loginRouter = express.Router();
+    // loginRouter.post('/login', buildAuthenticatedRouter(
+    //     admin, 
+    //     {
+    //         // "authenticate" was here
+    //         cookiePassword: 'test',
+    //         provider: authentication,
+    //     },
+    //     null,
+    //     {
+    //         secret: 'test',
+    //         resave: false,
+    //         saveUninitialized: true,
+    //     }
+    // ));
+    // loginRouter.get('/login', (req, res) => res.sendFile(`${__dirname}/login.html`));
+
+    const authenticate = new DefaultAuthProvider('admin', {
+        authenticate: async (email, password) => {
+            const user = await User.findOne({ where: { email } });
+            if (user && (await user.comparePassword(password))) {
+                return user;
+            }
+            return null;
+
+            // const { email, password } = req.body;
+            
+            // try {
+            //     const user = await admin.authenticate(email, password);
+            //     req.session.user = user;
+            //     res.redirect('/admin/dashboard');
+            // } catch (error) {
+            //     res.status(401).send('Invalid credentials');
+            // }
+
+        },
+        cookiePassword: 'some-very-long-secret',
+    });
+
+    const authRouter = buildAuthenticatedRouter(admin, {
+        authenticate,
         cookieName: 'username',
         cookiePassword: 'password',
     })
+    app.use(admin.options.rootPath, authRouter)
+    // app.post('/admin/login', async (req, res) => {
+    //     const { email, password } = req.body;
+        
+    //     try {
+    //         const user = await admin.authenticate(email, password);
+    //         req.session.user = user;
+    //         res.redirect('/admin/dashboard');
+    //     } catch (error) {
+    //         res.status(401).send('Invalid credentials');
+    //     }
+    // });
 
-    app.use('/login', loginRouter)
-    app.use('/admin', router)
-    app.use(bodyParser.json())
+    const router = AdminJSExpress.buildRouter(admin)
+    app.use(admin.options.rootPath, router)
+    app.get('/admin/dashboard', async (req, res) => {
+        if (!req.session.user) {
+            return res.redirect('/admin/login');
+        }
+        // Render the dashboard
+    });
+
+    // const dashboardRouter = AdminJSExpress.buildRouter(admin);
+    // app.use('/admin/dashboard', dashboardRouter);
+    // app.use('/admin/login', loginRouter);
 
     app.listen(PORT, () => {
         console.log('app started')
     })
-}
+};
 
-start()
+start();
+
+
 
 

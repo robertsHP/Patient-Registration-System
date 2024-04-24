@@ -47,7 +47,10 @@ export default function CalendarPage ({pages, page}) {
         <div className="main-container">
             <div className="container">
                 <div className="container-left">
-                    <Sidebar pages={pages} onPageChange={handlePageChange}/>
+                    <Sidebar 
+                        pages={pages} 
+                        onPageChange={handlePageChange}
+                    />
                     {subPages.map(({urlName, title}) => (
                         <Link key={`${urlName}_link_button`} to={`/${page.urlName}/${urlName}`}>
                             <button 

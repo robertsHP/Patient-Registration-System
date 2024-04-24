@@ -77,7 +77,7 @@ export default function CalendarOptions(props) {
                     </select>
                 </div>
                 <div className="container-right">
-                    <button className="buttonStyle" onClick={excelButton}>Lejupielādēt Excel</button>
+                    <button className="buttonStyle" onClick={excelButton}>Excel</button>
                 </div>
             </div>
         </>

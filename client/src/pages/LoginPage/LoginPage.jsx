@@ -6,16 +6,23 @@ import './LoginPage.css'
 export default function LoginPage ({pages}) {
     const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
+    const [error, setError] = useState('');
 
     const navigate = useNavigate();
   
     const handleSubmit = (event) => {
         event.preventDefault();
-        // Perform login logic here
-        console.log('Lietotājvārds:', username);
-        console.log('Parole:', password);
 
-        navigate(`/${pages[0].urlName}`);
+        const adminUser = {
+            username: 'admin',
+            password: 'admin'
+        };
+
+        if (username === adminUser.username && password === adminUser.password) {
+            navigate(`/${pages[0].urlName}`);
+        } else {
+            setError('Nepareizs lietotājvārds vai parole');
+        }
     };
 
     return (
@@ -36,6 +43,7 @@ export default function LoginPage ({pages}) {
                         value={password}
                         onChange={(e) => setPassword(e.target.value)}
                     />
+                    {error && <div className="error-message" style={{color: 'red'}}>{error}</div>}
                     <input type="submit" value="Pieslēgties" />
                 </form>
                 <Routes>
@@ -45,3 +53,4 @@ export default function LoginPage ({pages}) {
         </div>
     );
 }
+

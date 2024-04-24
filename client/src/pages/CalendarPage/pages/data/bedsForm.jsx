@@ -35,6 +35,23 @@ export default [
         }
     },
     {
+        name: "pack",
+        component: ({value, onChange}) => {
+            return (
+                <label>
+                    Komplekts:
+                    <select name="pack" value={value} onChange={onChange}>
+                        <option value={null}></option>
+                        <option value="MAK">MAK</option>
+                        <option value="DST">DST</option>
+                        <option value="AMB">AMB</option>
+                        <option value="VSN">VSN</option>
+                    </select>
+                </label>
+            )
+        }
+    },
+    {
         name: "room",
         component: ({value, onChange}) => {
             return (

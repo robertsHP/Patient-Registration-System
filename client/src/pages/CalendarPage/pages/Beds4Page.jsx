@@ -4,6 +4,7 @@ import bedsForm from './data/bedsForm.jsx';
 
 import SearchComponent from '../components/SearchComponent.jsx';
 import CalendarUIComponent from '../components/CalendarComponent/CalendarUIComponent.jsx';
+import TableComponent from '../components/TableComponent/TableComponent.jsx';
 import EventFormComponent from '../components/EventFormComponent/EventFormComponent.jsx';
 
 import CalendarOptions from '../components/CalendarComponent/CalendarOptions.jsx';
