@@ -11,7 +11,8 @@ export default function SearchComponent () {
         calendarRef,
 
         setRoom,
-        setRoomID,
+        setSelectedRoom,
+        getRoom,
         getRoomWithNumber
     } = useCalendarContext();
 
@@ -34,7 +35,7 @@ export default function SearchComponent () {
         var roomObj = getRoomWithNumber(event.room)
 
         setRoom(roomObj.id, roomObj);
-        setRoomID(roomObj.id);
+        setSelectedRoom(roomObj);
     };
 
     return (

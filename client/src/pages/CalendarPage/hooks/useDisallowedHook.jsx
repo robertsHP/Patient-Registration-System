@@ -2,7 +2,6 @@ import React, { useEffect, useState } from 'react';
 
 export default function useDisallowedHook (initialDisallowedDates, initialDisallowedDateID) {
     const [disallowedDates, setDisallowedDates] = useState(initialDisallowedDates);
-    const [disallowedDateID, _setDisallowedDateID] = useState(initialDisallowedDateID);
 
     const getDisallowedDate = (id) => {
         return disallowedDates.find(date => date.id == id);
@@ -11,12 +10,7 @@ export default function useDisallowedHook (initialDisallowedDates, initialDisall
     const [
         selectedDisallowedDate, 
         setSelectedDisallowedDate
-    ] = useState(getDisallowedDate(disallowedDateID) || null);
-
-    const setDisallowedDateID = (id) => {
-        _setDisallowedDateID(id);
-        setSelectedDisallowedDate(getDisallowedDate(id));
-    }
+    ] = useState(getDisallowedDate(initialDisallowedDateID) || null);
 
     const setDisallowedDate = (id, updatedDate) => {
         setDisallowedDates(disallowedDates.map(
@@ -31,17 +25,16 @@ export default function useDisallowedHook (initialDisallowedDates, initialDisall
     }
 
     const deleteDisallowedDate = (id) => {
+        console.log(id);
+
+        setDisallowedDates(disallowedDates => 
+            disallowedDates.filter(date => date.id != id)
+        );
+
         console.log(disallowedDates);
 
-        setDisallowedDates(prevDates => prevDates.filter(date => date.id != id));
-
-        console.log(disallowedDates);
-
-        if(selectedDisallowedDate != null) {
-            if(id == selectedDisallowedDate.id) {
-                _setDisallowedDateID(-1);
-                setDisallowedDate(null);
-            }
+        if (selectedDisallowedDate && id === selectedDisallowedDate.id) {
+            setSelectedDisallowedDate(null);
         }
     }
 
@@ -56,7 +49,6 @@ export default function useDisallowedHook (initialDisallowedDates, initialDisall
 
         if(selectedDisallowedDate != null) {
             if(id == selectedDisallowedDate.id) {
-                // console.log({...selectedDisallowedDate, ...values});
                 setSelectedDisallowedDate(
                     {...selectedDisallowedDate, ...values}
                 );
@@ -65,10 +57,9 @@ export default function useDisallowedHook (initialDisallowedDates, initialDisall
     }
 
     return { 
-        disallowedDates, setDisallowedDates, 
-        disallowedDateID, setDisallowedDateID, 
+        disallowedDates, setDisallowedDates,  
         getDisallowedDate, setDisallowedDate, 
+        selectedDisallowedDate, setSelectedDisallowedDate,
         updateDisallowedDate, deleteDisallowedDate,
-        selectedDisallowedDate, setSelectedDisallowedDate
     };
 }

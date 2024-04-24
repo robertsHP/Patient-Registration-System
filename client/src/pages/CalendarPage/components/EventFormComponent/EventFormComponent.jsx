@@ -13,18 +13,17 @@ import './EventFormComponent.css'
 
 export default function EventFormComponent({formTags}) {
     const { 
-        eventID, getEvent,
-        disallowedDateID, getDisallowedDate,
-
+        selectedEvent, getEvent,
+        selectedDisallowedDate, getDisallowedDate,
         actionState
     } = useCalendarContext();
 
     var initialCheck = () => {
         switch (actionState) {
             case ActionState.ADD :
-                return getEvent(eventID);
+                return selectedEvent;
             case ActionState.UNAVAILABILITY :
-                return getDisallowedDate(disallowedDateID);
+                return selectedDisallowedDate;
         }
         return false;
     }
@@ -43,33 +42,29 @@ export default function EventFormComponent({formTags}) {
 function _EventFormComponent({formTags}) {
     const { 
         events,
-        eventID,
-        setEventID,
-        getEvent,
-        setEvent,
-        deleteEvent,
+        getEvent, setEvent, deleteEvent,
 
         selectedEvent,
         setSelectedEvent,
 
-        disallowedDateID, getDisallowedDate,
+        getDisallowedDate,
         selectedDisallowedDate, setSelectedDisallowedDate,
 
         actionState
     } = useCalendarContext();
 
-    useEffect(() => {
-        switch (actionState) {
-            case ActionState.ADD :
-                const event = getEvent(eventID);
-                setSelectedEvent(event);
-                break;
-            case ActionState.UNAVAILABILITY :
-                const date = getDisallowedDate(disallowedDateID);
-                setSelectedDisallowedDate(date);
-                break;
-        }
-    }, [eventID, disallowedDateID]);
+    // useEffect(() => {
+    //     switch (actionState) {
+    //         case ActionState.ADD :
+    //             const event = getEvent(selectedEvent.id);
+    //             setSelectedEvent(event);
+    //             break;
+    //         case ActionState.UNAVAILABILITY :
+    //             const date = getDisallowedDate(selectedDisallowedDate.id);
+    //             setSelectedDisallowedDate(date);
+    //             break;
+    //     }
+    // }, [selectedEvent, selectedDisallowedDate]);
 
     var functions = {};
     var currentFormTags = [];

@@ -22,20 +22,20 @@ export default function CalendarUIComponent() {
 
         actionState, setActionState,
 
-        roomID, getRoom,
+        getRoom,
+        selectedRoom, setSelectedRoom,
 
         events, setEvents,
-        eventID, setEventID,
         getEvent, updateEvent,
         setSelectedEvent
     } = useCalendarContext();
 
     var properties = {
         filteredEvents: events.filter(
-            event => event.room === getRoom(roomID).num
+            event => event.room === getRoom(selectedRoom.id).num
         ),
         filteredDisallowedDates: disallowedDates.filter(
-            event => event.room === getRoom(roomID).num
+            event => event.room === getRoom(selectedRoom.id).num
         ),
         primaryColor: null,
         secondaryColor: null
@@ -46,7 +46,7 @@ export default function CalendarUIComponent() {
     switch (actionState) {
         case ActionState.ADD :
             properties.primaryColor ='#DB7800';
-            properties.secondaryColor ='#FF9B9B';
+            properties.secondaryColor ='#FF5959';
 
             functions = getCalendarAddFunctions({
                 ...properties,
@@ -54,7 +54,7 @@ export default function CalendarUIComponent() {
             eventsInCalendar = properties.filteredEvents;
             break;
         case ActionState.UNAVAILABILITY :
-            properties.primaryColor ='#FF9B9B';
+            properties.primaryColor ='#FF5959';
             properties.secondaryColor ='#DB7800';
 
             functions = getCalendarUnavailabilityFunctions({
@@ -73,7 +73,7 @@ export default function CalendarUIComponent() {
         calendarApi.prev();
         ///
 
-    }, [actionState, roomID])
+    }, [actionState, selectedRoom])
 
     return (
         <>

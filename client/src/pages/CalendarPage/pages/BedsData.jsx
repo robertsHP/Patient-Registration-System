@@ -27,8 +27,8 @@ export default function BedsPage () {
         { id: 3, num: 204, beds: [ 'gulta', '', '', 'gulta' ] },
     ];
     var disallowedDates = [
-        { id: 0, room: 201, start: '2024-04-10', end: '2024-04-15' },
-        { id: 1, room: 201, start: '2024-03-18', end: '2024-03-20' }
+        { id: 0, room: 201, description:"REMONTS", start: '2024-04-10', end: '2024-04-15' },
+        { id: 1, room: 201, description:"REMONTS", start: '2024-03-18', end: '2024-03-20' }
     ];
 
     var initialStates = {

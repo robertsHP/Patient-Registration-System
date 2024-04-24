@@ -14,11 +14,9 @@ export default function getCalendarUnavailabilityFunctions ({
 
         actionState, setActionState,
 
-        roomID,
-        getRoom,
+        getRoom, selectedRoom,
 
         disallowedDates, setDisallowedDates, 
-        disallowedDateID, setDisallowedDateID, 
         getDisallowedDate, setDisallowedDate, 
         updateDisallowedDate, deleteDisallowedDate,
         selectedDisallowedDate, setSelectedDisallowedDate,
@@ -37,18 +35,24 @@ export default function getCalendarUnavailabilityFunctions ({
 
         let newDate = {
             id: id, // use the current timestamp as a unique id
+            room: selectedRoom.num,
             description: "",
+            start: info.startStr,
+            end: info.endStr
         };
         calendarApi.addEvent(newDate);
 
         setDisallowedDates([...disallowedDates, newDate]); // add the new event to the events array
-        setDisallowedDateID(id);
         setSelectedDisallowedDate(newDate);
+
+        console.log(disallowedDates);
     }
 
     const handleEventClick = (info) => {
         // console.log("handleEventClick");
-        setDisallowedDateID(info.event.id); // set the clicked event as the selected event
+        setSelectedDisallowedDate(
+            getDisallowedDate(info.event.id)
+        ); // set the clicked event as the selected event
     }
 
     const handleEventDrop = (info) => {
@@ -71,8 +75,8 @@ export default function getCalendarUnavailabilityFunctions ({
         var date = getDisallowedDate(info.event.id);
         var newDate = {...date, start: formattedStartDate, end: formattedEndDate}
 
-        updateDisallowedDate(info.event.id, newDate);
-        setDisallowedDate(newDate);
+        setDisallowedDate(info.event.id, newDate);
+        setSelectedDisallowedDate(newDate);
     }
 
     const handleEventResize = (info) => {
@@ -85,8 +89,8 @@ export default function getCalendarUnavailabilityFunctions ({
         var date = getDisallowedDate(info.event.id);
         var newDate = {...date, start: formattedStartDate, end: formattedEndDate}
 
-        updateDisallowedDate(info.event.id, newDate);
-        setDisallowedDate(newDate);
+        setDisallowedDate(info.event.id, newDate);
+        setSelectedDisallowedDate(newDate);
     }
     const eventAllow = (info, event) => {
         // console.log("eventAllow");

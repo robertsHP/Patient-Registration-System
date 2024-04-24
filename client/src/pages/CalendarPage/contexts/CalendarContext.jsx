@@ -19,7 +19,6 @@ export const CalendarProvider = ({ children, initialStates }) => {
     //
     const { 
         events, setEvents, 
-        eventID, setEventID, 
         getEvent, setEvent, updateEvent, deleteEvent,
         selectedEvent, setSelectedEvent
     } = useEventHook(
@@ -29,15 +28,14 @@ export const CalendarProvider = ({ children, initialStates }) => {
     
     const { 
         rooms, setRooms, 
-        roomID, setRoomID, 
-        getRoom, getRoomWithNumber, setRoom
+        getRoom, getRoomWithNumber, setRoom, deleteRoom, updateRoom,
+        selectedRoom, setSelectedRoom
     } = useRoomHook(
         initialStates.rooms, 0
     );
 
     const { 
         disallowedDates, setDisallowedDates, 
-        disallowedDateID, setDisallowedDateID, 
         getDisallowedDate, setDisallowedDate, 
         updateDisallowedDate, deleteDisallowedDate,
         selectedDisallowedDate, setSelectedDisallowedDate
@@ -53,18 +51,16 @@ export const CalendarProvider = ({ children, initialStates }) => {
 
     const contextValues = {
         events, setEvents, 
-        eventID, setEventID, 
         getEvent, setEvent, 
         updateEvent, deleteEvent,
         selectedEvent, setSelectedEvent,
 
-        rooms, setRooms, 
-        roomID, setRoomID, 
+        rooms, setRooms, deleteRoom, updateRoom,
+        selectedRoom, setSelectedRoom,
         getRoom, getRoomWithNumber,
         setRoom,
 
         disallowedDates, setDisallowedDates,
-        disallowedDateID, setDisallowedDateID, 
         getDisallowedDate, setDisallowedDate, 
         updateDisallowedDate, deleteDisallowedDate,
         selectedDisallowedDate, setSelectedDisallowedDate,

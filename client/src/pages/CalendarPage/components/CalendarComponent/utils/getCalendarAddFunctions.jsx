@@ -14,11 +14,11 @@ export default function getCalendarAddFunctions ({
 
         actionState, setActionState,
 
-        roomID,
         getRoom,
+        selectedRoom,
 
         events, setEvents,
-        eventID, setEventID,
+        setEvent,
         getEvent, updateEvent,
         setSelectedEvent,
 
@@ -36,7 +36,7 @@ export default function getCalendarAddFunctions ({
 
         let newEvent = {
             id: id, // use the current timestamp as a unique id
-            room: getRoom(roomID).num,
+            room: selectedRoom.num,
             patientName: "",
             start: info.startStr,
             end: info.endStr,
@@ -45,13 +45,12 @@ export default function getCalendarAddFunctions ({
         calendarApi.addEvent(newEvent);
 
         setEvents([...events, newEvent]); // add the new event to the events array
-        setEventID(id);
         setSelectedEvent(newEvent);
     }
 
     const handleEventClick = (info) => {
         // console.log("handleEventClick");
-        setEventID(info.event.id); // set the clicked event as the selected event
+        setSelectedEvent(getEvent(info.event.id)); // set the clicked event as the selected event
     }
 
     const handleEventDrop = (info) => {
@@ -74,7 +73,7 @@ export default function getCalendarAddFunctions ({
         var event = getEvent(info.event.id);
         var newEvent = {...event, start: formattedStartDate, end: formattedEndDate}
 
-        updateEvent(info.event.id, newEvent);
+        setEvent(info.event.id, newEvent);
         setSelectedEvent(newEvent);
     }
 
@@ -87,7 +86,7 @@ export default function getCalendarAddFunctions ({
         var event = getEvent(info.event.id);
         var newEvent = {...event, start: formattedStartDate, end: formattedEndDate}
 
-        updateEvent(info.event.id, newEvent);
+        setEvent(info.event.id, newEvent);
         setSelectedEvent(newEvent);
     }
     const eventAllow = (info, event) => {

@@ -6,27 +6,25 @@ import { useCalendarContext } from '../../../contexts/CalendarContext.jsx';
 export default function getEventFormFunctions ({formTags}) {
     const { 
         events, setEvents, 
-        eventID, setEventID, 
         getEvent, setEvent, updateEvent, deleteEvent,
         selectedEvent, setSelectedEvent
     } = useCalendarContext();
 
-    const [form, setForm] = useState(() => {
-        return formTags.reduce((form, tag) => {
-            const label = tag.name;
-            const value = selectedEvent[label] || '';
+    // const [form, setForm] = useState(() => {
+    //     return formTags.reduce((form, tag) => {
+    //         const label = tag.name;
+    //         const value = selectedEvent[label] || '';
 
-            form[label] = value;
+    //         form[label] = value;
 
-            return form;
-        }, {});
-    });
+    //         return form;
+    //     }, {});
+    // });
 
     const handleInputUpdate = (event) => {
         const { name, value } = event.target;
         const updatedEvent = { 
-            id: selectedEvent.id, 
-            ...form, 
+            ...selectedEvent, 
             [name]: value 
         };
 
@@ -38,13 +36,13 @@ export default function getEventFormFunctions ({formTags}) {
         }
 
         setSelectedEvent(updatedEvent);
-        setForm(updatedEvent);
+        // setForm(updatedEvent);
 
         // console.log(selectedEvent);
     };
 
     const handleCloseButtonClick = () => {
-        setEventID(-1);
+        setSelectedEvent(null);
     };
 
     const handleSaveClick = () => {
@@ -52,6 +50,7 @@ export default function getEventFormFunctions ({formTags}) {
         // console.log(selectedEvent);
 
         setEvent(selectedEvent.id, selectedEvent);
+        // setForm(selectedEvent);
 
         // console.log(events);
         // console.log(selectedEvent);
@@ -61,6 +60,7 @@ export default function getEventFormFunctions ({formTags}) {
 
     const handleDeleteClick = () => {
         deleteEvent(selectedEvent.id);
+        setSelectedEvent(null);
         // console.log('Delete clicked!');
     };
 

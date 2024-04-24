@@ -6,28 +6,26 @@ import { useCalendarContext } from '../../../contexts/CalendarContext.jsx';
 export default function getDisallowedFormFunctions ({formTags}) {
     const { 
         disallowedDates, setDisallowedDates, 
-        disallowedDateID, setDisallowedDateID, 
         getDisallowedDate, setDisallowedDate, 
         updateDisallowedDate, deleteDisallowedDate,
         selectedDisallowedDate, setSelectedDisallowedDate
     } = useCalendarContext();
 
-    const [form, setForm] = useState(() => {
-        return formTags.reduce((form, tag) => {
-            const label = tag.name;
-            const value = selectedDisallowedDate[label] || '';
+    // const [form, setForm] = useState(() => {
+    //     return formTags.reduce((form, tag) => {
+    //         const label = tag.name;
+    //         const value = selectedDisallowedDate[label] || '';
 
-            form[label] = value;
+    //         form[label] = value;
 
-            return form;
-        }, {});
-    });
+    //         return form;
+    //     }, {});
+    // });
 
     const handleInputUpdate = (event) => {
         const { name, value } = event.target;
         const updatedDate = { 
-            id: selectedDisallowedDate.id, 
-            ...form, 
+            ...selectedDisallowedDate, 
             [name]: value 
         };
 
@@ -39,17 +37,18 @@ export default function getDisallowedFormFunctions ({formTags}) {
         }
 
         setSelectedDisallowedDate(updatedDate);
-        setForm(updatedDate);
+        // setForm(updatedDate);
 
         // console.log(selectedDisallowedDate);
     };
 
     const handleCloseButtonClick = () => {
-        setDisallowedDateID(-1);
+        setSelectedDisallowedDate(null);
     };
 
     const handleSaveClick = () => {
         setDisallowedDate(selectedDisallowedDate.id, selectedDisallowedDate);
+        // setForm(updatedDate);
 
         // console.log(events);
 
@@ -61,6 +60,7 @@ export default function getDisallowedFormFunctions ({formTags}) {
         // console.log(selectedDisallowedDate.id);
         
         deleteDisallowedDate(selectedDisallowedDate.id);
+        setDisallowedDate(null);
 
         // console.log(selectedDisallowedDate);
 

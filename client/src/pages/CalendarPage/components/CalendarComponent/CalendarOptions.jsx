@@ -10,22 +10,41 @@ import './CalendarOptions.css'
 export default function CalendarOptions(props) {
     const { 
         actionState, setActionState,
-        setEventID, events,
-        rooms, roomID, setRoomID,
+        setSelectedEvent, events,
+        setSelectedDisallowedDate, selectedDisallowedDate,
+        rooms, selectedRoom, setSelectedRoom,
+        getRoom,
         month, year
     } = useCalendarContext();
 
     const roomSelect = (event) => {
         const id = event.target.value;
-        setRoomID(id);
-        setEventID(-1);
+
+        setSelectedRoom(getRoom(id));
+        
+        switch (actionState) {
+            case ActionState.ADD :
+                setSelectedEvent(null);
+                break;
+            case ActionState.UNAVAILABILITY :
+                setSelectedDisallowedDate(null);
+                break;
+        }
     };
     const actionSelect = (event) => {
         const selectedOption = Object.values(ActionState).find(
             option => option.name === event.target.value
         );
         setActionState(selectedOption);
-        setEventID(-1);
+
+        switch (actionState) {
+            case ActionState.ADD :
+                setSelectedEvent(null);
+                break;
+            case ActionState.UNAVAILABILITY :
+                setSelectedDisallowedDate(null);
+                break;
+        }
     };
     const excelButton = () => {
         console.log("excelButton");
@@ -36,7 +55,7 @@ export default function CalendarOptions(props) {
         <>
             <div className="container">
                 <div className="container-left">
-                    <select className="selectStyle" onChange={roomSelect} value={roomID}>
+                    <select className="selectStyle" onChange={roomSelect} value={selectedRoom.id}>
                         {rooms.map(room => (
                             <option key={room.id} value={room.id}>
                                 {room.num}
