@@ -3,8 +3,8 @@ import { useCalendarContext } from '../../../contexts/CalendarContext.jsx';
 import { formatDate } from './utilFunctions.jsx';
 
 export default function getCalendarUnavailabilityFunctions ({
-    filteredEvents,
-    filteredDisallowedDates,
+    processedEvents,
+    processedDisallowedDates,
     primaryColor, secondaryColor
 }) {
     const { 
@@ -35,11 +35,13 @@ export default function getCalendarUnavailabilityFunctions ({
 
         let newDate = {
             id: id, // use the current timestamp as a unique id
-            room: selectedRoom.num,
             description: "",
             start: info.startStr,
             end: info.endStr
         };
+        if (selectedRoom) {
+            newEvent.room = selectedRoom.num;
+        }
         calendarApi.addEvent(newDate);
 
         setDisallowedDates([...disallowedDates, newDate]); // add the new event to the events array
@@ -97,9 +99,9 @@ export default function getCalendarUnavailabilityFunctions ({
 
         var allowed = false;
 
-        for (let i = 0; i < filteredEvents.length; i++) {
-            var disallowedStart = new Date(filteredEvents[i].start);
-            var disallowedEnd = new Date(filteredEvents[i].end);
+        for (let i = 0; i < processedEvents.length; i++) {
+            var disallowedStart = new Date(processedEvents[i].start);
+            var disallowedEnd = new Date(processedEvents[i].end);
     
             allowed = info.start <= disallowedEnd && info.end >= disallowedStart;
     
@@ -118,9 +120,9 @@ export default function getCalendarUnavailabilityFunctions ({
 
         // console.log(date);
         
-        for (let i = 0; i < filteredEvents.length; i++) {
-            var disallowedStart = new Date(filteredEvents[i].start);
-            var disallowedEnd = new Date(filteredEvents[i].end);
+        for (let i = 0; i < processedEvents.length; i++) {
+            var disallowedStart = new Date(processedEvents[i].start);
+            var disallowedEnd = new Date(processedEvents[i].end);
 
             disallowedStart.setDate(disallowedStart.getDate() - 1);
     

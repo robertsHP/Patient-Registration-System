@@ -55,13 +55,19 @@ export default function CalendarOptions(props) {
         <>
             <div className="container">
                 <div className="container-left">
-                    <select className="selectStyle" onChange={roomSelect} value={selectedRoom.id}>
-                        {rooms.map(room => (
-                            <option key={room.id} value={room.id}>
-                                {room.num}
-                            </option>
-                        ))}
-                    </select>
+                    {rooms &&
+                        <select 
+                            className="selectStyle" 
+                            onChange={roomSelect} 
+                            value={selectedRoom.id}
+                        >
+                            {rooms.map(room => (
+                                <option key={room.id} value={room.id}>
+                                    {room.num}
+                                </option>
+                            ))}
+                        </select>
+                    }
                     <select className="selectStyle" onChange={actionSelect} value={actionState?.name}>
                         {Object.values(ActionState).map(option => (
                             <option key={option.name} value={option.name}>

@@ -3,8 +3,8 @@ import { useCalendarContext } from '../../../contexts/CalendarContext.jsx';
 import { formatDate } from './utilFunctions.jsx';
 
 export default function getCalendarAddFunctions ({
-    filteredEvents,
-    filteredDisallowedDates,
+    processedEvents,
+    processedDisallowedDates,
     primaryColor, secondaryColor
 }) {
     const { 
@@ -36,12 +36,14 @@ export default function getCalendarAddFunctions ({
 
         let newEvent = {
             id: id, // use the current timestamp as a unique id
-            room: selectedRoom.num,
             patientName: "",
             start: info.startStr,
             end: info.endStr,
             allDay: info.allDay
         };
+        if (selectedRoom) {
+            newEvent.room = selectedRoom.num;
+        }
         calendarApi.addEvent(newEvent);
 
         setEvents([...events, newEvent]); // add the new event to the events array
@@ -94,9 +96,9 @@ export default function getCalendarAddFunctions ({
 
         var allowed = false;
 
-        for (let i = 0; i < filteredDisallowedDates.length; i++) {
-            var disallowedStart = new Date(filteredDisallowedDates[i].start);
-            var disallowedEnd = new Date(filteredDisallowedDates[i].end);
+        for (let i = 0; i < processedDisallowedDates.length; i++) {
+            var disallowedStart = new Date(processedDisallowedDates[i].start);
+            var disallowedEnd = new Date(processedDisallowedDates[i].end);
     
             allowed = info.start <= disallowedEnd && info.end >= disallowedStart;
     
@@ -115,9 +117,9 @@ export default function getCalendarAddFunctions ({
 
         // console.log(date);
         
-        for (let i = 0; i < filteredDisallowedDates.length; i++) {
-            var disallowedStart = new Date(filteredDisallowedDates[i].start);
-            var disallowedEnd = new Date(filteredDisallowedDates[i].end);
+        for (let i = 0; i < processedDisallowedDates.length; i++) {
+            var disallowedStart = new Date(processedDisallowedDates[i].start);
+            var disallowedEnd = new Date(processedDisallowedDates[i].end);
 
             disallowedStart.setDate(disallowedStart.getDate() - 1);
     

@@ -10,6 +10,7 @@ export default function SearchComponent () {
         events,
         calendarRef,
 
+        rooms,
         setRoom,
         setSelectedRoom,
         getRoom,
@@ -32,10 +33,12 @@ export default function SearchComponent () {
     const onClickEvent = (eventId, event) => {
         calendarRef.current.getApi().gotoDate(event.start);
 
-        var roomObj = getRoomWithNumber(event.room)
+        if(rooms) {
+            var roomObj = getRoomWithNumber(event.room)
 
-        setRoom(roomObj.id, roomObj);
-        setSelectedRoom(roomObj);
+            setRoom(roomObj.id, roomObj);
+            setSelectedRoom(roomObj);
+        }
     };
 
     return (

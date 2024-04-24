@@ -27,7 +27,7 @@ export default function App() {
 				<Routes>
 					{pages.map((page) => (
 						<Route key={page.urlName} path={`/${page.urlName}/*`} element={
-							<page.component pages={pages}/>
+							<page.component pages={pages} page={page}/>
 						} />
 					))}
 					<Route path="*" element={<Navigate to={`/${pages[0].urlName}`} replace />} />
