@@ -28,19 +28,31 @@ export default function CalendarPage ({pages, page}) {
         }
     ];
 
+    const [currentPage, setCurrentPage] = useState(subPages[0].urlName);
+
     const logoutOnClick = () => {
         // Add your logout logic here
         console.log('Logging out...');
     };
 
+    const handlePageChange = (urlName) => {
+        setCurrentPage(urlName);
+    }
+
     return (
         <div className="main-container">
             <div className="container">
                 <div className="container-left">
-                    <Sidebar pages={pages}/>
+                    <Sidebar pages={pages} onPageChange={handlePageChange}/>
                     {subPages.map(({urlName, title}) => (
                         <Link key={`${urlName}_link_button`} to={`/${page.urlName}/${urlName}`}>
-                            <button className="vertical-button">{title}</button>
+                            <button 
+                                className={
+                                    `vertical-button ${urlName === currentPage ? 'active-button' : ''
+                                }`} 
+                                onClick={() => handlePageChange(urlName)}>
+                                {title}
+                            </button>
                         </Link>
                     ))}
                 </div>

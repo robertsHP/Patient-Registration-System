@@ -16,9 +16,7 @@ export default function Beds4Page () {
     var events = [
         { id: 0, room: 401, patientName: 'aaaaaa', start: '2024-03-28', end: '2024-04-04' },
         { id: 1, room: 403, patientName: 'bbbbbbb', start: '2024-01-20', end: '2024-01-30' },
-        { id: 2, room: 403, patientName: 'e', start: '2024-04-15', end: '2024-04-19' },
-        { id: 3, room: 403, patientName: '------------', start: '2024-02-28', end: '2024-02-30' },
-        { id: 4, room: 404, patientName: 'cccccc', start: '2024-04-01', end: '2024-04-08' }
+        { id: 2, room: 403, patientName: 'e', start: '2024-04-15', end: '2024-04-19' }
     ];
     var rooms = [
         { id: 0, num: 401, beds: [ 'lielā gulta', 'dīvāns' ] },

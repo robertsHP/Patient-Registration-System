@@ -50,3 +50,9 @@
 .main-container {
     overflow: hidden;
 }
+
+button.active-button {
+    background-color: #f0f0f0;
+    border: 2px solid blue;
+    color: blue;
+}
