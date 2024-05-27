@@ -14,11 +14,11 @@ import './Page.css'
 
 export default function BedsPage () {
     var events = [
-        { id: 0, room: 201, patientName: 'aaaaaa', start: '2024-04-19', end: '2024-04-21' },
-        { id: 1, room: 203, patientName: 'bbbbbbb', start: '2024-04-28', end: '2024-04-30' },
-        { id: 2, room: 203, patientName: 'e', start: '2024-03-28', end: '2024-03-30' },
-        { id: 3, room: 203, patientName: '------------', start: '2024-02-28', end: '2024-02-30' },
-        { id: 4, room: 204, patientName: 'cccccc', start: '2024-04-01', end: '2024-04-08' }
+        { id: 0, room: 201, patientName: 'Jānis', start: '2024-04-19', end: '2024-04-21' },
+        { id: 1, room: 203, patientName: 'Evelīna', start: '2024-04-17', end: '2024-04-19' },
+        { id: 2, room: 203, patientName: 'Andris', start: '2024-03-28', end: '2024-03-30' },
+        { id: 3, room: 203, patientName: 'Jānis', start: '2024-02-28', end: '2024-02-30' },
+        { id: 4, room: 204, patientName: 'Katrīna', start: '2024-04-01', end: '2024-04-08' }
     ];
     var rooms = [
         { id: 0, num: 201, beds: [ 'lielā gulta', 'dīvāns' ] },

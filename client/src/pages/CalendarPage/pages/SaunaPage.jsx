@@ -14,11 +14,11 @@ import './Page.css'
 
 export default function SaunaPage () {
     var events = [
-        { id: 0, patientName: 'aaaaaa', start: '2024-04-19', end: '2024-04-21' },
-        { id: 1, patientName: 'bbbbbbb', start: '2024-04-28', end: '2024-04-30' },
-        { id: 2, patientName: 'e', start: '2024-03-28', end: '2024-03-30' },
-        { id: 3, patientName: '------------', start: '2024-02-28', end: '2024-02-30' },
-        { id: 4, patientName: 'cccccc', start: '2024-04-01', end: '2024-04-08' }
+        { id: 0, patientName: 'Laura', start: '2024-04-19', end: '2024-04-21' },
+        { id: 1, patientName: 'Beāte', start: '2024-04-28', end: '2024-04-30' },
+        { id: 2, patientName: 'Natālija', start: '2024-03-28', end: '2024-03-30' },
+        { id: 3, patientName: 'Andris', start: '2024-02-28', end: '2024-02-30' },
+        { id: 4, patientName: 'Vladislavs', start: '2024-04-01', end: '2024-04-08' }
     ];
     var disallowedDates = [
         { id: 0, description:"REMONTS", start: '2024-04-10', end: '2024-04-15' },

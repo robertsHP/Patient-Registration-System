@@ -1,0 +1,15 @@
+{
+  "name": "patient-registration-system",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "start": "concurrently \"cd server && npm start\" \"cd client && npm start\"",
+    "dev": "concurrently \"cd server && npm run dev\" \"cd client && npm run dev\"",
+    "build": "concurrently \"cd server && npm run build\" \"cd client && npm run build\"",
+    "test": "concurrently \"cd server && npm test\" \"cd client && npm test\""
+  },
+  "dependencies": {
+    "node-cmd": "^5.0.0"
+  }
+}
