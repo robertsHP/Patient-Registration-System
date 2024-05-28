@@ -3,12 +3,6 @@
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
-  "scripts": {
-    "start": "concurrently \"cd client && npm start\" \"cd admin && npm start\" \"cd server && npm start\"",
-    "dev": "concurrently \"cd client && npm run dev\" \"cd admin && npm run dev\" \"cd server && npm run dev\"",
-    "build": "concurrently \"cd client && npm run build\" \"cd admin && npm run build\" \"cd server && npm run build\"",
-    "test": "concurrently \"cd client && npm test\" \"cd admin && npm test\" \"cd server && npm test\""
-  },
   "dependencies": {
     "node-cmd": "^5.0.0"
   }
