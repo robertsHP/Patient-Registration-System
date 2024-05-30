@@ -2,7 +2,8 @@ import React, { useEffect, useState } from 'react';
 import { BrowserRouter as Router, Route, Routes, Navigate } from 'react-router-dom';
 
 import LoginPage from './pages/LoginPage/LoginPage.jsx';
-import CalendarPage from './pages/CalendarPage/CalendarPage.jsx';
+// import CalendarPage from './pages/CalendarPage/CalendarPage.jsx';
+import ExcelPage from './pages/ExcelPage/ExcelPage.jsx';
 
 import './App.css'
 
@@ -11,7 +12,7 @@ export default function App() {
         {
             title: "Kalendārs",
             urlName: "calendar",
-            component: CalendarPage
+            component: ExcelPage
         }
     ];
 

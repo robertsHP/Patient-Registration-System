@@ -43,8 +43,10 @@ export default function LoginPage ({pages}) {
                         value={password}
                         onChange={(e) => setPassword(e.target.value)}
                     />
+
                     {error && <div className="error-message" style={{color: 'red'}}>{error}</div>}
-                    <input type="submit" value="Pieslēgties" />
+                    <br/>
+                    <input className="login-button" type="submit" value="Pieslēgties" />
                 </form>
                 <Routes>
                     <Route path="*" element={<Navigate to={``} replace />} />

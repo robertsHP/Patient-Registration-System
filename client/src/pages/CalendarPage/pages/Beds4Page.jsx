@@ -37,19 +37,21 @@ export default function Beds4Page () {
     };
 
     return (
-        <CalendarProvider initialStates={initialStates}>
-            <div className="flex-container">
-                <div className="search">
-                    <SearchComponent />
+        <>
+            <CalendarProvider initialStates={initialStates}>
+                <div className="flex-container">
+                    <div className="search">
+                        <SearchComponent />
+                    </div>
+                    <div className="calendar-view">
+                        <CalendarOptions />
+                        <CalendarUIComponent />
+                    </div>
+                    <div className="event-form">
+                        <EventFormComponent formTags={bedsForm} />
+                    </div>
                 </div>
-                <div className="calendar-view">
-                    <CalendarOptions />
-                    <CalendarUIComponent />
-                </div>
-                <div className="event-form">
-                    <EventFormComponent formTags={bedsForm} />
-                </div>
-            </div>
-        </CalendarProvider>
+            </CalendarProvider>
+        </>
     )
 }

@@ -1,5 +1,5 @@
-const nodeCMD = require('node-cmd');
-const os = require('os');
+import nodeCMD from 'node-cmd';
+import os from 'os';
 
 // Determine the OS type
 const osType = os.type();
