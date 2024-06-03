@@ -1,11 +1,11 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 
-import GridLayout from 'react-grid-layout';
 import 'react-grid-layout/css/styles.css';
 import 'react-resizable/css/styles.css';
 
-import ColumnGrid from './ColumnGrid/ColumnGrid';
-import EventGrid from './EventGrid/EventGrid';
+import EventGrid from './EventGrid';
+import NameColumn from './NameColumn';
+import RoomColumn from './RoomColumn';
 
 import './Grid.css';
 
@@ -24,27 +24,57 @@ const initialData = (year, month) => {
     getMonthDays(year, month).forEach((day, index) => {
         layout.push({ i: `day-${index}`, x: index, y: 0, w: 1, h: 1, static: true, date: day });
     });
+
     return {
         layout,
-        events: [
-            { i: 'event-0', x: 0, y: 1, w: 3, h: 1, title: 'Event 1' }
-        ]
+        rooms: {
+            'Room 1': {
+                name: 'John Doe',
+                events: [
+                    { i: 'event-0', x: 0, y: 1, w: 3, h: 1, title: 'Event 1', date: new Date(year, month, 1) }
+                ]
+            },
+            'Room 2': {
+                name: 'Jane Smith',
+                events: []
+            }
+        }
     };
 };
 
 export default function Grid({ year, month }) {
     const [data] = useState(initialData(year, month));
-    const [nextEventId, setNextEventId] = useState(1);
+    const [nextEventId, setNextEventId] = useState(2); // Start with 2 since event-0 is already present
+    const [rowHeights, setRowHeights] = useState([]);
+
+    useEffect(() => {
+        const calculateRowHeights = () => {
+            const heights = data.layout.map(day => {
+                let maxHeight = 1;
+                Object.values(data.rooms).forEach(room => {
+                    const overlappingEvents = room.events.filter(event => event.date.getTime() === day.date.getTime());
+                    if (overlappingEvents.length > maxHeight) {
+                        maxHeight = overlappingEvents.length;
+                    }
+                });
+                return maxHeight * 50; // Assuming each event takes 50px height
+            });
+            setRowHeights(heights);
+        };
+
+        calculateRowHeights();
+    }, [data]);
 
     return (
-        <div>
-            <ColumnGrid 
-                data={data}
-            />
+        <div className="grid-container">
+            <RoomColumn rooms={data.rooms} rowHeights={rowHeights} />
+            <NameColumn rooms={data.rooms} rowHeights={rowHeights} />
             <EventGrid 
-                initialEvents={data.events}
+                layout={data.layout}
+                rooms={data.rooms}
                 nextEventId={nextEventId}
                 setNextEventId={setNextEventId}
+                rowHeights={rowHeights}
             />
         </div>
     );

@@ -1,17 +1,17 @@
 import React, { useState, useRef } from 'react';
+
 import GridLayout from 'react-grid-layout';
-import 'react-grid-layout/css/styles.css';
-import 'react-resizable/css/styles.css';
+
 import Event from './Event';
 
-export default function EventGrid({ initialEvents, nextEventId, setNextEventId }) {
-    const [events, setEvents] = useState(initialEvents);
+export default function EventRow({ events, nextEventId, setNextEventId, rowHeights }) {
+    const [localEvents, setLocalEvents] = useState(events);
     const [draggingEvent, setDraggingEvent] = useState(null);
     const [isCreatingEvent, setIsCreatingEvent] = useState(false);
     const gridRef = useRef(null);
 
     const onLayoutChange = (layout) => {
-        setEvents(prevEvents => (
+        setLocalEvents(prevEvents => (
             prevEvents.map(event => {
                 const newLayout = layout.find(l => l.i === String(event.i));
                 if (newLayout) {
@@ -32,7 +32,7 @@ export default function EventGrid({ initialEvents, nextEventId, setNextEventId }
         );
     };
 
-    const onMouseDown = (e) => {
+    const onGridMouseDown = (e) => {
         if (e.target.closest('.react-resizable-handle') || e.target.closest('.event-title')) {
             return; // Ignore mousedown on resize handles or event titles
         }
@@ -43,7 +43,7 @@ export default function EventGrid({ initialEvents, nextEventId, setNextEventId }
 
         setDraggingEvent({
             i: `event-temp`,
-            x: x,
+            x: x + 1, // Adjust for the "Name" column
             y: 0,
             w: 1,
             h: 1,
@@ -54,13 +54,13 @@ export default function EventGrid({ initialEvents, nextEventId, setNextEventId }
         setIsCreatingEvent(true);
     };
 
-    const onMouseMove = (e) => {
+    const onGridMouseMove = (e) => {
         if (isCreatingEvent && draggingEvent) {
             const gridRect = gridRef.current.getBoundingClientRect();
             const colWidth = gridRect.width / 31; // Assuming 31 columns for days
             const currentX = Math.floor((e.clientX - gridRect.left) / colWidth);
             const newWidth = Math.abs(currentX - draggingEvent.startX) + 1;
-            const newX = Math.min(draggingEvent.startX, currentX);
+            const newX = Math.min(draggingEvent.startX, currentX) + 1; // Adjust for the "Name" column
 
             setDraggingEvent(prevEvent => ({
                 ...prevEvent,
@@ -70,31 +70,34 @@ export default function EventGrid({ initialEvents, nextEventId, setNextEventId }
         }
     };
 
-    const onMouseUp = () => {
+    const onGridMouseUp = () => {
         if (isCreatingEvent && draggingEvent) {
             const newEvent = { ...draggingEvent, i: nextEventId, x: Number(draggingEvent.x), y: Number(draggingEvent.y), w: Number(draggingEvent.w), h: 1 };
-            setEvents(prevEvents => [
+            setLocalEvents(prevEvents => [
                 ...prevEvents,
                 newEvent
             ]);
             setDraggingEvent(null);
             setIsCreatingEvent(false);
             setNextEventId(prevId => prevId + 1);
+        } else {
+            setDraggingEvent(null);
+            setIsCreatingEvent(false);
         }
     };
 
     return (
-        <div 
+        <div
             ref={gridRef}
-            onMouseDown={onMouseDown} 
-            onMouseMove={onMouseMove} 
-            onMouseUp={onMouseUp} 
+            onMouseDown={onGridMouseDown}
+            onMouseMove={onGridMouseMove}
+            onMouseUp={onGridMouseUp}
             style={{ position: 'relative' }}
         >
             <GridLayout
                 className="layout"
                 layout={[
-                    ...events.map(event => ({ ...event, i: String(event.i), y: event.y + 1 })),
+                    ...localEvents.map(event => ({ ...event, i: String(event.i), y: event.y + 1 })),
                     ...(draggingEvent ? [{ ...draggingEvent, i: String(draggingEvent.i), y: draggingEvent.y + 1 }] : [])
                 ]}
                 cols={31} // Assuming 31 columns for days
@@ -106,13 +109,13 @@ export default function EventGrid({ initialEvents, nextEventId, setNextEventId }
                 draggableHandle=".event-title"
                 resizeHandles={['e', 'w']}
             >
-                {events.map(event => (
-                    <div key={event.i}>
+                {localEvents.map(event => (
+                    <div key={event.i} style={{ height: rowHeights[event.y] }}>
                         <Event title={event.title} />
                     </div>
                 ))}
                 {draggingEvent && (
-                    <div key={draggingEvent.i}>
+                    <div key={draggingEvent.i} style={{ height: rowHeights[draggingEvent.y] }}>
                         <Event title={draggingEvent.title} />
                     </div>
                 )}

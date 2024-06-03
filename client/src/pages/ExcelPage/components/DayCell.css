@@ -1,0 +1,9 @@
+.day-cell {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 5px;
+    border: 1px solid #ddd;
+    background-color: #f0f0f0;
+    border-radius: 4px;
+}
