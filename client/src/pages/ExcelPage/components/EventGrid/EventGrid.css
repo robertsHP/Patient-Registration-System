@@ -1,0 +1,36 @@
+import React from 'react';
+import GridLayout from 'react-grid-layout';
+import 'react-grid-layout/css/styles.css';
+import 'react-resizable/css/styles.css';
+import Event from './Event';
+
+export default function EventGrid({ events, onLayoutChange, draggingEvent }) {
+    return (
+        <GridLayout
+            className="layout"
+            layout={[
+                ...events.map(event => ({ ...event, i: String(event.i), y: event.y + 1 })),
+                ...(draggingEvent ? [{ ...draggingEvent, i: String(draggingEvent.i), y: draggingEvent.y + 1 }] : [])
+            ]}
+            cols={31} // Assuming 31 columns for days
+            rowHeight={50}
+            width={1200}
+            onLayoutChange={onLayoutChange}
+            isDraggable
+            isResizable
+            draggableHandle=".event-title"
+            resizeHandles={['e', 'w']}
+        >
+            {events.map(event => (
+                <div key={event.i}>
+                    <Event title={event.title} />
+                </div>
+            ))}
+            {draggingEvent && (
+                <div key={draggingEvent.i}>
+                    <Event title={draggingEvent.title} />
+                </div>
+            )}
+        </GridLayout>
+    );
+}
