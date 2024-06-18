@@ -4,6 +4,7 @@ import GridLayout from 'react-grid-layout';
 import 'react-grid-layout/css/styles.css';
 import 'react-resizable/css/styles.css';
 
+import ColumnRow from './ColumnRow';
 import EventRow from './EventRow';
 
 import './EventGrid.css';
@@ -65,10 +66,8 @@ export default function EventGrid({ year, month }) {
     // Stāvoklis, lai glabātu rindas augstumus, pamatojoties uz notikumu skaitu dienā
     const [rowHeights, setRowHeights] = useState([]);
     const [columnWidths, setColumnWidths] = useState(
-        [4, 4, ...data.layout.map(() => 1)]
+        [2, 2, ...data.layout.map(() => 1)]
     );
-
-    var width = columnWidths.reduce((acc, width) => acc + width, 0);
 
     // Efekts, lai aprēķinātu rindas augstumus, pamatojoties uz pārklājošiem notikumiem katrai dienai
     useEffect(() => {
@@ -89,53 +88,28 @@ export default function EventGrid({ year, month }) {
         calculateRowHeights();
     }, [data]);
 
-    const layout = [
-        { i: 'room-column', x: 0, y: 0, w: columnWidths[0], h: 1, static: true },
-        { i: 'name-column', x: columnWidths[0], y: 0, w: columnWidths[1], h: 1, static: true },
-        ...data.layout.map((item, index) => ({
-            ...item,
-            x: columnWidths.slice(0, index + 2).reduce((acc, width) => acc + width, 0),
-            y: 0,
-            w: columnWidths[index + 2],
-            h: 1,
-        }))
-    ];
- 
     return (
         <div className="grid-container">
-            <GridLayout
-                className="layout"
-                layout={layout}
-                cols={width}
-                rowHeight={30}
-                width={1000}
-                isDraggable={false}
-                isResizable={false}
-            >
-                <div key="room-column" className="grid-cell header">Room</div>
-                <div key="name-column" className="grid-cell header">Name</div>
-                {data.layout.map((item) => (
-                    <div key={item.i} className="grid-cell">
-                        {item.date.getDate()}
+            <ColumnRow 
+                columnWidths={columnWidths}
+                data={data}
+            />
+            <div className="event-grid">
+                {Object.keys(data.rooms).map((roomId, roomIndex) => (
+                    <div key={roomIndex}>
+                        <div className="event-row">
+                            <EventRow
+                                room={data.rooms[roomId]}
+                                events={data.rooms[roomId].events}
+                                nextEventId={nextEventId}
+                                setNextEventId={setNextEventId}
+                                columnWidths={columnWidths}
+                                rowHeights={rowHeights}
+                            />
+                        </div>
                     </div>
                 ))}
-            </GridLayout>
-            {Object.keys(data.rooms).map((roomId, roomIndex) => (
-                <div
-                    key={`room-${roomIndex}`} 
-                    className="grid-cell"
-                    style={{ gridColumn: `span ${columnWidths[roomId] || 4}` }}  // Adjust to the width specified
-                >
-                    <EventRow
-                        room={data.rooms[roomId]}
-                        events={data.rooms[roomId].events}
-                        nextEventId={nextEventId}
-                        setNextEventId={setNextEventId}
-                        columnWidths={columnWidths}
-                        rowHeights={rowHeights}
-                    />
-                </div>
-            ))}
+            </div>
         </div>
     );
 }
