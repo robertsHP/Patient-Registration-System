@@ -120,6 +120,7 @@ export default function EventGrid({ year, month }) {
                     </div>
                 ))}
             </GridLayout>
+            
             {Object.keys(data.rooms).map((roomId, roomIndex) => (
                 <div
                     key={`room-${roomIndex}`} 
