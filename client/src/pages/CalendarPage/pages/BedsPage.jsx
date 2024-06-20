@@ -1,24 +1,29 @@
 import React, { useState, useEffect } from 'react';
 
-import EventGrid from './components/EventGrid.jsx';
+import Event from './models/Event.jsx';
+import Room from './models/Room.jsx';
+
+import EventGrid from './components/EventGrid/EventGrid.jsx';
+import GridUI from './components/GridUI.jsx';
 
 import './Page.css'
 
 export default function BedsPage ({pages, page}) {
     var events = [
-        { id: 0, room: 401, patientName: 'Vladislavs', start: '2024-03-28', end: '2024-04-04' },
-        { id: 1, room: 403, patientName: 'Katrīna', start: '2024-01-20', end: '2024-01-30' },
-        { id: 2, room: 403, patientName: 'Anda', start: '2024-04-15', end: '2024-04-19' }
+        new Event(0, 401, 'Vladislavs', '2024-03-28', '2024-04-04'),
+        new Event(1, 403, 'Katrīna', '2024-01-20', '2024-01-30'),
+        new Event(0, 403, 'Anda', '2024-04-15', '2024-04-19')
     ];
     var rooms = [
-        { id: 0, num: 401, beds: [ 'lielā gulta', 'dīvāns' ] },
-        { id: 1, num: 402, beds: [ 'lielā gulta', 'izv.dīv.' ] },
-        { id: 2, num: 403, beds: [ '', '4 vienv.g.', '', '' ] },
-        { id: 3, num: 404, beds: [ 'gulta', '', '', 'gulta' ] },
+        new Room(0, 401, [ 'lielā gulta', 'dīvāns' ]),
+        new Room(1, 402, [ 'lielā gulta', 'izv.dīv.' ] ),
+        new Room(2, 403, [ '', '4 vienv.g.', '', '' ]),
+        new Room(3, 404, [ 'gulta', '', '', 'gulta' ])
     ];
 
     return (
         <>
+            <GridUI />
             <EventGrid year={2024} month={4} /> 
         </>
     );
