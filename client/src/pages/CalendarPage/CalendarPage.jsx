@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
-import { useNavigate, Router, Route, Routes, Link, Navigate } from 'react-router-dom';
+import { useNavigate, Route, Routes, Link, Navigate } from 'react-router-dom';
 
-import Sidebar from '../../components/Sidebar.jsx';
+import Header from '../../components/Header.jsx';
 
 import BedsPage from './pages/BedsPage.jsx';
 import Beds4Page from './pages/Beds4Page.jsx';
@@ -9,7 +9,7 @@ import SaunaPage from './pages/SaunaPage.jsx';
 
 import './CalendarPage.css'
 
-export default function CalendarPage ({pages, page}) {
+export default function CalendarPage ({sidebarPages, parentUrlName}) {
     const subPages = [
         {
             title: "Gultas",
@@ -28,53 +28,21 @@ export default function CalendarPage ({pages, page}) {
         }
     ];
 
-    const [currentPage, setCurrentPage] = useState(subPages[0].urlName);
-
-    const navigate = useNavigate();
-
-    const logoutOnClick = () => {
-        // Add your logout logic here
-        console.log('Logging out...');
-
-        navigate(`/login`);
-    };
-
-    const handlePageChange = (urlName) => {
-        setCurrentPage(urlName);
-    }
-
     return (
-        <div className="main-container">
-            <div className="container">
-                <div className="container-left">
-                    <Sidebar 
-                        pages={pages} 
-                        onPageChange={handlePageChange}
-                    />
-                    {subPages.map(({urlName, title}) => (
-                        <Link key={`${urlName}_link_button`} to={`/${page.urlName}/${urlName}`}>
-                            <button 
-                                className={
-                                    `vertical-button ${urlName === currentPage ? 'active-button' : ''
-                                }`} 
-                                onClick={() => handlePageChange(urlName)}>
-                                {title}
-                            </button>
-                        </Link>
+        <div className="page-container">
+            <Header sidebarPages={sidebarPages} parentUrlName={parentUrlName} subPages={subPages}/>
+            <main>
+                <Routes>
+                    {subPages.map(({urlName, component: Component}) => (
+                        <Route 
+                            key={`${urlName}_route`} 
+                            path={`/${urlName}/*`} 
+                            element={<Component />} 
+                        />
                     ))}
-                </div>
-                <div className="container-right">
-                    <button className="logout-button" onClick={logoutOnClick}>Iziet</button>
-                </div>
-            </div>
-            <Routes>
-                {subPages.map(({urlName, component: Component}) => (
-                    <Route key={`${urlName}_route`} path={`/${urlName}/*`} element={
-                        <Component />
-                    } />
-                ))}
-                <Route path="*" element={<Navigate to={`${subPages[0].urlName}`} replace />} />
-            </Routes>
+                    <Route path="*" element={<Navigate to={`${subPages[0].urlName}`} replace />} />
+                </Routes>
+            </main>
         </div>
     );
 }

@@ -1,59 +1,26 @@
-/* .row-wrapper {
+
+.page-container {
+    position: relative; /* Container to scope absolute positioning */
+    height: 100vh; /* Full viewport height */
+}
+
+header {
     display: flex;
-    align-items: center;
     justify-content: space-between;
-    width: 100%;
-}
-
-.column-wrapper {
-    display: flex;
-    flex-direction: row;
     align-items: center;
-    justify-content: center;
-    width: 100%;
+    background-color: #282c34;
+    padding: 10px 20px;
+    color: white; /* Re-enable if needed */
+    
+    position: fixed; /* Keep header fixed at the top */
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 100; /* Ensure header is above other content */
 }
 
-.search {
-    flex: 10;
-    overflow: auto;
-    padding: 10px;
-}
-.calendar {
-    flex: 10;
-    overflow: auto;
-    padding: 10px;
-}
-.event-form {
-    flex: 5;
-    overflow: auto;
-    padding: 10px;
-} */
-
-/* .flex-container {
-    display: flex;
-    flex-direction: row;
-    justify-content: space-between;
-}
-
-.search {
-    flex: 5;
-    padding: 10px;
-}
-.main-view-picker {
-    flex: 10;
-    padding: 10px;
-}
-.event-form {
-    padding: 10px;
-} */
-
-
-.main-container {
-    overflow: hidden;
-}
-
-button.active-button {
-    background-color: #f0f0f0;
-    border: 2px solid blue;
-    color: blue;
+main {
+    margin-top: 60px; /* Offset by header height, adjust as needed */
+    padding: 20px; /* Optional padding for content spacing */
+    z-index: 1; /* Lower than header */
 }

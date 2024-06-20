@@ -1,0 +1,35 @@
+
+.header-left {
+    display: flex;
+    align-items: center;
+}
+
+.subpage-button {
+    margin-left: 10px; /* Space between sidebar button and subpage buttons */
+    background-color: #444;
+    color: white;
+    border: none;
+    padding: 10px 15px;
+    cursor: pointer;
+}
+
+.subpage-button:hover {
+    background-color: #666;
+}
+
+.subpage-button.active-button {
+    background-color: #f0f0f0;
+    border: 2px solid blue;
+    color: blue;
+}
+
+
+.active-button {
+    background-color: #222;
+    font-weight: bold;
+}
+
+.header-right {
+    display: flex;
+    align-items: center;
+}

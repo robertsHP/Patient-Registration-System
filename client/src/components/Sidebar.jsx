@@ -3,7 +3,7 @@ import { Router, Route, Routes, Link } from 'react-router-dom';
 
 import './Sidebar.css'
 
-export default function Sidebar ({pages}) {
+export default function Sidebar ({sidebarPages}) {
     const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
     const sidebarOnClick = () => {
@@ -12,15 +12,15 @@ export default function Sidebar ({pages}) {
 
     return (
         <>
-            <div className={`sidebar ${isSidebarOpen ? 'open' : ''}`}>
-                {pages.map((page) => (
+            <aside className={`sidebar ${isSidebarOpen ? 'open' : ''}`}>
+                {sidebarPages.map((page) => (
                     <div className="sidebar-link" key={page.urlName}>
                         <Link to={`/${page.urlName}`}>
                             {page.title}
                         </Link>
                     </div>
                 ))}
-            </div>
+            </aside>
             <button className="sidebar-button" onClick={sidebarOnClick}>
                 ...
             </button>

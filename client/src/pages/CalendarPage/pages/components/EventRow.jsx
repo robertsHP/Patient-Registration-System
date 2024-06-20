@@ -6,7 +6,7 @@ import 'react-resizable/css/styles.css';
 
 import './EventRow.css';
 
-export default function EventRow({ room, events, nextEventId, setNextEventId, columnWidths, rowHeights }) {
+export default function EventRow({ room, events, nextEventId, setNextEventId, columnWidths }) {
     const sumOfAllColWidths = columnWidths.reduce((acc, width) => acc + width, 0);
 
     const [localEvents, setLocalEvents] = useState(events);
@@ -37,8 +37,8 @@ export default function EventRow({ room, events, nextEventId, setNextEventId, co
     };
 
     const onMouseDown = (e) => {
-        if (e.target.closest('.react-resizable-handle') || e.target.closest('.event-title')) {
-            return; // Ignore mousedown on resize handles or event titles
+        if (e.target.closest('.react-resizable-handle') || e.target.closest('.event-name')) {
+            return; // Ignore mousedown on resize handles or event names
         }
 
         const gridRect = gridRef.current.getBoundingClientRect();
@@ -88,6 +88,71 @@ export default function EventRow({ room, events, nextEventId, setNextEventId, co
     };
 
     return (
+        // <div ref={gridRef} style={{ position: 'relative' }}>
+        //     <GridLayout
+        //         className="layout"
+        //         layout={[
+        //             { i: `room-input-${room.id}`, x: 0, y: 0, w: columnWidths[0], h: 1, static: true },
+        //             { i: `name-input-${room.id}`, x: columnWidths[0], y: 0, w: columnWidths[1], h: 1, static: true },
+        //         ]}
+        //         cols={sumOfAllColWidths}
+        //         rowHeight={50}
+        //         width={1000}
+        //     >
+        //         <div key={`room-input-${room.id}`} className="grid-cell">
+        //             <input type="text" placeholder="Room Name" defaultValue={room.name} style={{ width: '100%' }} />
+        //         </div>
+
+        //         <div key={`name-input-${room.id}`} className="grid-cell">
+        //             <input type="text" placeholder="Event Name" defaultValue={room.patient} style={{ width: '100%' }} />
+        //         </div>
+        //     </GridLayout>
+        //     <div
+        //         onMouseDown={onMouseDown}
+        //         onMouseMove={onMouseMove}
+        //         onMouseUp={onMouseUp}
+        //     >
+        //         <GridLayout
+        //             className="layout"
+        //             layout={[
+        //                 // Dynamic events
+        //                 ...localEvents.map((event) => ({
+        //                     ...event,
+        //                     i: String(event.i),
+        //                     h: 1, // Ensuring height is set correctly
+        //                     x: event.x < columnWidths[0] + columnWidths[1] ? columnWidths[0] + columnWidths[1] : event.x, // Prevent overlap with inputs
+        //                 })),
+        //                 // New event in progress
+        //                 ...(draggingEvent ? [{ ...draggingEvent, h: 1, x: draggingEvent.x < columnWidths[0] + columnWidths[1] ? columnWidths[0] + columnWidths[1] : draggingEvent.x }] : [])
+        //             ]}
+        //             cols={sumOfAllColWidths}
+        //             rowHeight={50}
+        //             width={1000}
+        //             onLayoutChange={onLayoutChange}
+        //             isDraggable
+        //             isResizable
+        //             draggableHandle=".event-name"
+        //             resizeHandles={['e', 'w']}
+        //         >
+        //             {/* Render events */}
+        //             {localEvents.map(event => (
+        //                 <div key={event.i} style={{ height: rowHeights[0] }}>
+        //                     <div className="event-name no-select">{event.title}</div> {/* Apply no-select class here */}
+        //                 </div>
+        //             ))}
+
+        //             {/* New event in progress */}
+        //             {draggingEvent && (
+        //                 <div key={draggingEvent.i} style={{ height: rowHeights[0] }}>
+        //                     <div className="event-name no-select">{draggingEvent.title}</div> {/* Apply no-select class here */}
+        //                 </div>
+        //             )}
+        //         </GridLayout>
+        //     </div>
+        // </div>
+
+
+
         <div
             ref={gridRef}
             onMouseDown={onMouseDown}
@@ -116,7 +181,7 @@ export default function EventRow({ room, events, nextEventId, setNextEventId, co
                 onLayoutChange={onLayoutChange}
                 isDraggable
                 isResizable
-                draggableHandle=".event-title"
+                draggableHandle=".event-name"
                 resizeHandles={['e', 'w']}
             >
                 <div key={`room-input-${room.id}`} className="grid-cell">
@@ -124,20 +189,20 @@ export default function EventRow({ room, events, nextEventId, setNextEventId, co
                 </div>
 
                 <div key={`name-input-${room.id}`} className="grid-cell">
-                    <input type="text" placeholder="Event Name" style={{ width: '100%' }} />
+                    <input type="text" placeholder="Event Name" defaultValue={room.patient} style={{ width: '100%' }} />
                 </div>
 
                 {/* Render events */}
                 {localEvents.map(event => (
-                    <div key={event.i} style={{ height: rowHeights[0] }}>
-                        <div className="event-title">{event.title}</div>
+                    <div key={event.i}>
+                        <div className="event-name no-select">{event.title}</div> {/* Apply no-select class here */}
                     </div>
                 ))}
 
                 {/* New event in progress */}
                 {draggingEvent && (
-                    <div key={draggingEvent.i} style={{ height: rowHeights[0] }}>
-                        <div className="event-title">{draggingEvent.title}</div>
+                    <div key={draggingEvent.i}>
+                        <div className="event-name no-select">{draggingEvent.title}</div> {/* Apply no-select class here */}
                     </div>
                 )}
             </GridLayout>

@@ -1,0 +1,11 @@
+
+.event-name {
+    user-select: none; /* Disable text selection */
+    -webkit-user-select: none; /* Safari */
+    -moz-user-select: none; /* Firefox */
+    -ms-user-select: none; /* Internet Explorer/Edge */
+
+    text-align: center;
+    font-weight: bold;
+    padding: 5px;
+}

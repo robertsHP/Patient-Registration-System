@@ -1,0 +1,28 @@
+
+.flex-container {
+    display: flex;
+    flex-wrap: wrap;
+}
+
+.search {
+    flex: 1;
+    padding: 20px;
+}
+.calendar-view {
+    flex: 1.1;
+    padding: 20px;
+}
+.event-form {
+    padding: 20px;
+}
+
+
+.container {
+    overflow: hidden;
+}
+
+button.active-button {
+    background-color: #f0f0f0;
+    border: 2px solid blue;
+    color: blue;
+}

@@ -20,8 +20,7 @@ const getMonthDays = (year, month) => {
     return days;
 };
 
-// Sākotnējo datu uzstādīšanas funkcija
-const initialData = (year, month) => {
+const getDateLayout = (year, month) => {
     const layout = [];
     // Izveido izkārtojuma ierakstu katrai mēneša dienai
     getMonthDays(year, month).forEach((day, index) => {
@@ -35,78 +34,64 @@ const initialData = (year, month) => {
             date: day // Saglabā datuma objektu
         });
     });
+    return layout;
+}
 
+// Sākotnējo datu uzstādīšanas funkcija
+const initialData = (year, month) => {
     // Sākotnējā iestatīšana telpām un to notikumiem
     return {
-        layout,
-        rooms: {
-            'Room 1': {
-                name: 'John Doe',
+        ...getDateLayout(year, month),
+        rooms: [
+            {
+                name: 'Room 1',
+                patient: 'John Doe',
                 events: [
                     { i: 'event-0', x: 0, y: 1, w: 3, h: 1, title: 'Event 1', date: new Date(year, month, 1) }
                 ]
             },
-            'Room 2': {
+            {
                 name: 'Jane Smith',
+                patient: 'Jane Smith',
                 events: [
                     { i: 'event-0', x: 0, y: 1, w: 3, h: 1, title: 'Event 2', date: new Date(year, month, 1) }
                 ]
             }
-        }
+        ]
     };
 };
 
 // Galvenā Grid komponenta funkcija
 export default function EventGrid({ year, month }) {
-    // Stāvoklis grid datu glabāšanai
+
     const [data] = useState(initialData(year, month));
-    // Stāvoklis, lai pārvaldītu nākamo pieejamo notikumu ID
+
+    const [dateLayout, setDateLayout] = useState(getDateLayout(year, month));
+
     const [nextEventId, setNextEventId] = useState(2); // Sākas ar 2, jo event-0 jau ir
-    // Stāvoklis, lai glabātu rindas augstumus, pamatojoties uz notikumu skaitu dienā
-    const [rowHeights, setRowHeights] = useState([]);
+
     const [columnWidths, setColumnWidths] = useState(
-        [4, 4, ...data.layout.map(() => 1)]
+        [4, 4, ...dateLayout.map(() => 1)]
     );
 
-    var width = columnWidths.reduce((acc, width) => acc + width, 0);
+    var sumOfAllColWidths = columnWidths.reduce((acc, width) => acc + width, 0);
 
-    // Efekts, lai aprēķinātu rindas augstumus, pamatojoties uz pārklājošiem notikumiem katrai dienai
-    useEffect(() => {
-        const calculateRowHeights = () => {
-            const heights = data.layout.map(day => {
-                let maxHeight = 1;
-                // Pārbauda katru telpu un tās notikumus
-                Object.values(data.rooms).forEach(room => {
-                    const overlappingEvents = room.events.filter(event => event.date.getTime() === day.date.getTime());
-                    if (overlappingEvents.length > maxHeight) {
-                        maxHeight = overlappingEvents.length;
-                    }
-                });
-                return maxHeight * 50; // Pieņemot, ka katrs notikums aizņem 50px augstumu
-            });
-            setRowHeights(heights);
-        };
-        calculateRowHeights();
-    }, [data]);
-
-    const layout = [
-        { i: 'room-column', x: 0, y: 0, w: columnWidths[0], h: 1, static: true },
-        { i: 'name-column', x: columnWidths[0], y: 0, w: columnWidths[1], h: 1, static: true },
-        ...data.layout.map((item, index) => ({
-            ...item,
-            x: columnWidths.slice(0, index + 2).reduce((acc, width) => acc + width, 0),
-            y: 0,
-            w: columnWidths[index + 2],
-            h: 1,
-        }))
-    ];
- 
     return (
         <div className="grid-container">
             <GridLayout
                 className="layout"
-                layout={layout}
-                cols={width}
+                layout={[
+                    { i: 'room-column', x: 0, y: 0, w: columnWidths[0], h: 1, static: true },
+                    { i: 'name-column', x: columnWidths[0], y: 0, w: columnWidths[1], h: 1, static: true },
+                    ...dateLayout.map((item, index) => ({
+                        ...item,
+                        x: columnWidths.slice(0, index + 2).reduce((acc, width) => acc + width, 0),
+                        y: 0,
+                        w: columnWidths[index + 2],
+                        h: 1,
+                    }))
+                ]}
+                cols={sumOfAllColWidths}
                 rowHeight={30}
                 width={1000}
                 isDraggable={false}
@@ -114,7 +99,7 @@ export default function EventGrid({ year, month }) {
             >
                 <div key="room-column" className="grid-cell header">Room</div>
                 <div key="name-column" className="grid-cell header">Name</div>
-                {data.layout.map((item) => (
+                {dateLayout.map((item) => (
                     <div key={item.i} className="grid-cell">
                         {item.date.getDate()}
                     </div>
@@ -133,7 +118,6 @@ export default function EventGrid({ year, month }) {
                         nextEventId={nextEventId}
                         setNextEventId={setNextEventId}
                         columnWidths={columnWidths}
-                        rowHeights={rowHeights}
                     />
                 </div>
             ))}
