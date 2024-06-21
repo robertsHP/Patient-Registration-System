@@ -4,13 +4,13 @@ module.exports = {
         //     name: 'admin',
         //     script: './admin/boot.js',
         //     env: {
-        //         NODE_ENV: 'npm run dev',
+        //         NODE_COMMAND: 'npm run dev',
         //     },
         //     env_production: {
-        //         NODE_ENV: 'npm start',
+        //         NODE_COMMAND: 'npm start',
         //     },
         //     env_test: {
-        //         NODE_ENV: 'npm test',
+        //         NODE_COMMAND: 'npm test',
         //     },
         // },
         {
@@ -26,18 +26,18 @@ module.exports = {
                 NODE_COMMAND: 'npm test',
             },
         },
-        // {
-        //     name: 'server',
-        //     script: './server/boot.js',
-        //     env: {
-        //         NODE_ENV: 'npm run dev',
-        //     },
-        //     env_production: {
-        //         NODE_ENV: 'npm start',
-        //     },
-        //     env_test: {
-        //         NODE_ENV: 'npm test',
-        //     },
-        // },
+        {
+            name: 'server',
+            script: './server/boot.js',
+            env: {
+                NODE_COMMAND: 'npm run dev',
+            },
+            env_production: {
+                NODE_COMMAND: 'npm start',
+            },
+            env_test: {
+                NODE_COMMAND: 'npm test',
+            },
+        }
     ]
 }

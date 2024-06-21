@@ -8,13 +8,13 @@ const osType = os.type();
 let cdCommand;
 
 if (osType === 'Windows_NT') {
-    cdCommand = 'cd client &&';
+    cdCommand = 'cd admin &&';
 } else {
     // For macOS and Linux
-    cdCommand = 'cd client;';
+    cdCommand = 'cd admin;';
 }
 
-// Get the command from environment variables
+// Get the command from ecosystem.config.js
 const command = process.env.NODE_COMMAND;
 
 // Combine the commands

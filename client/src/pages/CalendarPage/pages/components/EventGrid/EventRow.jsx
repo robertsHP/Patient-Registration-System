@@ -37,6 +37,7 @@ export default function EventRow({ room, events, nextEventId, setNextEventId, co
     };
 
     const onMouseDown = (e) => {
+        console.log("onMouseDown");
         if (e.target.closest('.react-resizable-handle') || e.target.closest('.event')) {
             return; // Ignore mousedown on resize handles or event names
         }
@@ -149,7 +150,7 @@ export default function EventRow({ room, events, nextEventId, setNextEventId, co
 
                 {/* Additional column inputs */}
                 <div key="additional-input-1" className="grid-cell">
-                    <input type="text" defaultValue={1} style={{ width: '100%' }} />
+                    1 {/* Add value */}
                 </div>
                 <div key="additional-input-2" className="grid-cell">
                     <input type="text" defaultValue={"T"} style={{ width: '100%' }} />

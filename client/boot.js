@@ -14,7 +14,7 @@ if (osType === 'Windows_NT') {
     cdCommand = 'cd client;';
 }
 
-// Get the command from environment variables
+// Get the command from ecosystem.config.js
 const command = process.env.NODE_COMMAND;
 
 // Combine the commands

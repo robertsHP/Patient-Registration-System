@@ -67,7 +67,7 @@ export default function EventGrid({ date }) {
     const [nextEventId, setNextEventId] = useState(2); // Starts with 2 because event-0 already exists
 
     const [columnWidths, setColumnWidths] = useState(
-        [4, 4, ...dateLayout.map(() => 1), 4, 4] // Two additional columns at the end with widths 4 each
+        [4, 4, ...dateLayout.map(() => 1), 1, 4] // Two additional columns at the end with widths 4 each
     );
 
     // Calculate the sum of all column widths
