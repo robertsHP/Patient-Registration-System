@@ -61,20 +61,20 @@ const initialData = (year, month) => {
     };
 };
 
-// Galvenā Grid komponenta funkcija
-export default function EventGrid({ year, month }) {
-
-    const [data] = useState(initialData(year, month));
-
-    const [dateLayout, setDateLayout] = useState(getDateLayout(year, month));
-
-    const [nextEventId, setNextEventId] = useState(2); // Sākas ar 2, jo event-0 jau ir
+export default function EventGrid({ date }) {
+    const [data] = useState(initialData(date.getFullYear(), date.getMonth() + 1));
+    const [dateLayout, setDateLayout] = useState(getDateLayout(date.getFullYear(), date.getMonth() + 1));
+    const [nextEventId, setNextEventId] = useState(2); // Starts with 2 because event-0 already exists
 
     const [columnWidths, setColumnWidths] = useState(
-        [4, 4, ...dateLayout.map(() => 1)]
+        [4, 4, ...dateLayout.map(() => 1), 4, 4] // Two additional columns at the end with widths 4 each
     );
 
-    var sumOfAllColWidths = columnWidths.reduce((acc, width) => acc + width, 0);
+    // Calculate the sum of all column widths
+    const sumOfAllColWidths = columnWidths.reduce((acc, width) => acc + width, 0);
+
+    // Calculate the starting position for the additional columns
+    const lastColumnStart = columnWidths.slice(0, columnWidths.length - 2).reduce((acc, width) => acc + width, 0);
 
     return (
         <div className="grid-container">
@@ -89,7 +89,10 @@ export default function EventGrid({ year, month }) {
                         y: 0,
                         w: columnWidths[index + 2],
                         h: 1,
-                    }))
+                    })),
+                    // Add the two additional columns at the end
+                    { i: 'sum-column', x: lastColumnStart, y: 0, w: columnWidths[columnWidths.length - 2], h: 1, static: true },
+                    { i: 'hotel-column', x: lastColumnStart + columnWidths[columnWidths.length - 2], y: 0, w: columnWidths[columnWidths.length - 1], h: 1, static: true }
                 ]}
                 cols={sumOfAllColWidths}
                 rowHeight={30}
@@ -97,20 +100,23 @@ export default function EventGrid({ year, month }) {
                 isDraggable={false}
                 isResizable={false}
             >
-                <div key="room-column" className="grid-cell header">Room</div>
-                <div key="name-column" className="grid-cell header">Name</div>
+                <div key="room-column" className="grid-cell header">Telpa</div>
+                <div key="name-column" className="grid-cell header">Vārds</div>
                 {dateLayout.map((item) => (
                     <div key={item.i} className="grid-cell">
                         {item.date.getDate()}
                     </div>
                 ))}
+                {/* Add the new column divs */}
+                <div key="sum-column" className="grid-cell header"></div>
+                <div key="hotel-column" className="grid-cell header">Viesnīca</div>
             </GridLayout>
             
             {Object.keys(data.rooms).map((roomId, roomIndex) => (
                 <div
                     key={`room-${roomIndex}`} 
                     className="grid-cell"
-                    style={{ gridColumn: `span ${columnWidths[roomId] || 4}` }}  // Adjust to the width specified
+                    style={{ gridColumn: `span ${columnWidths[roomId] || 4}` }}
                 >
                     <EventRow
                         room={data.rooms[roomId]}

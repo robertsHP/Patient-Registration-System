@@ -20,11 +20,17 @@ export default function BedsPage ({pages, page}) {
         new Room(2, 403, [ '', '4 vienv.g.', '', '' ]),
         new Room(3, 404, [ 'gulta', '', '', 'gulta' ])
     ];
+    const [date, setDate] = useState(new Date ());
 
     return (
         <>
-            <GridUI />
-            <EventGrid year={2024} month={4} /> 
+            <GridUI 
+                date={date} 
+            />
+            <EventGrid 
+                date={date} 
+            
+            /> 
         </>
     );
 }

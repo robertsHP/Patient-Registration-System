@@ -42,7 +42,7 @@ export default function EventRow({ room, events, nextEventId, setNextEventId, co
         }
 
         const gridRect = gridRef.current.getBoundingClientRect();
-        const colWidth = gridRect.width / 31; // Assuming 31 columns for days
+        const colWidth = gridRect.width / sumOfAllColWidths; // Dynamic calculation based on grid width
         const x = Math.floor((e.clientX - gridRect.left) / colWidth);
 
         setDraggingEvent({
@@ -61,7 +61,7 @@ export default function EventRow({ room, events, nextEventId, setNextEventId, co
     const onMouseMove = (e) => {
         if (isCreatingEvent && draggingEvent) {
             const gridRect = gridRef.current.getBoundingClientRect();
-            const colWidth = gridRect.width / 31; // Assuming 31 columns for days
+            const colWidth = gridRect.width / sumOfAllColWidths; // Dynamic calculation based on grid width
             const currentX = Math.floor((e.clientX - gridRect.left) / colWidth);
             const newWidth = Math.abs(currentX - draggingEvent.startX) + 1;
             const newX = Math.min(draggingEvent.startX, currentX);
@@ -87,6 +87,9 @@ export default function EventRow({ room, events, nextEventId, setNextEventId, co
         }
     };
 
+    // Calculate the starting position for the additional columns
+    const lastColumnStart = columnWidths.slice(0, columnWidths.length - 2).reduce((acc, width) => acc + width, 0);
+
     return (
         <div
             ref={gridRef}
@@ -108,7 +111,10 @@ export default function EventRow({ room, events, nextEventId, setNextEventId, co
                         x: event.x < columnWidths[0] + columnWidths[1] ? columnWidths[0] + columnWidths[1] : event.x, // Prevent overlap with inputs
                     })),
                     // New event in progress
-                    ...(draggingEvent ? [{ ...draggingEvent, h: 1, x: draggingEvent.x < columnWidths[0] + columnWidths[1] ? columnWidths[0] + columnWidths[1] : draggingEvent.x }] : [])
+                    ...(draggingEvent ? [{ ...draggingEvent, h: 1, x: draggingEvent.x < columnWidths[0] + columnWidths[1] ? columnWidths[0] + columnWidths[1] : draggingEvent.x }] : []),
+                    // Add additional columns
+                    { i: 'additional-input-1', x: lastColumnStart, y: 0, w: columnWidths[columnWidths.length - 2], h: 1, static: true },
+                    { i: 'additional-input-2', x: lastColumnStart + columnWidths[columnWidths.length - 2], y: 0, w: columnWidths[columnWidths.length - 1], h: 1, static: true }
                 ]}
                 cols={sumOfAllColWidths}
                 rowHeight={50}
@@ -120,11 +126,11 @@ export default function EventRow({ room, events, nextEventId, setNextEventId, co
                 resizeHandles={['e', 'w']}
             >
                 <div key={`room-input-${room.id}`} className="grid-cell">
-                    <input type="text" placeholder="Room Name" defaultValue={room.name} style={{ width: '100%' }} />
+                    <input type="text" defaultValue={room.name} style={{ width: '100%' }} />
                 </div>
 
                 <div key={`name-input-${room.id}`} className="grid-cell">
-                    <input type="text" placeholder="Event Name" defaultValue={room.patient} style={{ width: '100%' }} />
+                    <input type="text" defaultValue={room.patient} style={{ width: '100%' }} />
                 </div>
 
                 {/* Render events */}
@@ -140,6 +146,14 @@ export default function EventRow({ room, events, nextEventId, setNextEventId, co
                         <div className="event-name no-select">{draggingEvent.title}</div> {/* Apply no-select class here */}
                     </div>
                 )}
+
+                {/* Additional column inputs */}
+                <div key="additional-input-1" className="grid-cell">
+                    <input type="text" defaultValue={1} style={{ width: '100%' }} />
+                </div>
+                <div key="additional-input-2" className="grid-cell">
+                    <input type="text" defaultValue={"T"} style={{ width: '100%' }} />
+                </div>
             </GridLayout>
         </div>
     );
