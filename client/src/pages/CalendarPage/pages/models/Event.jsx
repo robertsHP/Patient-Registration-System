@@ -1,4 +1,5 @@
 
+
 export default class Event {
     constructor(id, room, patientName, start, end) {
         this.id = id;

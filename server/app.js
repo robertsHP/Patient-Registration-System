@@ -22,15 +22,54 @@ app.listen(port, () => {
 app.get('/', (req, res) => {
     res.send('Hello World!');
 });
-app.use('/api', routes);
 
-// app.get('/data', (req, res) => {
-//     res.json({
-//         name: "John Doe",
-//         age: 20,
-//         courses: ["Math", "Science", "English"]
-//     });
-// });
+
+app.get('/api/events', (req, res) => {
+    res.json({
+        0: [
+            401, 
+            'Vladislavs', 
+            '2024-03-28', 
+            '2024-04-04'
+        ],
+        1: [
+            403, 
+            'Katrīna', 
+            '2024-01-20', 
+            '2024-01-30'
+        ],
+        2: [
+            403, 
+            'Anda', 
+            '2024-04-15', 
+            '2024-04-19'
+        ],
+
+    });
+});
+
+app.get('/api/rooms', (req, res) => {
+    res.json({
+        0: [
+            401, 
+            [ 'lielā gulta', 'dīvāns' ]
+        ],
+        1: [
+            402, 
+            [ 'lielā gulta', 'izv.dīv.' ]
+        ],
+        2: [
+            403, 
+            [ '', '4 vienv.g.', '', '' ]
+        ],
+        3: [
+            404, 
+            [ 'gulta', '', '', 'gulta' ]
+        ],
+    });
+});
+
+
 // app.post('/data', (req, res) => {
 //     console.log(req.body);
 // });
