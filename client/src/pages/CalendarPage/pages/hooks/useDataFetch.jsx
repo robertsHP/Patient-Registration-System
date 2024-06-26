@@ -6,26 +6,6 @@ import Event from '../models/Event.jsx';
 import Room from '../models/Room.jsx';
 import DataStorage from '../models/DataStorage.jsx';
 
-const transformEvents = (eventsData) => {
-    const events = [];
-    Object.entries(eventsData).forEach(([id, details]) => {
-        const [room, patientName, start, end] = details;
-        const newEvent = new Event(parseInt(id, 10), room, patientName, start, end);
-        events.push(newEvent);
-    });
-    return events;
-};
-
-const transformRooms = (roomsData) => {
-    const rooms = [];
-    Object.entries(roomsData).forEach(([id, details]) => {
-        const [number, beds] = details;
-        const newRoom = new Room(parseInt(id, 10), number, beds);
-        rooms.push(newRoom);
-    });
-    return rooms;
-};
-
 export default function useDataFetch (tableName) {
     const [date, setDate] = useState(new Date ());
 

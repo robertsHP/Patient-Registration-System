@@ -10,12 +10,12 @@ CREATE TABLE LRC_CALENDAR_PAGE_patient_type (
 
 CREATE TABLE LRC_CALENDAR_PAGE_doctor (
 	id_doctor 	INT PRIMARY KEY, 
-	doc_name 	VARCHAR(70)
+	doc_name 	VARCHAR(80)
 );
 
 CREATE TABLE LRC_CALENDAR_PAGE_patient (
 	id_patient          INT PRIMARY KEY, 
-	pat_name            VARCHAR(20), 
+	pat_name            VARCHAR(80), 
 	phone_num           VARCHAR(45), 
 	hotel_stay_start    TIMESTAMP, 
 	hotel_stay_end      TIMESTAMP, 
@@ -42,8 +42,9 @@ CREATE TABLE LRC_CALENDAR_PAGE_beds (
 );
 
 CREATE TABLE LRC_CALENDAR_PAGE_bed (
-    id_bed  INT PRIMARY KEY,
-    id_room INT,
+    id_bed      INT PRIMARY KEY,
+    bed_name    VARCHAR(80), 
+    id_room     INT,
     FOREIGN KEY (id_room) REFERENCES LRC_CALENDAR_PAGE_room(id_room)
 );
 

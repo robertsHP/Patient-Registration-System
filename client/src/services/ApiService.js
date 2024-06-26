@@ -15,7 +15,6 @@ class ApiService {
         return this.apiClient.get(endpoint, { params })
             .then(response => response.data)
             .catch(error => {
-                // Handle errors as appropriate for your application
                 throw new Error(`GET Error: ${error.response ? error.response.data : error.message}`);
             });
     }
@@ -25,8 +24,25 @@ class ApiService {
         return this.apiClient.post(endpoint, data)
             .then(response => response.data)
             .catch(error => {
-                // Handle errors as appropriate for your application
                 throw new Error(`POST Error: ${error.response ? error.response.data : error.message}`);
+            });
+    }
+
+    // Method to handle PUT requests
+    put(endpoint, data) {
+        return this.apiClient.put(endpoint, data)
+            .then(response => response.data)
+            .catch(error => {
+                throw new Error(`PUT Error: ${error.response ? error.response.data : error.message}`);
+            });
+    }
+
+    // Method to handle DELETE requests
+    delete(endpoint) {
+        return this.apiClient.delete(endpoint)
+            .then(response => response.data)
+            .catch(error => {
+                throw new Error(`DELETE Error: ${error.response ? error.response.data : error.message}`);
             });
     }
 }
