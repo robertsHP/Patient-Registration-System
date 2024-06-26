@@ -61,7 +61,7 @@ const initialData = (year, month) => {
     };
 };
 
-export default function EventGrid({ date }) {
+export default function EventGrid({ date, setDate, dataStorage, setDataStorage }) {
     const [data] = useState(initialData(date.getFullYear(), date.getMonth() + 1));
     const [dateLayout, setDateLayout] = useState(getDateLayout(date.getFullYear(), date.getMonth() + 1));
     const [nextEventId, setNextEventId] = useState(2); // Starts with 2 because event-0 already exists

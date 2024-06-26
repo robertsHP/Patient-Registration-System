@@ -1,7 +1,19 @@
-pm2 start ecosystem.config.js
-pm2 start ecosystem.config.js --env development
-pm2 start ecosystem.config.js --env test
 
-pm2 kill
+PM2:
+    pm2 start ecosystem.config.js
+    pm2 start ecosystem.config.js --env development
+    pm2 start ecosystem.config.js --env test
+
+    pm2 kill
 
 PostgreSQL:
+    sudo systemctl start postgresql
+    sudo systemctl restart postgresql
+    sudo systemctl stop postgresql
+
+    sudo systemctl status postgresql
+
+    sudo -i -u postgres
+    psql
+
+    exit

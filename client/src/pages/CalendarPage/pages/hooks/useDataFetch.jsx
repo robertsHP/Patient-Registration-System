@@ -26,7 +26,7 @@ const transformRooms = (roomsData) => {
     return rooms;
 };
 
-export default function useDataFetch () {
+export default function useDataFetch (dbName) {
     const [date, setDate] = useState(new Date ());
 
     const [dataStorage, setDataStorage] = useState(new DataStorage());
@@ -40,7 +40,7 @@ export default function useDataFetch () {
                 setError(null);
 
                 const [eventsResponse, roomsResponse] = await Promise.all([
-                    ApiService.get('/api/events'),
+                    ApiService.get('/api/'+dbName),
                     ApiService.get('/api/rooms')
                 ]);
 

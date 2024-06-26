@@ -7,19 +7,25 @@ import GridUI from './components/GridUI.jsx';
 
 import './Page.css'
 
-export default function BedsPage ({pages, page}) {
+export default function BedsPage () {
     const {
         date, setDate,
         dataStorage, setDataStorage
-    } = useDataFetch();
+    } = useDataFetch("beds");
 
     return (
         <>
             <GridUI 
                 date={date}
+                setDate={setDate}
+                dataStorage={dataStorage}
+                setDataStorage={setDataStorage}
             />
             <EventGrid 
                 date={date}
+                setDate={setDate}
+                dataStorage={dataStorage}
+                setDataStorage={setDataStorage}
             /> 
         </>
     );
