@@ -13,6 +13,8 @@ export default function BedsPage () {
         dataStorage, setDataStorage
     } = useDataFetch("beds");
 
+    console.log(dataStorage.getEvents());
+
     return (
         <>
             <GridUI 

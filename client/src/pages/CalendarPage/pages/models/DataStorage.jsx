@@ -6,6 +6,14 @@ export default class DataStorage {
         this.rooms = [];
     }
 
+    addEvents(events) {
+        this.events = events;
+    }
+
+    addRooms(rooms) {
+        this.rooms = rooms;
+    }
+
     addEvent(event) {
         this.events.push(event);
     }

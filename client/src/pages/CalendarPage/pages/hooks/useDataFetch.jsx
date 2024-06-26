@@ -26,40 +26,40 @@ const transformRooms = (roomsData) => {
     return rooms;
 };
 
-export default function useDataFetch (dbName) {
+export default function useDataFetch (tableName) {
     const [date, setDate] = useState(new Date ());
 
     const [dataStorage, setDataStorage] = useState(new DataStorage());
-    const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
 
     useEffect(() => {
         const fetchData = async () => {
             try {
-                setLoading(true);
                 setError(null);
 
                 const [eventsResponse, roomsResponse] = await Promise.all([
-                    ApiService.get('/api/'+dbName),
-                    ApiService.get('/api/rooms')
+                    ApiService.get('/api/'+tableName),
+                    ApiService.get('/api/room')
                 ]);
 
-                const events = transformEvents(eventsResponse);
-                const rooms = transformRooms(roomsResponse);
+                const eventsList = Object.values(eventsResponse);
+                const roomsList = Object.values(roomsResponse);
 
                 const storage = new DataStorage();
-                events.forEach(event => storage.addEvent(event));
-                rooms.forEach(room => storage.addRoom(room));
+                storage.addEvents(eventsList);
+                storage.addRooms(roomsList);
 
                 setDataStorage(storage);
             } catch (err) {
                 setError(err.message);
-            } finally {
-                setLoading(false);
             }
         };
 
         fetchData();
+
+        if (error) {
+            console.error('Error:' + error);
+        }
     }, []);
 
     return { 

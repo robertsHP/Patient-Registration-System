@@ -25,6 +25,24 @@ export default function LoginPage ({pages}) {
         }
     };
 
+
+    ///KAD IR ADMIN PANELIS UN LIETOTĀJU PĀRVALDĪBA GATAVA TAD INICIALIZĒ ŠO
+    // const handleSubmit = async (event) => {
+    //     event.preventDefault();
+
+    //     try {
+    //         const response = await ApiService.post('/login', { username, password });
+            
+    //         if (response.success) {
+    //             navigate(`/${pages[0].urlName}`);
+    //         } else {
+    //             setError('Nepareizs lietotājvārds vai parole');
+    //         }
+    //     } catch (error) {
+    //         setError(error.message);
+    //     }
+    // };
+
     return (
         <div className="login-page">
             <div className="login-container">
