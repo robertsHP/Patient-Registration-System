@@ -2,12 +2,11 @@
 const express = require('express');
 const app = express();
 
-const pool = require('./src/db.connect.js');
-const func = require('./src/util.functions.js');
+const defaultTableRoute = require('./src/routes/defaultTableRoute.js'); 
+
 require('dotenv').config({ path: '../.env' });
 
 const port = process.env.SERVER_PORT;
-const prefix = process.env.CALENDAR_PAGE_TABLE_PREFIX;
 
 app.listen(port, () => {
     console.log(`Server running at http://localhost:${port}`);
@@ -32,82 +31,41 @@ app.get('/api', (req, res) => {
     res.send('Api is running...');
 });
 
-app.get('/api/:tableName', async (req, res) => {
-    const { tableName } = req.params;
-    try {
-        var sanitizedTableName = prefix + func.sanitizeTableName(tableName);
-        const result = await pool.query(`SELECT * FROM ${sanitizedTableName}`);
-        res.json(result.rows);
-    } catch (err) {
-        console.error(err.message);
-        res.status(500).send('Server error: ' + err.message);
-    }
-});
+app.use('/api', defaultTableRoute); 
 
-app.get('/api/:tableName/:id', async (req, res) => {
-    const { tableName, id } = req.params;
-    try {
-        var sanitizedTableName = prefix + func.sanitizeTableName(tableName);
-        const result = await pool.query(`SELECT * FROM ${sanitizedTableName} WHERE id = $1`, [id]);
-        if (result.rows.length === 0) {
-            return res.status(404).send('Row not found');
-        }
-        res.json(result.rows[0]);
-    } catch (err) {
-        console.error(err.message);
-        res.status(500).send('Server error: ' + err.message);
-    }
-});
 
-app.post('/api/:tableName', async (req, res) => {
-    const { tableName } = req.params;
-    const data = req.body; // Assuming JSON body with keys matching table columns
-    const sanitizedTableName = prefix + func.sanitizeTableName(tableName);
-    const columns = Object.keys(data).join(', ');
-    const values = Object.values(data);
-    const valuePlaceholders = values.map((_, index) => `$${index + 1}`).join(', ');
+// app.get('/api/beds', async (req, res) => {
+//     try {
+//         // Sanitize and prefix the table names
+//         const sanitizedBedsTableName = prefix + func.sanitizeTableName("beds");
+//         const sanitizedRoomTableName = prefix + func.sanitizeTableName("room");
+//         const sanitizedPatientTableName = prefix + func.sanitizeTableName("patient");
 
-    try {
-        const result = await pool.query(`INSERT INTO ${sanitizedTableName} (${columns}) VALUES (${valuePlaceholders}) RETURNING *`, values);
-        res.status(201).json(result.rows[0]);
-    } catch (err) {
-        console.error(err.message);
-        res.status(500).send('Server error: ' + err.message);
-    }
-});
+//         // Define the query with the prefixed and sanitized table names
+//         const query = `
+//             SELECT 
+//                 b.id_beds, 
+//                 b.begin_date, 
+//                 b.end_date, 
+//                 b.notes, 
+//                 r.room_num, 
+//                 p.pat_name, 
+//                 p.phone_num,
+//                 p.hotel_stay_start,
+//                 p.hotel_stay_end
+//             FROM ${sanitizedBedsTableName} b
+//             JOIN ${sanitizedRoomTableName} r ON b.id_room = r.id_room
+//             JOIN ${sanitizedPatientTableName} p ON b.id_patient = p.id_patient;
+//         `;
 
-app.put('/api/:tableName/:id', async (req, res) => {
-    const { tableName, id } = req.params;
-    const data = req.body;
-    const sanitizedTableName = prefix + func.sanitizeTableName(tableName);
-    const updates = Object.keys(data).map((key, index) => `${key} = $${index + 2}`);
-    const values = Object.values(data);
-    values.push(id);
+//         // Execute the query
+//         const result = await pool.query(query);
 
-    try {
-        const result = await pool.query(`UPDATE ${sanitizedTableName} SET ${updates.join(', ')} WHERE id = $1 RETURNING *`, values);
-        if (result.rows.length === 0) {
-            return res.status(404).send('Row not found');
-        }
-        res.json(result.rows[0]);
-    } catch (err) {
-        console.error(err.message);
-        res.status(500).send('Server error: ' + err.message);
-    }
-});
-
-app.delete('/api/:tableName/:id', async (req, res) => {
-    const { tableName, id } = req.params;
-    const sanitizedTableName = prefix + func.sanitizeTableName(tableName);
-
-    try {
-        const result = await pool.query(`DELETE FROM ${sanitizedTableName} WHERE id = $1 RETURNING *`, [id]);
-        if (result.rows.length === 0) {
-            return res.status(404).send('Row not found');
-        }
-        res.send('Row deleted');
-    } catch (err) {
-        console.error(err.message);
-        res.status(500).send('Server error: ' + err.message);
-    }
-});
+//         // Send the result as a JSON response
+//         res.json(result.rows);
+//     } catch (err) {
+//         // Log the error and send a server error response
+//         console.error(err.message);
+//         res.status(500).send('Server error: ' + err.message);
+//     }
+// });

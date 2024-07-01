@@ -3,14 +3,19 @@
 const sanitizeTableName = (tableName) => {
     console.log(`Sanitizing table name: ${tableName}`);
     const allowedTables = [
-        'room', 'beds', 'sauna'
+        'room', 'patient', 
+        
+        'beds', 'sauna'
     ];
     const normalizedTableName = tableName.toLowerCase();
+
     if (allowedTables.includes(normalizedTableName)) {
         return normalizedTableName;
     } else {
-        console.error(`Attempted to access invalid table: ${tableName}`);
-        throw new Error('Invalid table name');
+        var error = `Attempted to access table: '${tableName}'. Invalid table name`;
+
+        console.error(error);
+        throw new Error(error);
     }
 };
 

@@ -17,3 +17,8 @@ PostgreSQL:
     psql
 
     exit
+
+
+Ja ir:
+    Server error: connect ECONNREFUSED <ip-adrese>
+        Tad ieslēdz postgresql serveri
