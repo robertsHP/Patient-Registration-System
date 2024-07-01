@@ -23,11 +23,21 @@ CREATE TABLE LRC_CALENDAR_PAGE_patient (
 	FOREIGN KEY (id_pat_type) REFERENCES LRC_CALENDAR_PAGE_patient_type(id_pat_type)
 );
 
+CREATE TABLE LRC_CALENDAR_PAGE_bed (
+    id_bed      INT PRIMARY KEY,
+    bed_name    VARCHAR(80), 
+    id_room     INT,
+    FOREIGN KEY (id_room) REFERENCES LRC_CALENDAR_PAGE_room(id_room)
+);
+
 CREATE TABLE LRC_CALENDAR_PAGE_sauna (
-	id_sauna    INT PRIMARY KEY, 
-	notes       TEXT, 
-	id_doctor   INT,
-	FOREIGN KEY (id_doctor) REFERENCES LRC_CALENDAR_PAGE_doctor(id_doctor)
+	id_sauna        INT PRIMARY KEY, 
+    date_and_time   TIMESTAMP,
+    id_patient      INT,
+    notes           TEXT, 
+    id_doctor       INT,
+	FOREIGN KEY (id_doctor) REFERENCES LRC_CALENDAR_PAGE_doctor(id_doctor),
+    FOREIGN KEY (id_patient) REFERENCES LRC_CALENDAR_PAGE_patient(id_patient)
 );
 
 CREATE TABLE LRC_CALENDAR_PAGE_beds (
@@ -39,13 +49,6 @@ CREATE TABLE LRC_CALENDAR_PAGE_beds (
     notes           TEXT,
     FOREIGN KEY (id_room) REFERENCES LRC_CALENDAR_PAGE_room(id_room),
     FOREIGN KEY (id_patient) REFERENCES LRC_CALENDAR_PAGE_patient(id_patient)
-);
-
-CREATE TABLE LRC_CALENDAR_PAGE_bed (
-    id_bed      INT PRIMARY KEY,
-    bed_name    VARCHAR(80), 
-    id_room     INT,
-    FOREIGN KEY (id_room) REFERENCES LRC_CALENDAR_PAGE_room(id_room)
 );
 
 CREATE TABLE LRC_CALENDAR_PAGE_beds4 (
@@ -63,49 +66,50 @@ CREATE TABLE LRC_CALENDAR_PAGE_beds4 (
 -------------------------------------------------DATI--------------------------------------------------------
 
 -- Populate room table
-INSERT INTO LRC_CALENDAR_PAGE_room (id_room, room_num) VALUES (1, '101');
-INSERT INTO LRC_CALENDAR_PAGE_room (id_room, room_num) VALUES (2, '102');
-INSERT INTO LRC_CALENDAR_PAGE_room (id_room, room_num) VALUES (3, '103');
-INSERT INTO LRC_CALENDAR_PAGE_room (id_room, room_num) VALUES (4, '104');
+INSERT INTO LRC_CALENDAR_PAGE_room (id_room, room_num) VALUES
+(0, '101A'),
+(1, '101B'),
+(2, '102A');
 
--- Populate patient_type table
-INSERT INTO LRC_CALENDAR_PAGE_patient_type (id_pat_type, pat_type) VALUES (1, 'AMB');
-INSERT INTO LRC_CALENDAR_PAGE_patient_type (id_pat_type, pat_type) VALUES (2, 'DST');
-INSERT INTO LRC_CALENDAR_PAGE_patient_type (id_pat_type, pat_type) VALUES (3, 'MAK');
-INSERT INTO LRC_CALENDAR_PAGE_patient_type (id_pat_type, pat_type) VALUES (4, 'PAV');
+INSERT INTO LRC_CALENDAR_PAGE_patient_type (id_pat_type, pat_type) VALUES
+(0, 'AMB'),
+(1, 'DST'),
+(2, 'MAK'),
+(3, 'PAV');
 
--- Populate doctor table
-INSERT INTO LRC_CALENDAR_PAGE_doctor (id_doctor, doc_name) VALUES (1, 'Dr. Smith');
-INSERT INTO LRC_CALENDAR_PAGE_doctor (id_doctor, doc_name) VALUES (2, 'Dr. Johnson');
-INSERT INTO LRC_CALENDAR_PAGE_doctor (id_doctor, doc_name) VALUES (3, 'Dr. Williams');
-INSERT INTO LRC_CALENDAR_PAGE_doctor (id_doctor, doc_name) VALUES (4, 'Dr. Davis');
+-- Insert data into doctor table
+INSERT INTO LRC_CALENDAR_PAGE_doctor (id_doctor, doc_name) VALUES
+(0, 'Dr. Emily White'),
+(1, 'Dr. Alice Smith'),
+(2, 'Dr. Bob Johnson'),
+(3, 'Dr. Charlie Davis');
 
--- Populate patient table
-INSERT INTO LRC_CALENDAR_PAGE_patient (id_patient, pat_name, phone_num, hotel_stay_start, hotel_stay_end, id_pat_type) VALUES (1, 'John Doe', '123-456-7890', CURRENT_TIMESTAMP, NULL, 1);
-INSERT INTO LRC_CALENDAR_PAGE_patient (id_patient, pat_name, phone_num, hotel_stay_start, hotel_stay_end, id_pat_type) VALUES (2, 'Jane Doe', '098-765-4321', CURRENT_TIMESTAMP, NULL, 2);
-INSERT INTO LRC_CALENDAR_PAGE_patient (id_patient, pat_name, phone_num, hotel_stay_start, hotel_stay_end, id_pat_type) VALUES (3, 'Alice', '111-222-3333', CURRENT_TIMESTAMP, NULL, 3);
-INSERT INTO LRC_CALENDAR_PAGE_patient (id_patient, pat_name, phone_num, hotel_stay_start, hotel_stay_end, id_pat_type) VALUES (4, 'Bob', '444-555-6666', CURRENT_TIMESTAMP, NULL, 4);
+-- Insert data into patient table
+INSERT INTO LRC_CALENDAR_PAGE_patient (id_patient, pat_name, phone_num, hotel_stay_start, hotel_stay_end, id_pat_type) VALUES
+(0, 'Alex Green', '555-0000', '2024-01-01 07:00:00', '2024-01-01 17:00:00', 0),
+(1, 'John Doe', '555-1234', '2024-01-01 08:00:00', '2024-01-02 18:00:00', 1),
+(2, 'Jane Roe', '555-5678', '2024-01-03 09:00:00', '2024-01-04 19:00:00', 2),
+(3, 'Chris Lee', '555-9012', '2024-01-05 10:00:00', '2024-01-06 20:00:00', 3);
 
--- Populate sauna table
-INSERT INTO LRC_CALENDAR_PAGE_sauna (id_sauna, notes, id_doctor) VALUES (1, 'Sauna 1 notes', 1);
-INSERT INTO LRC_CALENDAR_PAGE_sauna (id_sauna, notes, id_doctor) VALUES (2, 'Sauna 2 notes', 2);
-INSERT INTO LRC_CALENDAR_PAGE_sauna (id_sauna, notes, id_doctor) VALUES (3, 'Sauna 3 notes', 3);
-INSERT INTO LRC_CALENDAR_PAGE_sauna (id_sauna, notes, id_doctor) VALUES (4, 'Sauna 4 notes', 4);
+-- Insert data into bed table
+INSERT INTO LRC_CALENDAR_PAGE_bed (id_bed, bed_name, id_room) VALUES
+(0, 'Bed A0', 0),
+(1, 'Bed A1', 1),
+(2, 'Bed B1', 2);
 
--- Populate beds table
-INSERT INTO LRC_CALENDAR_PAGE_beds (id_beds, id_room, id_patient, begin_date, end_date, notes) VALUES (1, 1, 1, CURRENT_TIMESTAMP, NULL, 'Bed 1 notes');
-INSERT INTO LRC_CALENDAR_PAGE_beds (id_beds, id_room, id_patient, begin_date, end_date, notes) VALUES (2, 2, 2, CURRENT_TIMESTAMP, NULL, 'Bed 2 notes');
-INSERT INTO LRC_CALENDAR_PAGE_beds (id_beds, id_room, id_patient, begin_date, end_date, notes) VALUES (3, 3, 3, CURRENT_TIMESTAMP, NULL, 'Bed 3 notes');
-INSERT INTO LRC_CALENDAR_PAGE_beds (id_beds, id_room, id_patient, begin_date, end_date, notes) VALUES (4, 4, 4, CURRENT_TIMESTAMP, NULL, 'Bed 4 notes');
+-- Insert data into sauna table
+INSERT INTO LRC_CALENDAR_PAGE_sauna (id_sauna, date_and_time, id_patient, notes, id_doctor) VALUES
+(0, '2024-01-01 09:00:00', 0, 'Introductory session', 0),
+(1, '2024-01-01 10:00:00', 1, 'Initial session', 1),
+(2, '2024-01-03 11:00:00', 2, 'Follow-up session', 2);
 
--- Populate bed table
-INSERT INTO LRC_CALENDAR_PAGE_bed (id_bed, id_room) VALUES (1, 1);
-INSERT INTO LRC_CALENDAR_PAGE_bed (id_bed, id_room) VALUES (2, 2);
-INSERT INTO LRC_CALENDAR_PAGE_bed (id_bed, id_room) VALUES (3, 3);
-INSERT INTO LRC_CALENDAR_PAGE_bed (id_bed, id_room) VALUES (4, 4);
+-- Insert data into beds table
+INSERT INTO LRC_CALENDAR_PAGE_beds (id_beds, id_room, id_patient, begin_date, end_date, notes) VALUES
+(0, 0, 0, '2024-01-01 07:00:00', '2024-01-01 17:00:00', 'Short stay'),
+(1, 1, 1, '2024-01-01 08:00:00', '2024-01-02 18:00:00', 'Post-operation recovery'),
+(2, 2, 2, '2024-01-03 09:00:00', '2024-01-04 19:00:00', 'Overnight monitoring');
 
--- Populate beds4 table
-INSERT INTO LRC_CALENDAR_PAGE_beds4 (id_beds4, id_room, id_patient, begin_date, end_date, notes) VALUES (1, 1, 1, CURRENT_TIMESTAMP, NULL, 'Bed 1 notes');
-INSERT INTO LRC_CALENDAR_PAGE_beds4 (id_beds4, id_room, id_patient, begin_date, end_date, notes) VALUES (2, 2, 2, CURRENT_TIMESTAMP, NULL, 'Bed 2 notes');
-INSERT INTO LRC_CALENDAR_PAGE_beds4 (id_beds4, id_room, id_patient, begin_date, end_date, notes) VALUES (3, 3, 3, CURRENT_TIMESTAMP, NULL, 'Bed 3 notes');
-INSERT INTO LRC_CALENDAR_PAGE_beds4 (id_beds4, id_room, id_patient, begin_date, end_date, notes) VALUES (4, 4, 4, CURRENT_TIMESTAMP, NULL, 'Bed 4 notes');
+-- Insert data into beds4 table
+INSERT INTO LRC_CALENDAR_PAGE_beds4 (id_beds4, id_room, id_patient, begin_date, end_date, notes) VALUES
+(0, 0, 0, '2024-01-01 07:00:00', '2024-01-01 17:00:00', 'Introductory stay'),
+(1, 1, 3, '2024-01-05 10:00:00', '2024-01-06 20:00:00', 'Short stay for observation');

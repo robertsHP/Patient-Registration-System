@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 
 import useDataFetch from './hooks/useDataFetch.jsx';
 
-import EventGrid from './components/EventGrid/EventGrid.jsx';
+import EventGrid from './components/EventGrid.jsx';
 import GridUI from './components/GridUI.jsx';
 
 import './Page.css'
@@ -12,8 +12,6 @@ export default function BedsPage () {
         date, setDate,
         dataStorage, setDataStorage
     } = useDataFetch("beds");
-
-    console.log(dataStorage.getEvents());
 
     return (
         <>
