@@ -1,18 +1,18 @@
-const db = require('../utils/db.connect.js');
+const pool = require('../utils/db.connect.js');
 const func = require('../utils/functions.js');
 
 require('dotenv').config({ path: '../.env' });
 
 const prefix = process.env.CALENDAR_PAGE_TABLE_PREFIX;
 
-function buildGetEventQuery (year, month, limit, offset) {
-    const eventTableName = `${prefix}${func.sanitizeTableName('event')}`;
-    const patientTableName = `${prefix}${func.sanitizeTableName('patient')}`;
-    const doctorTableName = `${prefix}${func.sanitizeTableName('doctor')}`;
-    const roomTableName = `${prefix}${func.sanitizeTableName('room')}`;
-    const floorTableName = `${prefix}${func.sanitizeTableName('floor')}`;
-    const patientTypeTableName = `${prefix}${func.sanitizeTableName('patient_type')}`;
+const eventTableName = `${prefix}${func.sanitizeTableName('event')}`;
+const patientTableName = `${prefix}${func.sanitizeTableName('patient')}`;
+const doctorTableName = `${prefix}${func.sanitizeTableName('doctor')}`;
+const roomTableName = `${prefix}${func.sanitizeTableName('room')}`;
+const floorTableName = `${prefix}${func.sanitizeTableName('floor')}`;
+const patientTypeTableName = `${prefix}${func.sanitizeTableName('patient_type')}`;
 
+function buildGetEventQuery (year, month, floorId, limit, offset) {
     let baseQuery = `
         SELECT 
             e.begin_date,
@@ -22,7 +22,12 @@ function buildGetEventQuery (year, month, limit, offset) {
             d.doc_name AS doctor_name,
             r.room_num,
             f.floor_name,
-            pt.pat_type
+            pt.pat_type,
+            p.*,  -- To get all patient fields
+            d.*,  -- To get all doctor fields
+            r.*,  -- To get all room fields
+            f.*,  -- To get all floor fields
+            pt.*  -- To get all patient_type fields
         FROM 
             ${eventTableName} AS e
             JOIN ${patientTableName} AS p ON e.id_patient = p.id_patient
@@ -38,6 +43,10 @@ function buildGetEventQuery (year, month, limit, offset) {
         whereClause = `WHERE EXTRACT(YEAR FROM e.begin_date) = $${params.length + 1} AND EXTRACT(MONTH FROM e.begin_date) = $${params.length + 2}`;
         params.push(year, month);
     }
+    if (floorId) {
+        whereClause += `${whereClause ? ' AND ' : 'WHERE '}f.id_floor = $${params.length + 1}`;
+        params.push(floorId);
+    }
     
     let paginationClause = `ORDER BY e.begin_date DESC LIMIT $${params.length + 1} OFFSET $${params.length + 2}`;
     params.push(limit, offset);
@@ -49,35 +58,38 @@ function buildGetEventQuery (year, month, limit, offset) {
 }
 
 exports.getEvents = async (req, res) => {
-    const { page = 1, limit = 10 } = req.query;
+    const { floorId, page = 1, limit = 10 } = req.query;
     const offset = (page - 1) * limit;
-    const { query, params } = buildGetEventQuery(null, null, limit, offset);
+
+    const { query, params } = buildGetEventQuery(null, null, floorId, limit, offset);
 
     try {
-        const { rows } = await db.query(query, params);
-        res.json(rows);
+        const eventsResult = await pool.query(query, params);
+        const data = eventsResult.rows;
 
-        // res.json(
-        //     {'balsss': 'aaaaaaaaaaaaaa'}
-        // );
+        res.json({ data });
     } catch (err) {
-        res.status(500).json({ error: 'Internal Server Error (getEvents) - '+err.message });
+        res.status(500).json({ error: 'Internal Server Error (getEventsByDate) - ' + err.message });
     }
 };
 
 exports.getEventsByDate = async (req, res) => {
-    const { year, month, page = 1, limit = 10 } = req.query;
+    const { year, month, floorId, page = 1, limit = 10 } = req.query;
     const offset = (page - 1) * limit;
-    if (!year || !month) {
-        return res.status(400).json({ error: 'Year and month are required parameters.' });
+
+    if (!year || !month || !floorId) {
+        return res.status(400).json({ error: '(getEventsByDate) - Year, month, and floor ID are required parameters.' });
     }
-    const { query, params } = buildGetEventQuery(year, month, limit, offset);
+
+    const { query, params } = buildGetEventQuery(year, month, floorId, limit, offset);
 
     try {
-        const { rows } = await db.query(query, params);
-        res.json(rows);
+        const eventsResult = await pool.query(query, params);
+        const data = eventsResult.rows;
+
+        res.json({ data });
     } catch (err) {
-        res.status(500).json({ error: 'Internal Server Error (getEventsByDate) - '+err.message });
+        res.status(500).json({ error: 'Internal Server Error (getEventsByDate) - ' + err.message });
     }
 };
 

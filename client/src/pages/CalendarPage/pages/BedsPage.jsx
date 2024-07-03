@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 
-import useDataFetch from './hooks/useDataFetch.jsx';
+import useEventsFetch from './hooks/useEventsFetch.jsx';
 
 import EventGrid from './components/EventGrid.jsx';
 import GridUI from './components/GridUI.jsx';
@@ -11,7 +11,14 @@ export default function BedsPage () {
     const {
         date, setDate,
         dataStorage, setDataStorage
-    } = useDataFetch("beds");
+    } = useEventsFetch(1, new Date(2024, 5, 1));
+
+
+
+
+
+
+
 
     return (
         <>

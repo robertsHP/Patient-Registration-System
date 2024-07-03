@@ -40,7 +40,7 @@ CREATE TABLE LRC_CALENDAR_PAGE_doctor (
 );
 
 CREATE TABLE LRC_CALENDAR_PAGE_event (
-    id_beds         INT PRIMARY KEY,
+    id_event        INT PRIMARY KEY,
     id_room         INT,
     id_patient      INT,
     begin_date      TIMESTAMP,

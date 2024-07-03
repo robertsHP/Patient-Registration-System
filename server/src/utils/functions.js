@@ -7,7 +7,7 @@ const allowedTables = [
 
 exports.sanitizeTableName = (tableName) => {
     if (allowedTables.includes(tableName)) {
-        return tableName;
+        return tableName.toLowerCase().replace(/[^a-z0-9_]/g, '');
     } else {
         var error = `Attempted to access table: '${tableName}'. Invalid table name`;
 

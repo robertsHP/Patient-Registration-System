@@ -1,4 +1,4 @@
-const db = require('../utils/db.connect.js');
+const pool = require('../utils/db.connect.js');
 const func = require('../utils/functions.js');
 
 require('dotenv').config({ path: '../.env' });
@@ -9,7 +9,7 @@ exports.selectFromTable = async (req, res) => {
     const { tableName } = req.params;
     try {
         var sanitizedTableName = prefix + func.sanitizeTableName(tableName);
-        const result = await db.query(`SELECT * FROM ${sanitizedTableName}`);
+        const result = await pool.query(`SELECT * FROM ${sanitizedTableName}`);
         res.json(result.rows);
     } catch (err) {
         console.error(err.message);
@@ -21,7 +21,7 @@ exports.selectWithIDFromTable = async (req, res) => {
     const { tableName, id } = req.params;
     try {
         var sanitizedTableName = prefix + func.sanitizeTableName(tableName);
-        const result = await db.query(`SELECT * FROM ${sanitizedTableName} WHERE id = $1`, [id]);
+        const result = await pool.query(`SELECT * FROM ${sanitizedTableName} WHERE id = $1`, [id]);
         if (result.rows.length === 0) {
             return res.status(404).send('Row not found');
         }
@@ -41,7 +41,7 @@ exports.insertIntoTable = async (req, res) => {
     const valuePlaceholders = values.map((_, index) => `$${index + 1}`).join(', ');
 
     try {
-        const result = await db.query(`INSERT INTO ${sanitizedTableName} (${columns}) VALUES (${valuePlaceholders}) RETURNING *`, values);
+        const result = await pool.query(`INSERT INTO ${sanitizedTableName} (${columns}) VALUES (${valuePlaceholders}) RETURNING *`, values);
         res.status(201).json(result.rows[0]);
     } catch (err) {
         console.error(err.message);
@@ -58,7 +58,7 @@ exports.updateInTable = async (req, res) => {
     values.push(id);
 
     try {
-        const result = await db.query(`UPDATE ${sanitizedTableName} SET ${updates.join(', ')} WHERE id = $1 RETURNING *`, values);
+        const result = await pool.query(`UPDATE ${sanitizedTableName} SET ${updates.join(', ')} WHERE id = $1 RETURNING *`, values);
         if (result.rows.length === 0) {
             return res.status(404).send('Row not found');
         }
@@ -74,7 +74,7 @@ exports.deleteFromTable = async (req, res) => {
     const sanitizedTableName = prefix + func.sanitizeTableName(tableName);
 
     try {
-        const result = await db.query(`DELETE FROM ${sanitizedTableName} WHERE id = $1 RETURNING *`, [id]);
+        const result = await pool.query(`DELETE FROM ${sanitizedTableName} WHERE id = $1 RETURNING *`, [id]);
         if (result.rows.length === 0) {
             return res.status(404).send('Row not found');
         }
