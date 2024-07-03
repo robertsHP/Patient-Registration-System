@@ -2,10 +2,9 @@
 const express = require('express');
 const app = express();
 
-const defaultTableRoute = require('./src/routes/defaultTableRoutes.js'); 
-const bedsRoutes = require('./src/routes/bedsRoutes.js');
-// const saunaRoutes = require('./src/routes/saunaRoutes.js');
-// const beds4Routes = require('./src/routes/beds4Routes.js');
+const errorHandler = require('./src/middleware/errorHandler.js'); 
+const defaultRoute = require('./src/routes/defaultRoutes.js'); 
+const calendarPageRoutes = require('./src/routes/calendarPageRoutes.js');
 
 require('dotenv').config({ path: '../.env' });
 
@@ -34,7 +33,6 @@ app.get('/api', (req, res) => {
     res.send('Api is running...');
 });
 
-app.use('/api', bedsRoutes);
-// app.use('/api', saunaRoutes);
-// app.use('/api', beds4Routes);
-app.use('/api', defaultTableRoute);
+app.use('/api', calendarPageRoutes);
+app.use('/api', defaultRoute);
+app.use(errorHandler);

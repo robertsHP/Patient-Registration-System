@@ -64,18 +64,13 @@ const initialData = (year, month) => {
 };
 
 export default function EventGrid({ date, setDate, dataStorage, setDataStorage }) {
-
-
-
     const [data] = useState(initialData(date.getFullYear(), date.getMonth() + 1));
     const [dateLayout, setDateLayout] = useState(getDateLayout(date.getFullYear(), date.getMonth() + 1));
     const [nextEventId, setNextEventId] = useState(2); // Starts with 2 because event-0 already exists
 
     const [columnWidths, setColumnWidths] = useState(
-        [4, 4, ...dateLayout.map(() => 1), 1, 4] // Two additional columns at the end with widths 4 each
+        [4, 4, ...dateLayout.map(() => 1), 1, 4]
     );
-
-    
 
     return (
         <div className="grid-container">

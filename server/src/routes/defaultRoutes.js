@@ -1,11 +1,7 @@
-// 3rd Party Modules 
-const { Router } = require('express'); 
-  
-// Local Modules 
-const controller = require('../controllers/defaultTableController.js'); 
+const express = require('express');
+const controller = require('../controllers/defaultController.js'); 
 
-// Initialization 
-const router = Router(); 
+const router = express.Router();
 
 // Requests  
 router.get('/:tableName', controller.selectFromTable);

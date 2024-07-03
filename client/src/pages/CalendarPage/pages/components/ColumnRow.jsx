@@ -13,7 +13,7 @@ export default function ColumnRow({ dateLayout, columnWidths }) {
     // Calculate the starting position for the additional columns
     const lastColumnStart = columnWidths.slice(0, columnWidths.length - 2)
         .reduce((acc, width) => acc + width, 0);
-
+    
     return (
         <>
             <GridLayout

@@ -114,8 +114,8 @@ export default function EventRow({ room, events, nextEventId, setNextEventId, co
                     // New event in progress
                     ...(draggingEvent ? [{ ...draggingEvent, h: 1, x: draggingEvent.x < columnWidths[0] + columnWidths[1] ? columnWidths[0] + columnWidths[1] : draggingEvent.x }] : []),
                     // Add additional columns
-                    { i: 'additional-input-1', x: lastColumnStart, y: 0, w: columnWidths[columnWidths.length - 2], h: 1, static: true },
-                    { i: 'additional-input-2', x: lastColumnStart + columnWidths[columnWidths.length - 2], y: 0, w: columnWidths[columnWidths.length - 1], h: 1, static: true }
+                    { i: 'sum-column', x: lastColumnStart, y: 0, w: columnWidths[columnWidths.length - 2], h: 1, static: true },
+                    { i: 'hotel-column', x: lastColumnStart + columnWidths[columnWidths.length - 2], y: 0, w: columnWidths[columnWidths.length - 1], h: 1, static: true }
                 ]}
                 cols={sumOfAllColWidths}
                 rowHeight={50}
@@ -149,10 +149,10 @@ export default function EventRow({ room, events, nextEventId, setNextEventId, co
                 )}
 
                 {/* Additional column inputs */}
-                <div key="additional-input-1" className="grid-cell">
+                <div key="sum-column" className="grid-cell">
                     1 {/* Add value */}
                 </div>
-                <div key="additional-input-2" className="grid-cell">
+                <div key="hotel-column" className="grid-cell">
                     <input type="text" defaultValue={"T"} style={{ width: '100%' }} />
                 </div>
             </GridLayout>

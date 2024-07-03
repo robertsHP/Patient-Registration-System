@@ -1,11 +1,11 @@
 
 
-const sanitizeTableName = (tableName) => {
-    const allowedTables = [
-        'room', 'patient', 
-        'beds', 'sauna'
-    ];
+const allowedTables = [
+    //Calendar Page
+    'patient_type', 'patient', 'floor', 'room', 'bed', 'doctor', 'event'
+];
 
+exports.sanitizeTableName = (tableName) => {
     if (allowedTables.includes(tableName)) {
         return tableName;
     } else {
@@ -14,8 +14,4 @@ const sanitizeTableName = (tableName) => {
         console.error(error);
         throw new Error(error);
     }
-};
-
-module.exports = {
-    sanitizeTableName
 };
