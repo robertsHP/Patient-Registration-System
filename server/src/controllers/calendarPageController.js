@@ -12,22 +12,37 @@ const roomTableName = `${prefix}${func.sanitizeTableName('room')}`;
 const floorTableName = `${prefix}${func.sanitizeTableName('floor')}`;
 const patientTypeTableName = `${prefix}${func.sanitizeTableName('patient_type')}`;
 
-function buildGetEventQuery (year, month, floorId, limit, offset) {
+function buildGetEventQuery(year, month, floorId, limit, offset) {
     let baseQuery = `
-        SELECT 
-            e.begin_date,
-            e.end_date,
-            e.notes,
-            p.pat_name AS patient_name,
-            d.doc_name AS doctor_name,
-            r.room_num,
-            f.floor_name,
-            pt.pat_type,
-            p.*,  -- To get all patient fields
-            d.*,  -- To get all doctor fields
-            r.*,  -- To get all room fields
-            f.*,  -- To get all floor fields
-            pt.*  -- To get all patient_type fields
+        SELECT json_build_object(
+            'id_event', e.id_event,
+            'begin_date', e.begin_date,
+            'end_date', e.end_date,
+            'notes', e.notes,
+            'patient', json_build_object(
+                'id_patient', p.id_patient,
+                'pat_name', p.pat_name,
+                'phone_num', p.phone_num,
+                'hotel_stay_start', p.hotel_stay_start,
+                'hotel_stay_end', p.hotel_stay_end,
+                'patient_type', json_build_object(
+                    'id_pat_type', pt.id_pat_type,
+                    'pat_type', pt.pat_type
+                )
+            ),
+            'doctor', json_build_object(
+                'id_doctor', d.id_doctor,
+                'doc_name', d.doc_name
+            ),
+            'room', json_build_object(
+                'id_room', r.id_room,
+                'room_num', r.room_num,
+                'floor', json_build_object(
+                    'id_floor', f.id_floor,
+                    'floor_name', f.floor_name
+                )
+            )
+        ) AS event_details
         FROM 
             ${eventTableName} AS e
             JOIN ${patientTableName} AS p ON e.id_patient = p.id_patient
@@ -40,7 +55,10 @@ function buildGetEventQuery (year, month, floorId, limit, offset) {
     const params = [];
     let whereClause = '';
     if (year && month) {
-        whereClause = `WHERE EXTRACT(YEAR FROM e.begin_date) = $${params.length + 1} AND EXTRACT(MONTH FROM e.begin_date) = $${params.length + 2}`;
+        whereClause = `
+            WHERE EXTRACT(YEAR FROM e.begin_date) = $${params.length + 1} 
+            AND EXTRACT(MONTH FROM e.begin_date) = $${params.length + 2}
+        `;
         params.push(year, month);
     }
     if (floorId) {
@@ -64,12 +82,13 @@ exports.getEvents = async (req, res) => {
     const { query, params } = buildGetEventQuery(null, null, floorId, limit, offset);
 
     try {
-        const eventsResult = await pool.query(query, params);
-        const data = eventsResult.rows;
+        const dataResult = await pool.query(query, params);
+        // Directly use the JSON data from the database
+        const data = dataResult.rows.map(row => row.event_details);
 
         res.json({ data });
     } catch (err) {
-        res.status(500).json({ error: 'Internal Server Error (getEventsByDate) - ' + err.message });
+        res.status(500).json({ error: 'Internal Server Error (getEvents) - ' + err.message });
     }
 };
 
@@ -84,8 +103,8 @@ exports.getEventsByDate = async (req, res) => {
     const { query, params } = buildGetEventQuery(year, month, floorId, limit, offset);
 
     try {
-        const eventsResult = await pool.query(query, params);
-        const data = eventsResult.rows;
+        const dataResult = await pool.query(query, params);
+        const data = dataResult.rows.map(row => row.event_details);
 
         res.json({ data });
     } catch (err) {
