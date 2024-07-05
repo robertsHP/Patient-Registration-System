@@ -7,8 +7,6 @@ import 'react-resizable/css/styles.css';
 import './ColumnRow.css';
 
 export default function ColumnRow({ dateLayout, columnWidths, sumOfAllColWidths}) {
-
-    // Calculate the starting position for the additional columns
     const lastColumnStart = columnWidths.slice(0, columnWidths.length - 2)
         .reduce((acc, width) => acc + width, 0);
     
@@ -31,7 +29,7 @@ export default function ColumnRow({ dateLayout, columnWidths, sumOfAllColWidths}
                     { i: 'hotel-column', x: lastColumnStart + columnWidths[columnWidths.length - 2], y: 0, w: columnWidths[columnWidths.length - 1], h: 1, static: true }
                 ]}
                 cols={sumOfAllColWidths}
-                rowHeight={30}
+                rowHeight={20}
                 width={1200}
                 isDraggable={false}
                 isResizable={false}
