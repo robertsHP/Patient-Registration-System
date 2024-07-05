@@ -32,7 +32,7 @@ export default function ColumnRow({ dateLayout, columnWidths, sumOfAllColWidths}
                 ]}
                 cols={sumOfAllColWidths}
                 rowHeight={30}
-                width={1000}
+                width={1200}
                 isDraggable={false}
                 isResizable={false}
             >

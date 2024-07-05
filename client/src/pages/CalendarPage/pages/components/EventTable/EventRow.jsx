@@ -38,17 +38,44 @@ export default function EventRow({ room, events, nextEventId, setNextEventId, co
     };
 
     const onMouseDown = (e) => {
-        if (e.target.closest('.react-resizable-handle') || e.target.closest('.event')) return;
+        console.log("onMouseDown");
+        if (e.target.closest('.react-resizable-handle') || e.target.closest('.event')) {
+            return; // Ignore mousedown on resize handles or event names
+        }
 
-        const { hoveredCol } = calculateMousePosition(e);
-        if (isInDateColumns(hoveredCol, 1)) startDraggingEvent(hoveredCol);
+        const gridRect = gridRef.current.getBoundingClientRect();
+        const colWidth = gridRect.width / sumOfAllColWidths; // Dynamic calculation based on grid width
+        const x = Math.floor((e.clientX - gridRect.left) / colWidth);
+
+        if (isInDateColumns(x, 1)) {
+            setDraggingEvent({
+                i: `event-temp`,
+                x: x,
+                y: 0,
+                w: 1,
+                h: 1,
+                title: 'New Event',
+                startX: x
+            });
+
+            setIsCreatingEvent(true);
+        }
     };
 
     const onMouseMove = (e) => {
         if (isCreatingEvent && draggingEvent) {
-            const { hoveredCol, newWidth } = calculateMousePosition(e, draggingEvent.startX);
-            if (isInDateColumns(hoveredCol, newWidth) && !isOverlapping({ ...draggingEvent, x: hoveredCol, w: newWidth }, localEvents)) {
-                updateDraggingEvent(hoveredCol, newWidth);
+            const gridRect = gridRef.current.getBoundingClientRect();
+            const colWidth = gridRect.width / sumOfAllColWidths; // Dynamic calculation based on grid width
+            const currentX = Math.floor((e.clientX - gridRect.left) / colWidth);
+            const newWidth = Math.abs(currentX - draggingEvent.startX) + 1;
+            const newX = Math.min(draggingEvent.startX, currentX);
+
+            if (isInDateColumns(newX, newWidth)) {
+                setDraggingEvent(prevEvent => ({
+                    ...prevEvent,
+                    x: newX,
+                    w: newWidth
+                }));
             }
         }
     };
@@ -60,50 +87,9 @@ export default function EventRow({ room, events, nextEventId, setNextEventId, co
                 setLocalEvents(prevEvents => [...prevEvents, newEvent]);
                 setNextEventId(prevId => prevId + 1);
             }
-            stopDraggingEvent();
+            setDraggingEvent(null);
+            setIsCreatingEvent(false);
         }
-    };
-
-    const calculateMousePosition = (e, startX = null) => {
-        const gridRect = gridRef.current.getBoundingClientRect();
-        const colWidth = gridRect.width / sumOfAllColWidths;
-        const hoveredCol = Math.floor((e.clientX - gridRect.left) / colWidth);
-        const currentCol = startX !== null ? Math.floor((e.clientX - gridRect.left) / colWidth) : null;
-        const newWidth = startX !== null ? Math.abs(currentCol - startX) + 1 : null;
-
-        console.log('colWidth = '+colWidth);
-        console.log('hoveredCol = '+hoveredCol);
-        console.log('currentCol = '+currentCol);
-        console.log('newWidth = '+newWidth);
-        console.log('----------------------------------------------');
-
-        return { hoveredCol, currentCol, newWidth };
-    };
-
-    const startDraggingEvent = (x) => {
-        setDraggingEvent({
-            i: `event-temp`,
-            x: x,
-            y: 0,
-            w: 1,
-            h: 1,
-            title: 'New Event',
-            startX: x
-        });
-        setIsCreatingEvent(true);
-    };
-
-    const updateDraggingEvent = (x, w) => {
-        setDraggingEvent(prevEvent => ({
-            ...prevEvent,
-            x: x,
-            w: w
-        }));
-    };
-
-    const stopDraggingEvent = () => {
-        setDraggingEvent(null);
-        setIsCreatingEvent(false);
     };
 
     const lastColumnStart = columnWidths.slice(0, columnWidths.length - 2).reduce((acc, width) => acc + width, 0);
@@ -127,7 +113,7 @@ export default function EventRow({ room, events, nextEventId, setNextEventId, co
                 ]}
                 cols={sumOfAllColWidths}
                 rowHeight={50}
-                width={1000}
+                width={1200}
                 onLayoutChange={onLayoutChange}
                 isDraggable
                 isResizable

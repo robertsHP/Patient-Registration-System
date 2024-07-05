@@ -1,7 +1,9 @@
 import React, { useState, useRef } from 'react';
+
 import GridLayout from 'react-grid-layout';
 import 'react-grid-layout/css/styles.css';
 import 'react-resizable/css/styles.css';
+
 import './EventRow.css';
 
 export default function EventRow({ room, events, nextEventId, setNextEventId, columnWidths }) {
@@ -35,6 +37,7 @@ export default function EventRow({ room, events, nextEventId, setNextEventId, co
     };
 
     const onMouseDown = (e) => {
+        console.log("onMouseDown");
         if (e.target.closest('.react-resizable-handle') || e.target.closest('.event')) {
             return; // Ignore mousedown on resize handles or event names
         }
@@ -64,31 +67,24 @@ export default function EventRow({ room, events, nextEventId, setNextEventId, co
             const newWidth = Math.abs(currentX - draggingEvent.startX) + 1;
             const newX = Math.min(draggingEvent.startX, currentX);
 
-            // Prevent creating or dragging events to overlap existing events
-            const overlap = localEvents.some(event => areOverlapping(event, { ...draggingEvent, x: newX, w: newWidth }));
-            if (!overlap) {
-                setDraggingEvent(prevEvent => ({
-                    ...prevEvent,
-                    x: newX,
-                    w: newWidth
-                }));
-            }
+            setDraggingEvent(prevEvent => ({
+                ...prevEvent,
+                x: newX,
+                w: newWidth
+            }));
         }
     };
 
     const onMouseUp = () => {
         if (isCreatingEvent && draggingEvent) {
-            const overlap = localEvents.some(event => areOverlapping(event, draggingEvent));
-            if (!overlap) {
-                const newEvent = { ...draggingEvent, i: nextEventId, x: Number(draggingEvent.x), y: Number(draggingEvent.y), w: Number(draggingEvent.w), h: 1 };
-                setLocalEvents(prevEvents => [
-                    ...prevEvents,
-                    newEvent
-                ]);
-                setNextEventId(prevId => prevId + 1);
-            }
+            const newEvent = { ...draggingEvent, i: nextEventId, x: Number(draggingEvent.x), y: Number(draggingEvent.y), w: Number(draggingEvent.w), h: 1 };
+            setLocalEvents(prevEvents => [
+                ...prevEvents,
+                newEvent
+            ]);
             setDraggingEvent(null);
             setIsCreatingEvent(false);
+            setNextEventId(prevId => prevId + 1);
         }
     };
 
