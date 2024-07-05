@@ -1,90 +1,16 @@
 const pool = require('../utils/db.connect.js');
-const func = require('../utils/functions.js');
-
-require('dotenv').config({ path: '../.env' });
-
-const prefix = process.env.CALENDAR_PAGE_TABLE_PREFIX;
-
-const eventTableName = `${prefix}${func.sanitizeTableName('event')}`;
-const patientTableName = `${prefix}${func.sanitizeTableName('patient')}`;
-const doctorTableName = `${prefix}${func.sanitizeTableName('doctor')}`;
-const roomTableName = `${prefix}${func.sanitizeTableName('room')}`;
-const floorTableName = `${prefix}${func.sanitizeTableName('floor')}`;
-const patientTypeTableName = `${prefix}${func.sanitizeTableName('patient_type')}`;
-
-function buildGetEventQuery(year, month, floorId, limit, offset) {
-    let baseQuery = `
-        SELECT json_build_object(
-            'id_event', e.id_event,
-            'begin_date', e.begin_date,
-            'end_date', e.end_date,
-            'notes', e.notes,
-            'patient', json_build_object(
-                'id_patient', p.id_patient,
-                'pat_name', p.pat_name,
-                'phone_num', p.phone_num,
-                'hotel_stay_start', p.hotel_stay_start,
-                'hotel_stay_end', p.hotel_stay_end,
-                'patient_type', json_build_object(
-                    'id_pat_type', pt.id_pat_type,
-                    'pat_type', pt.pat_type
-                )
-            ),
-            'doctor', json_build_object(
-                'id_doctor', d.id_doctor,
-                'doc_name', d.doc_name
-            ),
-            'room', json_build_object(
-                'id_room', r.id_room,
-                'room_num', r.room_num,
-                'floor', json_build_object(
-                    'id_floor', f.id_floor,
-                    'floor_name', f.floor_name
-                )
-            )
-        ) AS event_details
-        FROM 
-            ${eventTableName} AS e
-            JOIN ${patientTableName} AS p ON e.id_patient = p.id_patient
-            JOIN ${doctorTableName} AS d ON e.id_doctor = d.id_doctor
-            JOIN ${roomTableName} AS r ON e.id_room = r.id_room
-            JOIN ${floorTableName} AS f ON r.id_floor = f.id_floor
-            JOIN ${patientTypeTableName} AS pt ON p.id_pat_type = pt.id_pat_type
-    `;
-
-    const params = [];
-    let whereClause = '';
-    if (year && month) {
-        whereClause = `
-            WHERE EXTRACT(YEAR FROM e.begin_date) = $${params.length + 1} 
-            AND EXTRACT(MONTH FROM e.begin_date) = $${params.length + 2}
-        `;
-        params.push(year, month);
-    }
-    if (floorId) {
-        whereClause += `${whereClause ? ' AND ' : 'WHERE '}f.id_floor = $${params.length + 1}`;
-        params.push(floorId);
-    }
-    
-    let paginationClause = `ORDER BY e.begin_date DESC LIMIT $${params.length + 1} OFFSET $${params.length + 2}`;
-    params.push(limit, offset);
-
-    return {
-        query: `${baseQuery} ${whereClause} ${paginationClause}`,
-        params
-    };
-}
+const calendarPageServices = require('../services/calendarPageServices.js');
 
 exports.getEvents = async (req, res) => {
     const { floorId, page = 1, limit = 10 } = req.query;
     const offset = (page - 1) * limit;
 
-    const { query, params } = buildGetEventQuery(null, null, floorId, limit, offset);
+    const { query, params } = calendarPageServices.buildGetEventQuery(null, null, floorId, limit, offset);
 
     try {
         const dataResult = await pool.query(query, params);
         // Directly use the JSON data from the database
-        const data = dataResult.rows.map(row => row.event_details);
+        const data = dataResult.rows;
 
         res.json({ data });
     } catch (err) {
@@ -100,11 +26,11 @@ exports.getEventsByDate = async (req, res) => {
         return res.status(400).json({ error: '(getEventsByDate) - Year, month, and floor ID are required parameters.' });
     }
 
-    const { query, params } = buildGetEventQuery(year, month, floorId, limit, offset);
+    const { query, params } = calendarPageServices.buildGetEventQuery(year, month, floorId, limit, offset);
 
     try {
         const dataResult = await pool.query(query, params);
-        const data = dataResult.rows.map(row => row.event_details);
+        const data = dataResult.rows;
 
         res.json({ data });
     } catch (err) {

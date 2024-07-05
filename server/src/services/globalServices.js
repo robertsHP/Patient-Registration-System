@@ -1,5 +1,4 @@
 
-
 const allowedTables = [
     //Calendar Page
     'patient_type', 'patient', 'floor', 'room', 'bed', 'doctor', 'event'
