@@ -15,32 +15,41 @@ export default function EventRow({ room, events, nextEventId, setNextEventId, co
         setLocalEvents(prevEvents =>
             prevEvents.map(event => {
                 const newLayout = layout.find(l => l.i === String(event.i));
-                if (newLayout && !isOverlapping(newLayout, prevEvents, event.i) && !isValidEventPosition(newLayout)) {
+
+                console.log('----------------------------------------------');
+
+                var overlapping = isOverlapping(newLayout, prevEvents, event.i);
+                var validPosition = isValidEventPosition(newLayout);
+
+                console.log('newLayout = '+newLayout);
+                console.log('overlapping = '+overlapping);
+                console.log('validPosition = '+validPosition);
+
+                if (newLayout && !overlapping && validPosition) {
                     return { ...event, ...newLayout, h: 1 };
                 }
                 return event;
             })
         );
     };
-    
+
     const isValidEventPosition = (layoutItem) => {
         const dateColumnsStart = columnWidths.slice(0, 2).reduce((acc, width) => acc + width, 0);
-        const sumColumnStart = lastColumnStart;
-        const hotelColumnStart = lastColumnStart + columnWidths[columnWidths.length - 2];
-        const dateColumnsEnd = sumColumnStart;
-    
-        // Ensure the event is within date columns and not overlapping with sum or hotel columns
+        const dateColumnsEnd = columnWidths.slice(2, columnWidths.length - 2).reduce((acc, width) => acc + width, dateColumnsStart);
+
+        console.log('layoutItem.x = '+layoutItem.x);
+        console.log('dateColumnsStart.x = '+dateColumnsStart);
+        console.log('(layoutItem.x + layoutItem.w) = '+(layoutItem.x + layoutItem.w));
+        console.log('dateColumnsEnd.x = '+dateColumnsEnd);
+
+        // Ensure the event is within date columns
         return (
-            layoutItem.x >= dateColumnsStart &&
-            (layoutItem.x + layoutItem.w) <= dateColumnsEnd &&
-            layoutItem.x < sumColumnStart &&
-            layoutItem.x + layoutItem.w <= sumColumnStart
+            layoutItem.x <= dateColumnsStart ||
+            (layoutItem.x + layoutItem.w) >= dateColumnsEnd
         );
     };
 
     const isOverlapping = (newLayout, events, currentEventId) => {
-        console.log('isOverlapping');
-        console.log('currentEventId = '+currentEventId);
         // Check if any event in the `events` array overlaps with the `newLayout` event,
         // excluding the event with `currentEventId` to avoid checking an event against itself.
         return events.some(event => event.i !== currentEventId && areOverlapping(event, newLayout));
@@ -55,15 +64,11 @@ export default function EventRow({ room, events, nextEventId, setNextEventId, co
     const isInDateColumns = (x, w) => {
         const dateColumnsStart = columnWidths.slice(0, 2).reduce((acc, width) => acc + width, 0);
         const dateColumnsEnd = dateColumnsStart + columnWidths.slice(2, columnWidths.length - 2).reduce((acc, width) => acc + width, 0);
-    
-        console.log('dateColumnsStart = ' + dateColumnsStart);
-        console.log('dateColumnsEnd = ' + dateColumnsEnd);
-    
+
         return x >= dateColumnsStart && (x + w) <= dateColumnsEnd;
     };
 
     const onMouseDown = (e) => {
-        console.log("onMouseDown");
         if (e.target.closest('.react-resizable-handle') || e.target.closest('.event')) {
             return; // Ignore mousedown on resize handles or event names
         }
@@ -133,8 +138,8 @@ export default function EventRow({ room, events, nextEventId, setNextEventId, co
                         x: Math.min(Math.max(event.x, columnWidths[0] + columnWidths[1]), lastColumnStart - event.w),
                     })),
                     ...(draggingEvent ? [{ ...draggingEvent, h: 1, x: Math.min(Math.max(draggingEvent.x, columnWidths[0] + columnWidths[1]), lastColumnStart - draggingEvent.w) }] : []),
-                    { i: 'sum-column', x: lastColumnStart, y: 0, w: columnWidths[columnWidths.length - 2], h: 1, static: true },
-                    { i: 'hotel-column', x: lastColumnStart + columnWidths[columnWidths.length - 2], y: 0, w: columnWidths[columnWidths.length - 1], h: 1, static: true }
+                    { i: 'sum-value', x: lastColumnStart, y: 0, w: columnWidths[columnWidths.length - 2], h: 1, static: true },
+                    { i: 'hotel-input', x: lastColumnStart + columnWidths[columnWidths.length - 2], y: 0, w: columnWidths[columnWidths.length - 1], h: 1, static: true }
                 ]}
                 cols={sumOfAllColWidths}
                 rowHeight={20}
@@ -165,10 +170,10 @@ export default function EventRow({ room, events, nextEventId, setNextEventId, co
                     </div>
                 )}
 
-                <div key="sum-column" className="grid-cell">
+                <div key="sum-value" className="grid-cell">
                     1
                 </div>
-                <div key="hotel-column" className="grid-cell">
+                <div key="hotel-input" className="grid-cell">
                     <input type="text" defaultValue={"T"} style={{ width: '100%' }} />
                 </div>
             </GridLayout>
