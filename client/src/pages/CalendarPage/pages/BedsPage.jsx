@@ -11,14 +11,14 @@ export default function BedsPage () {
     const {
         date, setDate,
         data, setData
-    } = useDataFetch(0, new Date(2024, 5, 1));
+    } = useDataFetch(1, new Date(2024, 5, 1));
 
 
-    console.log(data[0]);
+    console.log(data);
 
     return (
         <>
-            <GridUI 
+            {/* <GridUI 
                 date={date}
                 setDate={setDate}
                 data={data}
@@ -29,7 +29,7 @@ export default function BedsPage () {
                 setDate={setDate}
                 data={data}
                 setData={setData}
-            /> 
+            />  */}
         </>
     );
 }

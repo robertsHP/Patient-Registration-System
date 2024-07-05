@@ -2,10 +2,6 @@ import React, { useEffect, useState } from 'react';
 
 import ApiService from '../../../../services/ApiService';
 
-import Event from '../models/Event.jsx';
-import Room from '../models/Room.jsx';
-import DataStorage from '../models/DataStorage.jsx';
-
 export default function useDataFetch (floorID, tempDate) {
     const [date, setDate] = useState(tempDate);
     const [data, setData] = useState(tempDate);
@@ -13,9 +9,9 @@ export default function useDataFetch (floorID, tempDate) {
     useEffect(() => {
         var params = `?floorId=${floorID}&year=${date.getFullYear()}&month=${date.getMonth() + 1}`;
 
-        ApiService.get('/api/calendar-page/events/by-date'+params)
+        ApiService.get('/api/calendar-page/table'+params)
         .then(result => {
-            setData(result.data);
+            setData(result.data[0].rooms);
         })
         .catch(error => {
             console.error('Failed to get data in useDataFetch - ' + error);

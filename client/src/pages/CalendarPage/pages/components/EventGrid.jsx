@@ -64,19 +64,19 @@ const initialData = (year, month) => {
 };
 
 export default function EventGrid({ date, setDate, data, setData }) {
-    const dateLayout = getDateLayout(year, month);
+    const dateLayout = getDateLayout(date.getFullYear(), date.getMonth() + 1);
 
     // const [data] = useState(initialData(date.getFullYear(), date.getMonth() + 1));
     // const [dateLayout, setDateLayout] = useState(getDateLayout(date.getFullYear(), date.getMonth() + 1));
     // const [nextEventId, setNextEventId] = useState(2); // Starts with 2 because event-0 already exists
 
-    // const [columnWidths, setColumnWidths] = useState(
-    //     [4, 4, ...dateLayout.map(() => 1), 1, 4]
-    // );
+    const [columnWidths, setColumnWidths] = useState(
+        [4, 4, ...dateLayout.map(() => 1), 1, 4]
+    );
 
     return (
         <div className="grid-container">
-            {/* <ColumnRow
+            <ColumnRow
                 dateLayout={dateLayout}
                 columnWidths={columnWidths}
             />
@@ -86,15 +86,16 @@ export default function EventGrid({ date, setDate, data, setData }) {
                     className="grid-cell"
                     style={{ gridColumn: `span ${columnWidths[roomId] || 4}` }}
                 >
-                    <EventRow
+                    
+                    {/* <EventRow
                         room={data.rooms[roomId]}
                         events={data.rooms[roomId].events}
                         nextEventId={nextEventId}
                         setNextEventId={setNextEventId}
                         columnWidths={columnWidths}
-                    />
+                    /> */}
                 </div>
-            ))} */}
+            ))}
         </div>
     );
 }
