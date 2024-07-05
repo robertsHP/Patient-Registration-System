@@ -1,29 +1,28 @@
 const pool = require('../utils/db.connect.js');
 const calendarPageServices = require('../services/calendarPageServices.js');
 
+//---------------------DEBUG---------------------------
+// exports.getEvents = async (req, res) => {
+//     const { floorId, page = 1, limit = 10 } = req.query;
+//     const offset = (page - 1) * limit;
+
+//     const { query, params } = calendarPageServices.buildGetEventQuery(null, null, floorId, limit, offset);
+
+//     try {
+//         const formattedQuery = query.replace(/\s+/g, ' ').trim(); // Simplify whitespace and trim
+
+//         res.json({ query: formattedQuery, params }); // Include parameters for context
+//     } catch (err) {
+//         res.status(500).json({ error: 'Internal Server Error (getEvents) - ' + err.message });
+//     }
+// };
+
 exports.getEvents = async (req, res) => {
-    const { floorId, page = 1, limit = 10 } = req.query;
+    const { floorId, year = null, month = null, page = 1, limit = 10 } = req.query;
     const offset = (page - 1) * limit;
 
-    const { query, params } = calendarPageServices.buildGetEventQuery(null, null, floorId, limit, offset);
-
-    try {
-        const dataResult = await pool.query(query, params);
-        // Directly use the JSON data from the database
-        const data = dataResult.rows;
-
-        res.json({ data });
-    } catch (err) {
-        res.status(500).json({ error: 'Internal Server Error (getEvents) - ' + err.message });
-    }
-};
-
-exports.getEventsByDate = async (req, res) => {
-    const { year, month, floorId, page = 1, limit = 10 } = req.query;
-    const offset = (page - 1) * limit;
-
-    if (!year || !month || !floorId) {
-        return res.status(400).json({ error: '(getEventsByDate) - Year, month, and floor ID are required parameters.' });
+    if (!floorId) {
+        return res.status(400).json({ error: '(getEvents) - Floor ID is a required parameter.' });
     }
 
     const { query, params } = calendarPageServices.buildGetEventQuery(year, month, floorId, limit, offset);
@@ -34,7 +33,7 @@ exports.getEventsByDate = async (req, res) => {
 
         res.json({ data });
     } catch (err) {
-        res.status(500).json({ error: 'Internal Server Error (getEventsByDate) - ' + err.message });
+        res.status(500).json({ error: 'Internal Server Error (getEvents) - ' + err.message });
     }
 };
 

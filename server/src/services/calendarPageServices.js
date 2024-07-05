@@ -14,23 +14,25 @@ const patientTypeTableName = `${prefix}${globalServices.sanitizeTableName('patie
 exports.buildGetEventQuery = (year, month, floorId, limit, offset) => {
     const params = [];
     let whereConditions = [];
-
-    if (year && month) {
+    
+    if (year !== null && month !== null) {
         whereConditions.push(`
-            (EXTRACT(YEAR FROM e.begin_date) = $${params.length + 1} 
-            AND EXTRACT(MONTH FROM e.begin_date) = $${params.length + 2})
-            OR
-            (EXTRACT(YEAR FROM e.end_date) = $${params.length + 1} 
-            AND EXTRACT(MONTH FROM e.end_date) = $${params.length + 2})
+            (
+                (EXTRACT(YEAR FROM e.begin_date AT TIME ZONE 'EET') = $${params.length + 1} 
+                AND EXTRACT(MONTH FROM e.begin_date AT TIME ZONE 'EET') = $${params.length + 2})
+                OR
+                (EXTRACT(YEAR FROM e.end_date AT TIME ZONE 'EET') = $${params.length + 1} 
+                AND EXTRACT(MONTH FROM e.end_date AT TIME ZONE 'EET') = $${params.length + 2})
+            )
         `);
         params.push(year, month);
     }
-
+    
     if (floorId) {
         whereConditions.push(`f.id_floor = $${params.length + 1}`);
         params.push(floorId);
     }
-
+    
     const whereClause = whereConditions.length > 0
         ? 'WHERE ' + whereConditions.join(' AND ')
         : '';
@@ -70,7 +72,6 @@ exports.buildGetEventQuery = (year, month, floorId, limit, offset) => {
             ${whereClause}
         )
 
-        -- Main SELECT Query to aggregate rooms with nested events
         SELECT 
             jsonb_agg(
                 jsonb_build_object(
