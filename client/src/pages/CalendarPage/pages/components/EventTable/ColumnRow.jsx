@@ -6,9 +6,7 @@ import 'react-resizable/css/styles.css';
 
 import './ColumnRow.css';
 
-export default function ColumnRow({ dateLayout, columnWidths }) {
-    // Calculate the sum of all column widths
-    const sumOfAllColWidths = columnWidths.reduce((acc, width) => acc + width, 0);
+export default function ColumnRow({ dateLayout, columnWidths, sumOfAllColWidths}) {
 
     // Calculate the starting position for the additional columns
     const lastColumnStart = columnWidths.slice(0, columnWidths.length - 2)
@@ -42,7 +40,7 @@ export default function ColumnRow({ dateLayout, columnWidths }) {
                 <div key="name-column" className="grid-cell header">Vārds</div>
                 {dateLayout.map((item) => (
                     <div key={item.i} className="grid-cell">
-                        {item.date.getDate()}
+                        {item.title}
                     </div>
                 ))}
                 {/* Add the new column divs */}
