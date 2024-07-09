@@ -1,7 +1,10 @@
 import React, { useState, useRef } from 'react';
+
 import GridLayout from 'react-grid-layout';
+
 import 'react-grid-layout/css/styles.css';
 import 'react-resizable/css/styles.css';
+
 import './EventRow.css';
 
 export default function EventRow({ room, width, nextEventId, setNextEventId, columnWidths, sumOfAllColWidths }) {
@@ -11,22 +14,6 @@ export default function EventRow({ room, width, nextEventId, setNextEventId, col
     const gridRef = useRef(null);
 
     const lastColumnStart = columnWidths.slice(0, columnWidths.length - 2).reduce((acc, width) => acc + width, 0);
-
-    const onLayoutChange = (layout) => {
-        setLocalEvents(prevEvents =>
-            prevEvents.map(event => {
-                const newLayout = layout.find(l => l.i === String(event.i));
-
-                var overlapping = isOverlapping(newLayout, prevEvents, event.i);
-                var validPosition = isValidEventPosition(newLayout);
-                if (newLayout && validPosition && !overlapping) {
-                    console.log('onLayoutChange');
-                    return { ...event, ...newLayout, h: 1 };
-                }
-                return event;
-            })
-        );
-    };
 
     const isValidEventPosition = (layoutItem) => {
         const dateColumnsStart = columnWidths.slice(0, 2).reduce((acc, width) => acc + width, 0);
@@ -40,11 +27,29 @@ export default function EventRow({ room, width, nextEventId, setNextEventId, col
     };
 
     const isOverlapping = (newLayout, events, currentEventId) => {
-        return events.some(event => event.i !== currentEventId && areOverlapping(event, newLayout));
-    };
-    
-    const areOverlapping = (event1, event2) => {
-        return event1.y === event2.y && !(event1.x + event1.w <= event2.x || event2.x + event2.w <= event1.x);
+        const overlapping = (event1, event2) => {
+            // Check if y-coordinates are the same
+            if (event1.y !== event2.y) {
+                return false;
+            }
+        
+            // Check if both the starts and ends of the events overlap
+            const start1 = event1.x;
+            const end1 = event1.x + event1.w;
+            const start2 = event2.x;
+            const end2 = event2.x + event2.w;
+        
+            // Check for overlap: either event2 starts within event1 or event1 starts within event2
+            const startsOverlap = (start1 >= start2 && start1 <= end2) || (start2 >= start1 && start2 <= end1);
+            // Check for overlap: either event2 ends within event1 or event1 ends within event2
+            const endsOverlap = (end1 >= start2 && end1 <= end2) || (end2 >= start1 && end2 <= end1);
+        
+            return startsOverlap && endsOverlap;
+        };
+
+        return events.some(
+            event => event.i !== currentEventId && overlapping(event, newLayout)
+        );
     };
 
     const isInDateColumns = (x, w) => {
@@ -54,19 +59,34 @@ export default function EventRow({ room, width, nextEventId, setNextEventId, col
         return x >= dateColumnsStart && (x + w) <= dateColumnsEnd;
     };
 
+    const onLayoutChange = (layout) => {
+        setLocalEvents(prevEvents =>
+            prevEvents.map(event => {
+                const newLayout = layout.find(l => l.i === String(event.i));
+    
+                if (newLayout) {
+                    const validPosition = isValidEventPosition(newLayout);
+                    const notOverlapping = !isOverlapping(newLayout, prevEvents, event.i);
+    
+                    if (validPosition && notOverlapping) {
+                        return { ...event, ...newLayout, h: 1 };
+                    }
+                }
+                return event;
+            })
+        );
+    };
+
     const onMouseDown = (e) => {
         if (e.target.closest('.react-resizable-handle') || e.target.closest('.event')) {
             return; // Ignore mousedown on resize handles or event names
         }
 
         console.log('onMouseDown');
-
+        
         const gridRect = gridRef.current.getBoundingClientRect();
         const colWidth = width / sumOfAllColWidths; // Dynamic calculation based on grid width
         const x = Math.floor((e.clientX - gridRect.left) / colWidth);
-
-        console.log('gridRect.width = '+gridRect.width);
-        console.log('x = '+x);
 
         if (isInDateColumns(x, 1)) {
             setDraggingEvent({
@@ -84,8 +104,9 @@ export default function EventRow({ room, width, nextEventId, setNextEventId, col
     };
 
     const onMouseMove = (e) => {
-        // console.log('onMouseMove');
         if (isCreatingEvent && draggingEvent) {
+            console.log('onMouseMove');
+
             const gridRect = gridRef.current.getBoundingClientRect();
             const colWidth = width / sumOfAllColWidths;
             const currentX = Math.floor((e.clientX - gridRect.left) / colWidth);
@@ -103,10 +124,21 @@ export default function EventRow({ room, width, nextEventId, setNextEventId, col
     };
 
     const onMouseUp = () => {
-        console.log('onMouseUp');
         if (isCreatingEvent && draggingEvent) {
-            if (isInDateColumns(draggingEvent.x, draggingEvent.w) && !isOverlapping(draggingEvent, localEvents, 'event-temp')) {
-                const newEvent = { ...draggingEvent, i: nextEventId, x: Number(draggingEvent.x), y: Number(draggingEvent.y), w: Number(draggingEvent.w), h: 1 };
+            console.log('onMouseUp');
+
+            var inDateColumns = isInDateColumns(draggingEvent.x, draggingEvent.w);
+            var overlapping = isOverlapping(draggingEvent, localEvents, 'event-temp');
+
+            if (inDateColumns && !overlapping) {
+                const newEvent = { 
+                    ...draggingEvent, 
+                    i: nextEventId, 
+                    x: Number(draggingEvent.x), 
+                    y: Number(draggingEvent.y), 
+                    w: Number(draggingEvent.w), 
+                    h: 1 
+                };
                 setLocalEvents(prevEvents => [...prevEvents, newEvent]);
                 setNextEventId(prevId => prevId + 1);
             }
@@ -120,8 +152,7 @@ export default function EventRow({ room, width, nextEventId, setNextEventId, col
             ref={gridRef} 
             onMouseDown={onMouseDown} 
             onMouseMove={onMouseMove} 
-            onMouseUp={onMouseUp} 
-            // style={{ position: 'relative' }}
+            onMouseUp={onMouseUp}
         >
             <GridLayout
                 className="layout"

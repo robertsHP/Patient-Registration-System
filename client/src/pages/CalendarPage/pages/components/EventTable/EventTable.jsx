@@ -1,10 +1,12 @@
 import React, { useState, useEffect } from 'react';
+
 import GridLayout from 'react-grid-layout';
 import 'react-grid-layout/css/styles.css';
 import 'react-resizable/css/styles.css';
 
 import ColumnRow from './ColumnRow';
 import EventRow from './EventRow';
+import SumRow from './SumRow';
 
 import './EventTable.css';
 
@@ -80,6 +82,13 @@ export default function EventTable({ date, setDate, rooms, setRooms }) {
                     />
                 </div>
             ))}
+            <SumRow 
+                dateLayout={dateLayout} 
+                width={width} 
+                columnWidths={columnWidths} 
+                sumOfAllColWidths={sumOfAllColWidths} 
+                rooms={rooms} 
+            />
         </div>
     );
 }
