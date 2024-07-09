@@ -1,8 +1,6 @@
-// useGridConfigurations.js
 import { useMemo } from 'react';
 
-export default function useGridConfigurations (date) {
-    // Helper function to get all days of a specific month and year
+export default function useTableConfigurations (date) {
     const getDaysOfMonth = (year, month) => {
         const date = new Date(year, month, 1);
         const days = [];
@@ -49,5 +47,12 @@ export default function useGridConfigurations (date) {
         resizeHandles: ['e', 'w']
     }), []);
 
-    return { mainConfig, columnRowConfig, eventRowConfig };
+    const sumRowConfig = useMemo(() => ({
+        rowHeight: 20,
+        width: 1200,
+        isDraggable: false,
+        isResizable: false
+    }), []);
+
+    return { mainConfig, columnRowConfig, eventRowConfig, sumRowConfig };
 };
