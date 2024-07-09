@@ -42,6 +42,36 @@ const fromRoomDataToLayout = (rooms, monthStart) => {
     }));
 };
 
+
+const fromLayoutToRoomData = (rooms) => {
+    return rooms.map(room => ({
+        ...room,
+        events: room.events.filter(event => event.i.startsWith('event-')).map(event => ({
+            notes: event.notes,
+            doctor: {
+                doc_name: event.doctor.doc_name,
+                id_doctor: event.doctor.id_doctor
+            },
+            patient: {
+                pat_name: event.patient.pat_name,
+                phone_num: event.patient.phone_num,
+                id_patient: event.patient.id_patient,
+                patient_type: {
+                    pat_type: event.patient.patient_type.pat_type,
+                    id_pat_type: event.patient.patient_type.id_pat_type
+                },
+                hotel_stay_end: event.patient.hotel_stay_end,
+                hotel_stay_start: event.patient.hotel_stay_start
+            },
+            end_date: new Date(event.end_date),
+            id_event: parseInt(event.i.split('-')[1]),
+            begin_date: new Date(event.begin_date)
+        }))
+    }));
+};
+
+
+
 export default function EventTable({ date, setDate, rooms, setRooms }) {
     const daysOfMonth = getDaysOfMonth(date.getFullYear(), date.getMonth());
     const columnWidths = [4, 4, ...daysOfMonth.map(() => 1), 1, 4];
@@ -61,6 +91,8 @@ export default function EventTable({ date, setDate, rooms, setRooms }) {
     );
     const sumOfAllColWidths = columnWidths.reduce((acc, width) => acc + width, 0);
     const preparedRooms = fromRoomDataToLayout(rooms, new Date(date.getFullYear(), date.getMonth(), 1));
+    
+    const reconvertedRooms = fromLayoutToRoomData(preparedRooms);
 
     return (
         <div className="grid-container">

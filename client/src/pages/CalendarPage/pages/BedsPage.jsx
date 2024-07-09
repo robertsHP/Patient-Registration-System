@@ -15,7 +15,7 @@ export default function BedsPage () {
         rooms, setRooms
     } = useDataFetch(0, new Date(2024, 5, 1));
 
-    console.log(rooms);
+    // console.log(rooms);
 
     return (
         <>
