@@ -6,7 +6,7 @@ import 'react-resizable/css/styles.css';
 
 import './ColumnRow.css';
 
-export default function ColumnRow({ dateLayout, columnWidths, sumOfAllColWidths}) {
+export default function ColumnRow({ dateLayout, width, columnWidths, sumOfAllColWidths}) {
     const lastColumnStart = columnWidths.slice(0, columnWidths.length - 2)
         .reduce((acc, width) => acc + width, 0);
     
@@ -30,7 +30,7 @@ export default function ColumnRow({ dateLayout, columnWidths, sumOfAllColWidths}
                 ]}
                 cols={sumOfAllColWidths}
                 rowHeight={20}
-                width={1200}
+                width={width}
                 isDraggable={false}
                 isResizable={false}
             >

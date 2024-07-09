@@ -2,8 +2,10 @@ import React, { useState, useEffect } from 'react';
 import GridLayout from 'react-grid-layout';
 import 'react-grid-layout/css/styles.css';
 import 'react-resizable/css/styles.css';
+
 import ColumnRow from './ColumnRow';
 import EventRow from './EventRow';
+
 import './EventTable.css';
 
 // Helper function to get all days of a specific month and year
@@ -50,6 +52,7 @@ export default function EventTable({ date, setDate, rooms, setRooms }) {
         static: true,
         title: day.getDate()
     }));
+    const width = 1200;
 
     const [nextEventId, setNextEventId] = useState(
         rooms.flatMap(room => room.events.map(event => event.id_event)).length
@@ -61,6 +64,7 @@ export default function EventTable({ date, setDate, rooms, setRooms }) {
         <div className="grid-container">
             <ColumnRow
                 dateLayout={dateLayout}
+                width={width}
                 columnWidths={columnWidths}
                 sumOfAllColWidths={sumOfAllColWidths}
             />
@@ -68,7 +72,7 @@ export default function EventTable({ date, setDate, rooms, setRooms }) {
                 <div key={`room-${room.id_room}`} className="grid-cell" style={{ gridColumn: `span ${sumOfAllColWidths}` }}>
                     <EventRow
                         room={room}
-                        events={room.events}
+                        width={width}
                         nextEventId={nextEventId}
                         setNextEventId={setNextEventId}
                         columnWidths={columnWidths}
