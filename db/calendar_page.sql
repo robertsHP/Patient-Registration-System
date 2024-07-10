@@ -90,7 +90,7 @@ INSERT INTO LRC_CALENDAR_PAGE_doctor (id_doctor, doc_name) VALUES
 (1, 'Dr. Michael Brown'),
 (2, 'Dr. Sarah Wilson');
 
-INSERT INTO LRC_CALENDAR_PAGE_event (id_beds, id_room, id_patient, begin_date, end_date, notes, id_doctor) VALUES
+INSERT INTO LRC_CALENDAR_PAGE_event (id_event, id_room, id_patient, begin_date, end_date, notes, id_doctor) VALUES
 (0, 0, 0, '2024-06-01 12:00:00', '2024-06-05 11:00:00', 'Routine check-up', 0),
 (1, 1, 1, '2024-06-02 14:00:00', '2024-06-06 10:00:00', 'VIP patient, regular monitoring', 1),
 (2, 2, 2, '2024-06-03 16:00:00', '2024-06-07 09:00:00', 'Emergency surgery', 2),
