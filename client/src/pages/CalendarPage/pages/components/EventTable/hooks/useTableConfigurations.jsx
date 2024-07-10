@@ -24,35 +24,13 @@ export default function useTableConfigurations (date) {
     }));
     const sumOfAllColWidths = columnWidths.reduce((acc, width) => acc + width, 0);
 
-    const mainConfig = useMemo(() => ({
+    return {
+        cols: sumOfAllColWidths,
+        rowHeight: 20,
+        width: 1200,
+
         daysOfMonth: daysOfMonth,
         dateLayout: dateLayout,
-        columnWidths: columnWidths,
-        sumOfAllColWidths: sumOfAllColWidths
-    }), [daysOfMonth, dateLayout, columnWidths, sumOfAllColWidths])
-
-    const columnRowConfig = useMemo(() => ({
-        rowHeight: 20,
-        width: 1200,
-        isDraggable: false,
-        isResizable: false
-    }), []);
-
-    const eventRowConfig = useMemo(() => ({
-        rowHeight: 20,
-        width: 1200,
-        isDraggable: true,
-        isResizable: true,
-        draggableHandle: '.event',
-        resizeHandles: ['e', 'w']
-    }), []);
-
-    const sumRowConfig = useMemo(() => ({
-        rowHeight: 20,
-        width: 1200,
-        isDraggable: false,
-        isResizable: false
-    }), []);
-
-    return { mainConfig, columnRowConfig, eventRowConfig, sumRowConfig };
+        columnWidths: columnWidths
+    };
 };

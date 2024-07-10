@@ -4,7 +4,7 @@ import 'react-grid-layout/css/styles.css';
 import 'react-resizable/css/styles.css';
 import './SumRow.css';
 
-export default function SumRow({ dateLayout, columnWidths, sumOfAllColWidths, width, rooms }) {
+export default function SumRow({ config, rooms }) {
     // Helper function to check if an event occurs on a specific date
     const isEventOnDate = (event, date) => {
         const eventStart = new Date(event.begin_date);
@@ -14,8 +14,9 @@ export default function SumRow({ dateLayout, columnWidths, sumOfAllColWidths, wi
         return checkDate >= eventStart && checkDate <= eventEnd;
     };
 
-    // Calculate sums for each date column
-    const dateSums = dateLayout.map(dateItem => {
+
+
+    const dateSums = config.dateLayout.map(dateItem => {
         const date = new Date(dateItem.title);
         return Object.values(rooms).reduce((sum, room) => {
             return sum + room.events.reduce((eventSum, event) => 
@@ -24,31 +25,40 @@ export default function SumRow({ dateLayout, columnWidths, sumOfAllColWidths, wi
         }, 0);
     });
 
-    const sumColumnStart = columnWidths.slice(0, columnWidths.length - 2).reduce((acc, width) => acc + width, 0);
+    const sumColumnStart = config.columnWidths.slice(0, config.columnWidths.length - 2).reduce((acc, width) => acc + width, 0);
     const totalSum = dateSums.reduce((acc, sum) => acc + sum, 0);
 
     return (
         <GridLayout
             className="layout"
             layout={[
-                ...dateLayout.map((item, index) => ({
+                ...config.dateLayout.map((item, index) => ({
                     i: item.i,
-                    x: columnWidths.slice(0, index + 2).reduce((acc, width) => acc + width, 0),
+                    x: config.columnWidths.slice(0, index + 2).reduce((acc, width) => acc + width, 0),
                     y: 0,
-                    w: columnWidths[index + 2],
+                    w: config.columnWidths[index + 2],
                     h: 1,
                     static: true,
                 })),
-                { i: 'sum-column', x: sumColumnStart, y: 0, w: columnWidths[columnWidths.length - 2], h: 1, static: true }
+                { 
+                    i: 'sum-column', 
+                    x: sumColumnStart, 
+                    y: 0, 
+                    w: config.columnWidths[config.columnWidths.length - 2], 
+                    h: 1, 
+                    static: true 
+                }
             ]}
-            cols={sumOfAllColWidths}
-            rowHeight={20}
-            width={width}
+            cols={config.cols}
+            rowHeight={config.rowHeight}
+            width={config.width}
             isDraggable={false}
             isResizable={false}
         >
             {dateSums.map((sum, index) => (
-                <div key={dateLayout[index].i} className="grid-cell">{sum}</div>
+                <div key={config.dateLayout[index].i} className="grid-cell">
+                    {sum}
+                </div>
             ))}
             <div key="sum-column" className="grid-cell header">{totalSum}</div>
         </GridLayout>

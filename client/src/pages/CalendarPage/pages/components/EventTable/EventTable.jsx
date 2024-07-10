@@ -22,28 +22,24 @@ export default function EventTable({ data }) {
 
     return (
         <div className="grid-container">
-            {/* <ColumnRow
+            <ColumnRow
                 config={config}
-            /> */}
-            {/* {preparedRooms.map((room, roomIndex) => (
-                <div key={`room-${room.id_room}`} className="grid-cell" style={{ gridColumn: `span ${sumOfAllColWidths}` }}>
+            />
+            {data.rooms.map((room, roomIndex) => (
+                ///LOOOOOK AT THIIIIISSSSSSZZZZ (pārvilkšanas kļūda)
+                <div key={`room-${room.id_room}`} className="grid-cell" style={{ gridColumn: `span ${config.cols}` }}>
                     <EventRow
+                        config={config}
                         room={room}
-                        width={width}
                         nextEventId={nextEventId}
                         setNextEventId={setNextEventId}
-                        columnWidths={columnWidths}
-                        sumOfAllColWidths={sumOfAllColWidths}
                     />
                 </div>
-            ))} */}
-            {/* <SumRow 
-                dateLayout={dateLayout} 
-                width={width} 
-                columnWidths={columnWidths} 
-                sumOfAllColWidths={sumOfAllColWidths} 
-                rooms={rooms} 
-            /> */}
+            ))}
+            <SumRow 
+                config={config}
+                rooms={data.rooms} 
+            />
         </div>
     );
 }

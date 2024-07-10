@@ -7,17 +7,17 @@ import 'react-resizable/css/styles.css';
 
 import './EventRow.css';
 
-export default function EventRow({ room, width, nextEventId, setNextEventId, columnWidths, sumOfAllColWidths }) {
+export default function EventRow({ config, room, nextEventId, setNextEventId }) {
     const [localEvents, setLocalEvents] = useState(room.events);
     const [draggingEvent, setDraggingEvent] = useState(null);
     const [isCreatingEvent, setIsCreatingEvent] = useState(false);
     const gridRef = useRef(null);
 
-    const lastColumnStart = columnWidths.slice(0, columnWidths.length - 2).reduce((acc, width) => acc + width, 0);
+    const lastColumnStart = config.columnWidths.slice(0, config.columnWidths.length - 2).reduce((acc, width) => acc + width, 0);
 
     const isValidEventPosition = (layoutItem) => {
-        const dateColumnsStart = columnWidths.slice(0, 2).reduce((acc, width) => acc + width, 0);
-        const dateColumnsEnd = columnWidths.slice(2, columnWidths.length - 2).reduce((acc, width) => acc + width, dateColumnsStart);
+        const dateColumnsStart = config.columnWidths.slice(0, 2).reduce((acc, width) => acc + width, 0);
+        const dateColumnsEnd = config.columnWidths.slice(2, config.columnWidths.length - 2).reduce((acc, width) => acc + width, dateColumnsStart);
 
         // Ensure the event is within date columns
         return (
@@ -53,8 +53,8 @@ export default function EventRow({ room, width, nextEventId, setNextEventId, col
     };
 
     const isInDateColumns = (x, w) => {
-        const dateColumnsStart = columnWidths.slice(0, 2).reduce((acc, width) => acc + width, 0);
-        const dateColumnsEnd = dateColumnsStart + columnWidths.slice(2, columnWidths.length - 2).reduce((acc, width) => acc + width, 0);
+        const dateColumnsStart = config.columnWidths.slice(0, 2).reduce((acc, width) => acc + width, 0);
+        const dateColumnsEnd = dateColumnsStart + config.columnWidths.slice(2, config.columnWidths.length - 2).reduce((acc, width) => acc + width, 0);
 
         return x >= dateColumnsStart && (x + w) <= dateColumnsEnd;
     };
@@ -85,7 +85,7 @@ export default function EventRow({ room, width, nextEventId, setNextEventId, col
         console.log('onMouseDown');
         
         const gridRect = gridRef.current.getBoundingClientRect();
-        const colWidth = width / sumOfAllColWidths; // Dynamic calculation based on grid width
+        const colWidth = config.width / config.cols; // Dynamic calculation based on grid width
         const x = Math.floor((e.clientX - gridRect.left) / colWidth);
 
         if (isInDateColumns(x, 1)) {
@@ -108,7 +108,7 @@ export default function EventRow({ room, width, nextEventId, setNextEventId, col
             console.log('onMouseMove');
 
             const gridRect = gridRef.current.getBoundingClientRect();
-            const colWidth = width / sumOfAllColWidths;
+            const colWidth = config.width / config.cols;
             const currentX = Math.floor((e.clientX - gridRect.left) / colWidth);
             const newWidth = Math.abs(currentX - draggingEvent.startX) + 1;
             const newX = Math.min(draggingEvent.startX, currentX);
@@ -157,21 +157,60 @@ export default function EventRow({ room, width, nextEventId, setNextEventId, col
             <GridLayout
                 className="layout"
                 layout={[
-                    { i: `room-input-${room.id_room}`, x: 0, y: 0, w: columnWidths[0], h: 1, static: true },
-                    { i: `name-input-${room.id_room}`, x: columnWidths[0], y: 0, w: columnWidths[1], h: 1, static: true },
+                    { 
+                        i: `room-input-${room.id_room}`, 
+                        x: 0, 
+                        y: 0, 
+                        w: 
+                        config.columnWidths[0], 
+                        h: 1, 
+                        static: true 
+                    },
+                    { 
+                        i: `name-input-${room.id_room}`, 
+                        x: config.columnWidths[0], 
+                        y: 0, 
+                        w: config.columnWidths[1], 
+                        h: 1, 
+                        static: true 
+                    },
                     ...localEvents.map(event => ({
                         ...event,
                         i: String(event.i),
                         h: 1,
-                        x: Math.min(Math.max(event.x, columnWidths[0] + columnWidths[1]), lastColumnStart - event.w),
+                        x: Math.min(Math.max(
+                            event.x, 
+                            config.columnWidths[0] + config.columnWidths[1]), 
+                            lastColumnStart - event.w
+                        ),
                     })),
-                    ...(draggingEvent ? [{ ...draggingEvent, h: 1, x: Math.min(Math.max(draggingEvent.x, columnWidths[0] + columnWidths[1]), lastColumnStart - draggingEvent.w) }] : []),
-                    { i: 'sum-value', x: lastColumnStart, y: 0, w: columnWidths[columnWidths.length - 2], h: 1, static: true },
-                    { i: 'hotel-input', x: lastColumnStart + columnWidths[columnWidths.length - 2], y: 0, w: columnWidths[columnWidths.length - 1], h: 1, static: true }
+                    ...(draggingEvent ? [
+                        { 
+                            ...draggingEvent, 
+                            h: 1, 
+                            x: Math.min(Math.max(draggingEvent.x, config.columnWidths[0] + config.columnWidths[1]), 
+                            lastColumnStart - draggingEvent.w) 
+                        }
+                    ] : []),
+                    { 
+                        i: 'sum-value', 
+                        x: lastColumnStart, 
+                        y: 0, 
+                        w: config.columnWidths[config.columnWidths.length - 2], 
+                        h: 1, 
+                        static: true 
+                    },
+                    { 
+                        i: 'hotel-input', 
+                        x: lastColumnStart + config.columnWidths[config.columnWidths.length - 2], 
+                        y: 0, w: config.columnWidths[config.columnWidths.length - 1], 
+                        h: 1, 
+                        static: true 
+                    }
                 ]}
-                cols={sumOfAllColWidths}
-                rowHeight={20}
-                width={width}
+                cols={config.cols}
+                rowHeight={config.rowHeight}
+                width={config.width}
                 onLayoutChange={onLayoutChange}
                 isDraggable
                 isResizable
