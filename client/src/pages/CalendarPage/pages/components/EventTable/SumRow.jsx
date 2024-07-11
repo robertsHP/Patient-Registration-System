@@ -4,21 +4,46 @@ import 'react-grid-layout/css/styles.css';
 import 'react-resizable/css/styles.css';
 import './SumRow.css';
 
-export default function SumRow({ config, rooms }) {
+export default function SumRow({ data, config }) {
+
+
+    // const [dateSums, setDateSums] = useState([]);
+    // const [totalSum, setTotalSum] = useState(0);
+
+    // useEffect(() => {
+    //     const updatedDateSums = config.dateLayout.map(dateItem => {
+    //         const date = new Date(dateItem.title);
+    //         return Object.values(data.rooms).reduce((sum, room) => {
+    //             return sum + room.events.reduce((eventSum, event) => 
+    //                 eventSum + (isEventOnDate(event, date) ? 1 : 0)
+    //             , 0);
+    //         }, 0);
+    //     });
+    //     setDateSums(updatedDateSums);
+
+    //     const updatedTotalSum = updatedDateSums.reduce((sum, dateSum) => sum + dateSum, 0);
+    //     setTotalSum(updatedTotalSum);
+    // }, [localEvents]);
+
+
+
+
+
+
     // Helper function to check if an event occurs on a specific date
     const isEventOnDate = (event, date) => {
         const eventStart = new Date(event.begin_date);
         const eventEnd = new Date(event.end_date);
-        const checkDate = new Date(date.getFullYear(), date.getMonth(), date.getDate());
 
-        return checkDate >= eventStart && checkDate <= eventEnd;
+        return date >= eventStart && date <= eventEnd;
     };
 
-
-
     const dateSums = config.dateLayout.map(dateItem => {
-        const date = new Date(dateItem.title);
-        return Object.values(rooms).reduce((sum, room) => {
+        const year = data.date.getFullYear();
+        const month = data.date.getMonth();
+        const date = new Date(year, month, dateItem.title);
+
+        return Object.values(data.rooms).reduce((sum, room) => {
             return sum + room.events.reduce((eventSum, event) => 
                 eventSum + (isEventOnDate(event, date) ? 1 : 0)
             , 0);

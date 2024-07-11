@@ -7,8 +7,9 @@ import 'react-resizable/css/styles.css';
 
 import './EventRow.css';
 
-export default function EventRow({ config, room, nextEventId, setNextEventId }) {
-    const [localEvents, setLocalEvents] = useState(room.events);
+export default function EventRow({ data, roomIndex, config, nextEventId, setNextEventId }) {
+    const [room, setRoom] = useState(data.getRoomWithID(roomIndex));
+
     const [draggingEvent, setDraggingEvent] = useState(null);
     const [isCreatingEvent, setIsCreatingEvent] = useState(false);
     const gridRef = useRef(null);
@@ -17,7 +18,8 @@ export default function EventRow({ config, room, nextEventId, setNextEventId }) 
 
     const isValidEventPosition = (layoutItem) => {
         const dateColumnsStart = config.columnWidths.slice(0, 2).reduce((acc, width) => acc + width, 0);
-        const dateColumnsEnd = config.columnWidths.slice(2, config.columnWidths.length - 2).reduce((acc, width) => acc + width, dateColumnsStart);
+        const dateColumnsEnd = config.columnWidths.slice(2, config.columnWidths.length - 2)
+            .reduce((acc, width) => acc + width, dateColumnsStart);
 
         // Ensure the event is within date columns
         return (
@@ -54,27 +56,45 @@ export default function EventRow({ config, room, nextEventId, setNextEventId }) 
 
     const isInDateColumns = (x, w) => {
         const dateColumnsStart = config.columnWidths.slice(0, 2).reduce((acc, width) => acc + width, 0);
-        const dateColumnsEnd = dateColumnsStart + config.columnWidths.slice(2, config.columnWidths.length - 2).reduce((acc, width) => acc + width, 0);
+        const dateColumnsEnd = dateColumnsStart + config.columnWidths.slice(2, config.columnWidths.length - 2)
+            .reduce((acc, width) => acc + width, 0);
 
         return x >= dateColumnsStart && (x + w) <= dateColumnsEnd;
     };
 
+    const getDateBasedOnLayoutPosition = (pos) => {
+        var finalDate = null;
+        config.dateLayout.forEach( date => {
+            if (pos == date.x)
+                finalDate = new Date(
+                    data.date.getFullYear(), 
+                    data.date.getMonth(), 
+                    date.num
+                );    
+        });
+        return finalDate;
+    };
+
     const onLayoutChange = (layout) => {
-        setLocalEvents(prevEvents =>
-            prevEvents.map(event => {
-                const newLayout = layout.find(l => l.i === String(event.i));
-    
-                if (newLayout) {
-                    const validPosition = isValidEventPosition(newLayout);
-                    const notOverlapping = !isOverlapping(newLayout, prevEvents, event.i);
-    
-                    if (validPosition && notOverlapping) {
-                        return { ...event, ...newLayout, h: 1 };
-                    }
+        room.events.forEach(event => {
+            const newLayout = layout.find(l => l.i === String(event.i));
+
+            if (newLayout) {
+                const validPosition = isValidEventPosition(newLayout);
+                const notOverlapping = !isOverlapping(newLayout, room.events, event.i);
+
+                if (validPosition && notOverlapping) {
+                    var startDatePos = newLayout.x;
+                    var endDatePos = newLayout.x + newLayout.w;
+
+                    event.begin_date = getDateBasedOnLayoutPosition(startDatePos);
+                    event.end_date = getDateBasedOnLayoutPosition(endDatePos);
+                    event.x = newLayout.x;
+                    event.w = newLayout.w;
                 }
-                return event;
-            })
-        );
+            }
+            return event;
+        });
     };
 
     const onMouseDown = (e) => {
@@ -82,20 +102,26 @@ export default function EventRow({ config, room, nextEventId, setNextEventId }) 
             return; // Ignore mousedown on resize handles or event names
         }
 
-        console.log('onMouseDown');
-        
         const gridRect = gridRef.current.getBoundingClientRect();
         const colWidth = config.width / config.cols; // Dynamic calculation based on grid width
         const x = Math.floor((e.clientX - gridRect.left) / colWidth);
 
         if (isInDateColumns(x, 1)) {
+            var startDate = getDateBasedOnLayoutPosition(x);
+            var endDate = getDateBasedOnLayoutPosition(x + 1);
+
             setDraggingEvent({
+                id_event: null,
+                notes: "",
+                doctor: null,
+                patient: null,
+                end_date: endDate,
+                begin_date: startDate,
                 i: 'event-temp',
                 x: x,
                 y: 0,
                 w: 1,
                 h: 1,
-                title: 'New Event',
                 startX: x
             });
 
@@ -105,8 +131,6 @@ export default function EventRow({ config, room, nextEventId, setNextEventId }) 
 
     const onMouseMove = (e) => {
         if (isCreatingEvent && draggingEvent) {
-            console.log('onMouseMove');
-
             const gridRect = gridRef.current.getBoundingClientRect();
             const colWidth = config.width / config.cols;
             const currentX = Math.floor((e.clientX - gridRect.left) / colWidth);
@@ -114,21 +138,34 @@ export default function EventRow({ config, room, nextEventId, setNextEventId }) 
             const newX = Math.min(draggingEvent.startX, currentX);
 
             if (isInDateColumns(newX, newWidth)) {
-                setDraggingEvent(prevEvent => ({
-                    ...prevEvent,
+                var startDate = getDateBasedOnLayoutPosition(newX);
+                var endDate = getDateBasedOnLayoutPosition(newX + newWidth);
+
+                var newDragEv = {
+                    ...draggingEvent,
+                    end_date: endDate,
+                    begin_date: startDate,
                     x: newX,
                     w: newWidth
-                }));
+                };
+
+                console.log(newDragEv);
+
+                setDraggingEvent({
+                    ...draggingEvent,
+                    end_date: endDate,
+                    begin_date: startDate,
+                    x: newX,
+                    w: newWidth
+                });
             }
         }
     };
 
     const onMouseUp = () => {
         if (isCreatingEvent && draggingEvent) {
-            console.log('onMouseUp');
-
             var inDateColumns = isInDateColumns(draggingEvent.x, draggingEvent.w);
-            var overlapping = isOverlapping(draggingEvent, localEvents, 'event-temp');
+            var overlapping = isOverlapping(draggingEvent, room.events, 'event-temp');
 
             if (inDateColumns && !overlapping) {
                 const newEvent = { 
@@ -139,8 +176,8 @@ export default function EventRow({ config, room, nextEventId, setNextEventId }) 
                     w: Number(draggingEvent.w), 
                     h: 1 
                 };
-                setLocalEvents(prevEvents => [...prevEvents, newEvent]);
-                setNextEventId(prevId => prevId + 1);
+                room.events.push(newEvent);
+                setNextEventId(nextEventId + 1);
             }
             setDraggingEvent(null);
             setIsCreatingEvent(false);
@@ -158,7 +195,7 @@ export default function EventRow({ config, room, nextEventId, setNextEventId }) 
                 className="layout"
                 layout={[
                     { 
-                        i: `room-input-${room.id_room}`, 
+                        i: `room-input-${roomIndex}`, 
                         x: 0, 
                         y: 0, 
                         w: 
@@ -167,14 +204,14 @@ export default function EventRow({ config, room, nextEventId, setNextEventId }) 
                         static: true 
                     },
                     { 
-                        i: `name-input-${room.id_room}`, 
+                        i: `name-input-${roomIndex}`, 
                         x: config.columnWidths[0], 
                         y: 0, 
                         w: config.columnWidths[1], 
                         h: 1, 
                         static: true 
                     },
-                    ...localEvents.map(event => ({
+                    ...room.events.map(event => ({
                         ...event,
                         i: String(event.i),
                         h: 1,
@@ -217,23 +254,25 @@ export default function EventRow({ config, room, nextEventId, setNextEventId }) 
                 draggableHandle=".event"
                 resizeHandles={['e', 'w']}
             >
-                <div key={`room-input-${room.id_room}`} className="grid-cell">
+                <div key={`room-input-${roomIndex}`} className="grid-cell">
                     <input type="text" defaultValue={room.room_num} style={{ width: '100%' }} />
                 </div>
 
-                <div key={`name-input-${room.id_room}`} className="grid-cell">
+                <div key={`name-input-${roomIndex}`} className="grid-cell">
                     <input type="text" defaultValue={room.events[0]?.patient.pat_name} style={{ width: '100%' }} />
                 </div>
 
-                {localEvents.map(event => (
+                {room.events.map(event => (
                     <div className="event" key={event.i}>
-                        <div className="event-name no-select">{event.notes}</div>
+                        <div className="event-name no-select">
+                            {(event.patient == null) ? '' : event.patient.pat_name}
+                        </div>
                     </div>
                 ))}
 
                 {draggingEvent && (
                     <div className="event" key={draggingEvent.i}>
-                        <div className="event-name no-select">{draggingEvent.title}</div>
+                        
                     </div>
                 )}
 

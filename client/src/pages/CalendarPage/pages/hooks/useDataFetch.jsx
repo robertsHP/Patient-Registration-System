@@ -60,6 +60,44 @@ export default function useDataFetch(floorID, tempDate) {
         return newRooms;
     };
 
+    const getRoomWithID = (id) => {
+        return rooms.find(room => room.id_room === id);
+    };
+
+    const setRoomWithID = (id, room) => {
+        setRooms(rooms.map(r => r.id_room === id ? room : r));
+    };
+
+    const getEventWithID = (roomID, eventID) => {
+        const room = getRoomByID(roomID);
+        if (!room) {
+            return null;
+        }
+        return room.events.find(event => event.id_event === eventID);
+    };
+
+    const setEventWithID = (roomID, event) => {
+        const room = getRoomByID(roomID);
+        if (!room) {
+            return;
+        }
+        setRoomWithID(roomID, {
+            ...room,
+            events: room.events.map(e => e.id_event === id ? event : e)
+        });
+    };
+
+    const removeEventWithID = (roomID, eventID) => {
+        const room = getRoomByID(roomID);
+        if (!room) {
+            return;
+        }
+        setRoomWithID(roomID, {
+            ...room,
+            events: room.events.filter(e => e.id_event !== eventID)
+        });
+    };
+
     useEffect(() => {
         var params = `?floorId=${floorID}&year=${date.getFullYear()}&month=${date.getMonth() + 1}`;
     
@@ -75,6 +113,8 @@ export default function useDataFetch(floorID, tempDate) {
     return { 
         date, setDate,
         rooms, setRooms,
+        getRoomWithID, setRoomWithID,
+        getEventWithID, setEventWithID, removeEventWithID,
         convertRoomDataToLayout,
         convertLayoutToRoomData
     };

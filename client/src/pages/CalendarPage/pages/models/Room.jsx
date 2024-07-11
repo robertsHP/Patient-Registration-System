@@ -4,6 +4,7 @@ export default class Room {
         this.id = id;
         this.number = number;
         this.beds = beds;
+        this.events = [];
     }
 
     getDetails() {

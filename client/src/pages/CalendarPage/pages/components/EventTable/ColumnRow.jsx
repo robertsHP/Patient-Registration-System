@@ -64,9 +64,9 @@ export default function ColumnRow({ config }) {
             >
                 <div key="room-column" className="grid-cell header">Telpa</div>
                 <div key="name-column" className="grid-cell header">Vārds</div>
-                {config.dateLayout.map((item) => (
-                    <div key={item.i} className="grid-cell">
-                        {item.title}
+                {config.dateLayout.map((date) => (
+                    <div key={date.i} className="grid-cell">
+                        {date.num}
                     </div>
                 ))}
                 {/* Add the new column divs */}

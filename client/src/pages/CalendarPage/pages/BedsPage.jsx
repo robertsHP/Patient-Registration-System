@@ -12,6 +12,8 @@ import './Page.css'
 export default function BedsPage () {
     const data = useDataFetch(0, new Date(2024, 5, 1));
 
+    console.log(data.rooms);
+
     return (
         <>
             {/* <MouseTest/> */}

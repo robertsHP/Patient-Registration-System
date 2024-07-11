@@ -26,19 +26,19 @@ export default function EventTable({ data }) {
                 config={config}
             />
             {data.rooms.map((room, roomIndex) => (
-                ///LOOOOOK AT THIIIIISSSSSSZZZZ (pārvilkšanas kļūda)
-                <div key={`room-${room.id_room}`} className="grid-cell" style={{ gridColumn: `span ${config.cols}` }}>
+                <div key={`room-${roomIndex}`} className="grid-cell" style={{ gridColumn: `span ${config.cols}` }}>
                     <EventRow
+                        data={data}
+                        roomIndex={roomIndex}
                         config={config}
-                        room={room}
                         nextEventId={nextEventId}
                         setNextEventId={setNextEventId}
                     />
                 </div>
             ))}
             <SumRow 
+                data={data}
                 config={config}
-                rooms={data.rooms} 
             />
         </div>
     );

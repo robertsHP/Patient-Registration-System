@@ -20,7 +20,7 @@ export default function useTableConfigurations (date) {
         w: 1,
         h: 1,
         static: true,
-        title: day.getDate()
+        num: day.getDate()
     }));
     const sumOfAllColWidths = columnWidths.reduce((acc, width) => acc + width, 0);
 
