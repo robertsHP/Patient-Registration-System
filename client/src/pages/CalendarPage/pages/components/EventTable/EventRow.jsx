@@ -95,6 +95,7 @@ export default function EventRow({ data, roomIndex, config, nextEventId, setNext
             }
             return event;
         });
+        data.setRoomWithID(room.id_room, room);
     };
 
     const onMouseDown = (e) => {
@@ -149,20 +150,13 @@ export default function EventRow({ data, roomIndex, config, nextEventId, setNext
                     w: newWidth
                 };
 
-                console.log(newDragEv);
-
-                setDraggingEvent({
-                    ...draggingEvent,
-                    end_date: endDate,
-                    begin_date: startDate,
-                    x: newX,
-                    w: newWidth
-                });
+                setDraggingEvent(newDragEv);
             }
         }
     };
 
     const onMouseUp = () => {
+        console.log('onMouseUp');
         if (isCreatingEvent && draggingEvent) {
             var inDateColumns = isInDateColumns(draggingEvent.x, draggingEvent.w);
             var overlapping = isOverlapping(draggingEvent, room.events, 'event-temp');
@@ -170,7 +164,7 @@ export default function EventRow({ data, roomIndex, config, nextEventId, setNext
             if (inDateColumns && !overlapping) {
                 const newEvent = { 
                     ...draggingEvent, 
-                    i: nextEventId, 
+                    i: `event-${nextEventId}`,
                     x: Number(draggingEvent.x), 
                     y: Number(draggingEvent.y), 
                     w: Number(draggingEvent.w), 

@@ -37,6 +37,7 @@ export default function ColumnRow({ config }) {
                         y: 0,
                         w: config.columnWidths[index + 2],
                         h: 1,
+                        static: true
                     })),
                     // Add the two additional columns at the end
                     { 
