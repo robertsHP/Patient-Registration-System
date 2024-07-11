@@ -2,17 +2,23 @@ import React, { useState, useRef } from 'react';
 
 import GridLayout from 'react-grid-layout';
 
+import EventInputForm from './EventInputForm';
+
 import 'react-grid-layout/css/styles.css';
 import 'react-resizable/css/styles.css';
 
 import './EventRow.css';
 
 export default function EventRow({ data, roomIndex, config, nextEventId, setNextEventId }) {
+    const gridRef = useRef(null);
+
     const [room, setRoom] = useState(data.getRoomWithID(roomIndex));
 
     const [draggingEvent, setDraggingEvent] = useState(null);
     const [isCreatingEvent, setIsCreatingEvent] = useState(false);
-    const gridRef = useRef(null);
+
+    const [lastClickTime, setLastClickTime] = useState(0);
+    const [selectedEvent, setSelectedEvent] = useState(null);
 
     const lastColumnStart = config.columnWidths.slice(0, config.columnWidths.length - 2).reduce((acc, width) => acc + width, 0);
 
@@ -99,18 +105,38 @@ export default function EventRow({ data, roomIndex, config, nextEventId, setNext
     };
 
     const onMouseDown = (e) => {
-        if (e.target.closest('.react-resizable-handle') || e.target.closest('.event')) {
-            return; // Ignore mousedown on resize handles or event names
-        }
+        if (e.target.closest('.react-resizable-handle')) {
+            return; // Ignore mousedown on resize handles
+        } else if (e.target.closest('.event')) {
+            const clickedEventElement = e.target.closest('.event');
+        
+            if (clickedEventElement) {
+                const now = Date.now();
+                const doubleClickThreshold = 300;
+                
+                if (now - lastClickTime < doubleClickThreshold) {
+                    const eventKey = clickedEventElement.getAttribute('key');
 
+                    console.log(eventKey);
+                    
+                    // const event = room.events.find(event => event.i === eventKey);
+                    // handleEventDoubleClick(event);
+                } else {
+                    // Handle single-click
+                    setLastClickTime(now);
+                }
+            }
+            return;
+        }
+    
         const gridRect = gridRef.current.getBoundingClientRect();
         const colWidth = config.width / config.cols; // Dynamic calculation based on grid width
         const x = Math.floor((e.clientX - gridRect.left) / colWidth);
-
+    
         if (isInDateColumns(x, 1)) {
             var startDate = getDateBasedOnLayoutPosition(x);
             var endDate = getDateBasedOnLayoutPosition(x + 1);
-
+    
             setDraggingEvent({
                 id_event: null,
                 notes: "",
@@ -125,10 +151,11 @@ export default function EventRow({ data, roomIndex, config, nextEventId, setNext
                 h: 1,
                 startX: x
             });
-
+    
             setIsCreatingEvent(true);
         }
     };
+    
 
     const onMouseMove = (e) => {
         if (isCreatingEvent && draggingEvent) {
@@ -176,6 +203,15 @@ export default function EventRow({ data, roomIndex, config, nextEventId, setNext
             setDraggingEvent(null);
             setIsCreatingEvent(false);
         }
+    };
+
+    const handleEventDoubleClick = (event) => {
+        console.log('double ccc');
+        setSelectedEvent(event);
+    };
+
+    const handleCloseModal = () => {
+        setSelectedEvent(null);
     };
 
     return (
@@ -257,17 +293,16 @@ export default function EventRow({ data, roomIndex, config, nextEventId, setNext
                 </div>
 
                 {room.events.map(event => (
-                    <div className="event" key={event.i}>
+                    <div className="event" key={event.i} onDoubleClick={() => handleEventDoubleClick(event)}>
                         <div className="event-name no-select">
-                            {(event.patient == null) ? '' : event.patient.pat_name}
+                            {event.i}
+                            {/* {(event.patient == null) ? '' : event.patient.pat_name} */}
                         </div>
                     </div>
                 ))}
 
                 {draggingEvent && (
-                    <div className="event" key={draggingEvent.i}>
-                        
-                    </div>
+                    <div className="event" key={draggingEvent.i}></div>
                 )}
 
                 <div key="sum-value" className="grid-cell">
@@ -277,6 +312,10 @@ export default function EventRow({ data, roomIndex, config, nextEventId, setNext
                     <input type="text" defaultValue={"T"} style={{ width: '100%' }} />
                 </div>
             </GridLayout>
+            {selectedEvent && <EventInputForm 
+                event={selectedEvent} 
+                onClose={handleCloseModal} 
+            />}
         </div>
     );
 }

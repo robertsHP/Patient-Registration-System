@@ -8,6 +8,10 @@ import ColumnRow from './ColumnRow';
 import EventRow from './EventRow';
 import SumRow from './SumRow';
 
+
+import Test from './Test';
+
+
 import 'react-grid-layout/css/styles.css';
 import 'react-resizable/css/styles.css';
 
@@ -40,6 +44,7 @@ export default function EventTable({ data }) {
                 data={data}
                 config={config}
             />
+            {/* <Test /> */}
         </div>
     );
 }
