@@ -1,5 +1,25 @@
 
-.header-left {
+header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color: #282c34;
+    padding: 10px 20px;
+    color: white; /* Re-enable if needed */
+    
+    position: fixed; /* Keep header fixed at the top */
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 100; /* Ensure header is above other content */
+}
+
+header.left {
+    display: flex;
+    align-items: center;
+}
+
+header.right {
     display: flex;
     align-items: center;
 }
@@ -27,9 +47,4 @@
 .active-button {
     background-color: #222;
     font-weight: bold;
-}
-
-.header-right {
-    display: flex;
-    align-items: center;
 }

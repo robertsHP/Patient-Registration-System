@@ -14,12 +14,8 @@ export default function BedsPage () {
 
     return (
         <>
-            <GridUI 
-                data={data} 
-            />
-            {data.rooms && <EventTable 
-                data={data} 
-            />}
+            <GridUI data={data} />
+            {data.rooms && <EventTable data={data} />}
         </>
     );
 }

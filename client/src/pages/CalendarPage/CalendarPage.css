@@ -4,21 +4,6 @@
     height: 100vh; /* Full viewport height */
 }
 
-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    background-color: #282c34;
-    padding: 10px 20px;
-    color: white; /* Re-enable if needed */
-    
-    position: fixed; /* Keep header fixed at the top */
-    top: 0;
-    left: 0;
-    right: 0;
-    z-index: 100; /* Ensure header is above other content */
-}
-
 main {
     margin-top: 60px; /* Offset by header height, adjust as needed */
     padding: 20px; /* Optional padding for content spacing */

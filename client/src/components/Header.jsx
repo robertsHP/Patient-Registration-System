@@ -15,7 +15,7 @@ export default function Header ({sidebarPages, parentUrlName, subPages}) {
 
     return (
         <header>
-            <div className="header-left">
+            <div className="left">
                 {/* The sidebar component is used here and includes its own toggle button */}
                 <Sidebar sidebarPages={sidebarPages} />
 
@@ -31,7 +31,7 @@ export default function Header ({sidebarPages, parentUrlName, subPages}) {
                     </Link>
                 ))}
             </div>
-            <div className="header-right">
+            <div className="right">
                 <LogoutButton />
             </div>
         </header>

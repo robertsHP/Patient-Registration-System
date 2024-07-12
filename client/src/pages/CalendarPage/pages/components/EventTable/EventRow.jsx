@@ -152,7 +152,6 @@ export default function EventRow({ data, roomIndex, config, nextEventId, setNext
         }
     };
     
-
     const onMouseMove = (e) => {
         if (isCreatingEvent && draggingEvent) {
             const gridRect = gridRef.current.getBoundingClientRect();
