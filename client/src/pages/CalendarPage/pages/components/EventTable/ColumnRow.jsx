@@ -9,7 +9,7 @@ import './ColumnRow.css';
 export default function ColumnRow({ config }) {
     const lastColumnStart = config.columnWidths.slice(0, config.columnWidths.length - 2)
         .reduce((acc, width) => acc + width, 0);
-    
+
     return (
         <>
             <GridLayout

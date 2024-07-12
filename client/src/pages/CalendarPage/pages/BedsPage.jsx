@@ -2,8 +2,6 @@ import React, { useState, useEffect } from 'react';
 
 import useDataFetch from './hooks/useDataFetch.jsx';
 
-import MouseTest from './components/MouseTest.jsx';
-
 import EventTable from './components/EventTable/EventTable.jsx';
 import GridUI from './components/GridUI/GridUI.jsx';
 
@@ -16,7 +14,6 @@ export default function BedsPage () {
 
     return (
         <>
-            {/* <MouseTest/> */}
             <GridUI 
                 data={data} 
             />

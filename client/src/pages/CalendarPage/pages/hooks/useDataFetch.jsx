@@ -61,34 +61,40 @@ export default function useDataFetch(floorID, tempDate) {
     };
 
     const getRoomWithID = (id) => {
-        return rooms.find(room => room.id_room === id);
+        return rooms.find(room => room.id_room == id);
     };
 
     const setRoomWithID = (id, room) => {
-        setRooms(rooms.map(r => r.id_room === id ? room : r));
+        setRooms(rooms.map(r => r.id_room == id ? room : r));
     };
 
     const getEventWithID = (roomID, eventID) => {
-        const room = getRoomByID(roomID);
+        const room = getRoomWithID(roomID);
+
+        console.log(room);
+
         if (!room) {
             return null;
         }
-        return room.events.find(event => event.id_event === eventID);
+
+        console.log(room.events);
+
+        return room.events.find(event => event.id_event == eventID);
     };
 
     const setEventWithID = (roomID, event) => {
-        const room = getRoomByID(roomID);
+        const room = getRoomWithID(roomID);
         if (!room) {
             return;
         }
         setRoomWithID(roomID, {
             ...room,
-            events: room.events.map(e => e.id_event === id ? event : e)
+            events: room.events.map(e => e.id_event == id ? event : e)
         });
     };
 
     const removeEventWithID = (roomID, eventID) => {
-        const room = getRoomByID(roomID);
+        const room = getRoomWithID(roomID);
         if (!room) {
             return;
         }

@@ -2,14 +2,12 @@ import React, { useState, useRef } from 'react';
 
 import GridLayout from 'react-grid-layout';
 
-import EventInputForm from './EventInputForm';
-
 import 'react-grid-layout/css/styles.css';
 import 'react-resizable/css/styles.css';
 
 import './EventRow.css';
 
-export default function EventRow({ data, roomIndex, config, nextEventId, setNextEventId }) {
+export default function EventRow({ data, roomIndex, config, nextEventId, setNextEventId, selectedEvent, setSelectedEvent }) {
     const gridRef = useRef(null);
 
     const [room, setRoom] = useState(data.getRoomWithID(roomIndex));
@@ -18,7 +16,6 @@ export default function EventRow({ data, roomIndex, config, nextEventId, setNext
     const [isCreatingEvent, setIsCreatingEvent] = useState(false);
 
     const [lastClickTime, setLastClickTime] = useState(0);
-    const [selectedEvent, setSelectedEvent] = useState(null);
 
     const lastColumnStart = config.columnWidths.slice(0, config.columnWidths.length - 2).reduce((acc, width) => acc + width, 0);
 
@@ -109,50 +106,49 @@ export default function EventRow({ data, roomIndex, config, nextEventId, setNext
             return; // Ignore mousedown on resize handles
         } else if (e.target.closest('.event')) {
             const clickedEventElement = e.target.closest('.event');
-        
+
             if (clickedEventElement) {
                 const now = Date.now();
                 const doubleClickThreshold = 300;
                 
                 if (now - lastClickTime < doubleClickThreshold) {
-                    const eventKey = clickedEventElement.getAttribute('key');
-
-                    console.log(eventKey);
+                    const reactFiberKey = Object.keys(clickedEventElement).find(key => key.startsWith('__reactFiber$'));
+                    const objEl = clickedEventElement[reactFiberKey];
+                    const eventKey = objEl.key.replace('event-', '');
+                    const event = data.getEventWithID(roomIndex, eventKey);
                     
-                    // const event = room.events.find(event => event.i === eventKey);
-                    // handleEventDoubleClick(event);
+                    handleEventDoubleClick(event);
                 } else {
                     // Handle single-click
                     setLastClickTime(now);
                 }
             }
-            return;
-        }
-    
-        const gridRect = gridRef.current.getBoundingClientRect();
-        const colWidth = config.width / config.cols; // Dynamic calculation based on grid width
-        const x = Math.floor((e.clientX - gridRect.left) / colWidth);
-    
-        if (isInDateColumns(x, 1)) {
-            var startDate = getDateBasedOnLayoutPosition(x);
-            var endDate = getDateBasedOnLayoutPosition(x + 1);
-    
-            setDraggingEvent({
-                id_event: null,
-                notes: "",
-                doctor: null,
-                patient: null,
-                end_date: endDate,
-                begin_date: startDate,
-                i: 'event-temp',
-                x: x,
-                y: 0,
-                w: 1,
-                h: 1,
-                startX: x
-            });
-    
-            setIsCreatingEvent(true);
+        } else {
+            const gridRect = gridRef.current.getBoundingClientRect();
+            const colWidth = config.width / config.cols; // Dynamic calculation based on grid width
+            const x = Math.floor((e.clientX - gridRect.left) / colWidth);
+        
+            if (isInDateColumns(x, 1)) {
+                var startDate = getDateBasedOnLayoutPosition(x);
+                var endDate = getDateBasedOnLayoutPosition(x + 1);
+        
+                setDraggingEvent({
+                    id_event: null,
+                    notes: "",
+                    doctor: null,
+                    patient: null,
+                    end_date: endDate,
+                    begin_date: startDate,
+                    i: 'event-temp',
+                    x: x,
+                    y: 0,
+                    w: 1,
+                    h: 1,
+                    startX: x
+                });
+        
+                setIsCreatingEvent(true);
+            }
         }
     };
     
@@ -183,7 +179,6 @@ export default function EventRow({ data, roomIndex, config, nextEventId, setNext
     };
 
     const onMouseUp = () => {
-        console.log('onMouseUp');
         if (isCreatingEvent && draggingEvent) {
             var inDateColumns = isInDateColumns(draggingEvent.x, draggingEvent.w);
             var overlapping = isOverlapping(draggingEvent, room.events, 'event-temp');
@@ -206,12 +201,7 @@ export default function EventRow({ data, roomIndex, config, nextEventId, setNext
     };
 
     const handleEventDoubleClick = (event) => {
-        console.log('double ccc');
         setSelectedEvent(event);
-    };
-
-    const handleCloseModal = () => {
-        setSelectedEvent(null);
     };
 
     return (
@@ -293,7 +283,7 @@ export default function EventRow({ data, roomIndex, config, nextEventId, setNext
                 </div>
 
                 {room.events.map(event => (
-                    <div className="event" key={event.i} onDoubleClick={() => handleEventDoubleClick(event)}>
+                    <div className="event" key={event.i}>
                         <div className="event-name no-select">
                             {event.i}
                             {/* {(event.patient == null) ? '' : event.patient.pat_name} */}
@@ -312,10 +302,6 @@ export default function EventRow({ data, roomIndex, config, nextEventId, setNext
                     <input type="text" defaultValue={"T"} style={{ width: '100%' }} />
                 </div>
             </GridLayout>
-            {selectedEvent && <EventInputForm 
-                event={selectedEvent} 
-                onClose={handleCloseModal} 
-            />}
         </div>
     );
 }

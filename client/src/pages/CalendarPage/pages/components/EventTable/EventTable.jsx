@@ -4,6 +4,8 @@ import GridLayout from 'react-grid-layout';
 
 import useTableConfigurations from './hooks/useTableConfigurations.jsx';
 
+import EventInputForm from './EventInputForm';
+
 import ColumnRow from './ColumnRow';
 import EventRow from './EventRow';
 import SumRow from './SumRow';
@@ -23,6 +25,7 @@ export default function EventTable({ data }) {
     const [nextEventId, setNextEventId] = useState(
         data.rooms.flatMap(room => room.events.map(event => event.id_event)).length
     );
+    const [selectedEvent, setSelectedEvent] = useState(null);
 
     return (
         <div className="grid-container">
@@ -37,6 +40,8 @@ export default function EventTable({ data }) {
                         config={config}
                         nextEventId={nextEventId}
                         setNextEventId={setNextEventId}
+                        selectedEvent={selectedEvent}
+                        setSelectedEvent={setSelectedEvent}
                     />
                 </div>
             ))}
@@ -44,6 +49,10 @@ export default function EventTable({ data }) {
                 data={data}
                 config={config}
             />
+            {selectedEvent && <EventInputForm 
+                selectedEvent={selectedEvent} 
+                setSelectedEvent={setSelectedEvent} 
+            />}
             {/* <Test /> */}
         </div>
     );

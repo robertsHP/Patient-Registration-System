@@ -39,7 +39,7 @@ export default function SumRow({ data, config }) {
         const updatedTotalSum = updatedDateSums.reduce((sum, dateSum) => sum + dateSum, 0);
         setTotalSum(updatedTotalSum);
 
-        console.log('āaaaaaaaaaaa');
+        console.log('!!!updatedDateSums');
     }, [data.rooms]);
 
     return (

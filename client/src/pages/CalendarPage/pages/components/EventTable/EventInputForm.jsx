@@ -2,19 +2,29 @@ import React from 'react';
 
 import './EventInputForm.css';
 
-export default function EventInputForm ({ event, onClose }) {
+export default function EventInputForm ({ selectedEvent, setSelectedEvent }) {
 
-    console.log(event);
+    // console.log(event);
+
+    const handleCloseModal = () => {
+        setSelectedEvent(null);
+    };
 
     return (
-        <div className="form-container">
-            <div className="modal-content">
-                {/* <span className="close" onClick={onClose}>&times;</span>
-                <h2>Event Details</h2>
-                <p><strong>Patient Name:</strong> {event.patient ? event.patient.pat_name : 'N/A'}</p>
-                <p><strong>Start Date:</strong> {event.begin_date.toString()}</p>
-                <p><strong>End Date:</strong> {event.end_date.toString()}</p> */}
-                <h1>WORKERINOOOOO</h1>
+        <div className="modal-overlay">
+            <div className="modal-window">
+            <button className="close-button" onClick={handleCloseModal}>
+                &times;
+            </button>
+            <form className="modal-form">
+                <label htmlFor="name">Name:</label>
+                <input type="text" id="name" name="name" required />
+                
+                <label htmlFor="email">Email:</label>
+                <input type="email" id="email" name="email" required />
+    
+                <button type="submit">Submit</button>
+            </form>
             </div>
         </div>
     );
