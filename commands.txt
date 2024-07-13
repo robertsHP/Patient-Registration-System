@@ -21,3 +21,16 @@ PostgreSQL:
 Ja ir:
     Server error: connect ECONNREFUSED <ip-adrese>
         Tad ieslēdz postgresql serveri
+
+CURL:
+curl -X POST http://localhost:5000/api/event \
+    -H "Content-Type: application/json" \
+    -d '{
+        "id": null,
+        "id_room": 0,
+        "id_patient": null,
+        "begin_date": "2024-06-13T21:00:00.000Z",
+        "end_date": "2024-06-22T21:00:00.000Z",
+        "notes": "",
+        "id_doctor": null
+    }'

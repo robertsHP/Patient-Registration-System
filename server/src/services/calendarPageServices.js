@@ -33,7 +33,7 @@ function prepareGetEventClauses(year, month, floorId, params) {
     }
     
     if (floorId !== null) {
-        floorCond = `f.id_floor = $${params.length + 1}`;
+        floorCond = `f.id = $${params.length + 1}`;
         eventConditions.push(floorCond);
         roomConditions.push(floorCond);
         params.push(floorId);
@@ -57,55 +57,55 @@ exports.buildGetEventQuery = (year, month, floorId, limit, offset) => {
     let query = `
         WITH EventDetails AS (
             SELECT
-                r.id_room,
+                r.id,
                 jsonb_build_object(
-                    'id_event', e.id_event,
+                    'id', e.id,
                     'begin_date', e.begin_date,
                     'end_date', e.end_date,
                     'notes', e.notes,
                     'patient', jsonb_build_object(
-                        'id_patient', p.id_patient,
+                        'id', p.id,
                         'pat_name', p.pat_name,
                         'phone_num', p.phone_num,
                         'hotel_stay_start', p.hotel_stay_start,
                         'hotel_stay_end', p.hotel_stay_end,
                         'patient_type', jsonb_build_object(
-                            'id_pat_type', pt.id_pat_type,
+                            'id', pt.id,
                             'pat_type', pt.pat_type
                         )
                     ),
                     'doctor', jsonb_build_object(
-                        'id_doctor', d.id_doctor,
+                        'id', d.id,
                         'doc_name', d.doc_name
                     )
                 ) AS event_data
             FROM 
                 ${eventTableName} AS e
-                JOIN ${patientTableName} AS p ON e.id_patient = p.id_patient
-                JOIN ${doctorTableName} AS d ON e.id_doctor = d.id_doctor
-                JOIN ${roomTableName} AS r ON e.id_room = r.id_room
-                JOIN ${floorTableName} AS f ON r.id_floor = f.id_floor
-                JOIN ${patientTypeTableName} AS pt ON p.id_pat_type = pt.id_pat_type
+                JOIN ${patientTableName} AS p ON e.id_patient = p.id
+                JOIN ${doctorTableName} AS d ON e.id_doctor = d.id
+                JOIN ${roomTableName} AS r ON e.id_room = r.id
+                JOIN ${floorTableName} AS f ON r.id_floor = f.id
+                JOIN ${patientTypeTableName} AS pt ON p.id_pat_type = pt.id
             ${eventClause}
         )
 
         SELECT 
             jsonb_agg(
                 jsonb_build_object(
-                    'id_room', r.id_room,
+                    'id', r.id,
                     'room_num', r.room_num,
                     'events', (
                         SELECT jsonb_agg(event_data)
                         FROM EventDetails ed
-                        WHERE ed.id_room = r.id_room
+                        WHERE ed.id = r.id
                     )
                 )
             ) AS rooms
         FROM 
             ${roomTableName} AS r
-            JOIN ${floorTableName} AS f ON r.id_floor = f.id_floor
+            JOIN ${floorTableName} AS f ON r.id_floor = f.id
         ${roomClause}
-        GROUP BY r.id_room, r.room_num, f.id_floor, f.floor_name
+        GROUP BY r.id, r.room_num, f.id, f.floor_name
         LIMIT $${params.length + 1}
         OFFSET $${params.length + 2};
     `;

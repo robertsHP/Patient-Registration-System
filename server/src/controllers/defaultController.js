@@ -32,22 +32,27 @@ exports.selectWithIDFromTable = async (req, res) => {
     }
 } 
 
-exports.insertIntoTable = async (req, res) => { 
+exports.insertIntoTable = async (req, res) => {
     const { tableName } = req.params;
     const data = req.body; // Assuming JSON body with keys matching table columns
     const sanitizedTableName = prefix + globalServices.sanitizeTableName(tableName);
+
+    // Prepare columns and values, considering the possibility of 'id' being null
     const columns = Object.keys(data).join(', ');
     const values = Object.values(data);
     const valuePlaceholders = values.map((_, index) => `$${index + 1}`).join(', ');
 
+    let query = `INSERT INTO ${sanitizedTableName} (${columns}) VALUES (${valuePlaceholders}) RETURNING id`;
+    let queryValues = values;
+
     try {
-        const result = await pool.query(`INSERT INTO ${sanitizedTableName} (${columns}) VALUES (${valuePlaceholders}) RETURNING *`, values);
-        res.status(201).json(result.rows[0]);
+        const result = await pool.query(query, queryValues);
+        res.json(result.rows[0].id)
     } catch (err) {
         console.error(err.message);
         res.status(500).send('Server error: ' + err.message);
     }
-}
+};
 
 exports.updateInTable = async (req, res) => { 
     const { tableName, id } = req.params;

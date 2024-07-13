@@ -37,6 +37,13 @@ exports.getEvents = async (req, res) => {
     }
 };
 
+// exports.insertEvent = async (req, res) => {
+
+// };
+
+
+
+
 // // Get beds by month with room and patient details
 // exports.getBedsByMonth = async (req, res) => {
 //     const { month } = req.params;

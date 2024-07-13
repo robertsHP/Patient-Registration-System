@@ -2,14 +2,14 @@ import React, { useEffect, useState } from 'react';
 
 import ApiService from '../../../../services/ApiService';
 
+import {
+    convertEventForLayoutSupport,
+    convertEventForSendingToDB
+} from '../utils/conversionFunctions'
+
 export default function useDataFetch(floorID, tempDate) {
     const [date, setDate] = useState(tempDate);
     const [rooms, setRooms] = useState(null);
-
-    const getDayIndex = (date, monthStart) => {
-        const startDate = new Date(monthStart.getFullYear(), monthStart.getMonth(), 1);
-        return Math.floor((new Date(date) - startDate) / (1000 * 60 * 60 * 24));
-    };
 
     const convertRoomDataToLayout = (curRooms) => {
         if (!curRooms) {
@@ -17,69 +17,40 @@ export default function useDataFetch(floorID, tempDate) {
         }
         const newRooms = curRooms.map((room) => ({
             ...room,
-            events: room.events.map(event => ({
-                ...event,
-                i: `event-${event.id_event}`,
-                x: getDayIndex(event.begin_date, date) + 8,
-                y: 0,
-                w: getDayIndex(event.end_date, date) - getDayIndex(event.begin_date, date) + 1,
-                h: 1
-            }))
+            events: room.events.map(event => (
+                convertEventForLayoutSupport(event, date)
+            ))
         }));
         return newRooms;
     };
     
-    const convertLayoutToRoomData = (curRooms) => {
-        if (!curRooms) {
-            return;
-        }
-        const newRooms = curRooms.map(room => ({
-            ...room,
-            events: room.events.filter(event => event.i.startsWith('event-')).map(event => ({
-                notes: event.notes,
-                doctor: {
-                    doc_name: event.doctor.doc_name,
-                    id_doctor: event.doctor.id_doctor
-                },
-                patient: {
-                    pat_name: event.patient.pat_name,
-                    phone_num: event.patient.phone_num,
-                    id_patient: event.patient.id_patient,
-                    patient_type: {
-                        pat_type: event.patient.patient_type.pat_type,
-                        id_pat_type: event.patient.patient_type.id_pat_type
-                    },
-                    hotel_stay_end: event.patient.hotel_stay_end,
-                    hotel_stay_start: event.patient.hotel_stay_start
-                },
-                end_date: new Date(event.end_date),
-                id_event: parseInt(event.i.split('-')[1]),
-                begin_date: new Date(event.begin_date)
-            }))
-        }));
-        return newRooms;
-    };
+    // const convertLayoutToRoomData = (curRooms) => {
+    //     if (!curRooms) {
+    //         return;
+    //     }
+    //     const newRooms = curRooms.map(room => ({
+    //         ...room,
+    //         events: room.events.filter(event => event.i.startsWith('event-')).map(event => (
+    //             convertEventForSendingToDB(event)
+    //         ))
+    //     }));
+    //     return newRooms;
+    // };
 
     const getRoomWithID = (id) => {
-        return rooms.find(room => room.id_room == id);
+        return rooms.find(room => room.id == id);
     };
 
     const setRoomWithID = (id, room) => {
-        setRooms(rooms.map(r => r.id_room == id ? room : r));
+        setRooms(rooms.map(r => r.id == id ? room : r));
     };
 
     const getEventWithID = (roomID, eventID) => {
         const room = getRoomWithID(roomID);
-
-        console.log(room);
-
         if (!room) {
             return null;
         }
-
-        console.log(room.events);
-
-        return room.events.find(event => event.id_event == eventID);
+        return room.events.find(event => event.id == eventID);
     };
 
     const setEventWithID = (roomID, event) => {
@@ -89,7 +60,7 @@ export default function useDataFetch(floorID, tempDate) {
         }
         setRoomWithID(roomID, {
             ...room,
-            events: room.events.map(e => e.id_event == id ? event : e)
+            events: room.events.map(e => e.id == id ? event : e)
         });
     };
 
@@ -100,16 +71,17 @@ export default function useDataFetch(floorID, tempDate) {
         }
         setRoomWithID(roomID, {
             ...room,
-            events: room.events.filter(e => e.id_event !== eventID)
+            events: room.events.filter(e => e.id !== eventID)
         });
     };
 
     useEffect(() => {
-        var params = `?floorId=${floorID}&year=${date.getFullYear()}&month=${date.getMonth() + 1}`;
+        var params = `?floorId=${floorID}&year=${date.getFullYear()}&month=${date.getMonth()}`;
     
         ApiService.get('/api/calendar-page/table'+params)
         .then(result => {
-            setRooms(convertRoomDataToLayout(result.data[0].rooms));
+            var data = result.data[0].rooms;
+            setRooms(convertRoomDataToLayout(data));
         })
         .catch(error => {
             console.error('Failed to get data in useDataFetch - ' + error);
@@ -120,8 +92,6 @@ export default function useDataFetch(floorID, tempDate) {
         date, setDate,
         rooms, setRooms,
         getRoomWithID, setRoomWithID,
-        getEventWithID, setEventWithID, removeEventWithID,
-        convertRoomDataToLayout,
-        convertLayoutToRoomData
+        getEventWithID, setEventWithID, removeEventWithID
     };
 }

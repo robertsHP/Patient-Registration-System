@@ -2,6 +2,10 @@ import React, { useState, useRef } from 'react';
 
 import GridLayout from 'react-grid-layout';
 
+import { convertEventForSendingToDB } from '../../utils/conversionFunctions'
+
+import ApiService from '../../../../../services/ApiService';
+
 import 'react-grid-layout/css/styles.css';
 import 'react-resizable/css/styles.css';
 
@@ -71,7 +75,7 @@ export default function EventRow({ data, roomIndex, config, nextEventId, setNext
             if (pos == date.x)
                 finalDate = new Date(
                     data.date.getFullYear(), 
-                    data.date.getMonth(), 
+                    data.date.getMonth() - 1, 
                     date.num
                 );    
         });
@@ -98,7 +102,7 @@ export default function EventRow({ data, roomIndex, config, nextEventId, setNext
             }
             return event;
         });
-        data.setRoomWithID(room.id_room, room);
+        data.setRoomWithID(room.id, room);
     };
 
     const onMouseDown = (e) => {
@@ -133,10 +137,23 @@ export default function EventRow({ data, roomIndex, config, nextEventId, setNext
                 var endDate = getDateBasedOnLayoutPosition(x + 1);
         
                 setDraggingEvent({
-                    id_event: null,
+                    id: null,
                     notes: "",
-                    doctor: null,
-                    patient: null,
+                    doctor: {
+                        doc_name: null,
+                        id: null
+                    },
+                    patient: {
+                        pat_name: null,
+                        phone_num: null,
+                        id: null,
+                        patient_type: {
+                            pat_type: null,
+                            id: null
+                        },
+                        hotel_stay_end: null,
+                        hotel_stay_start: null
+                    },
                     end_date: endDate,
                     begin_date: startDate,
                     i: 'event-temp',
@@ -183,16 +200,32 @@ export default function EventRow({ data, roomIndex, config, nextEventId, setNext
             var overlapping = isOverlapping(draggingEvent, room.events, 'event-temp');
 
             if (inDateColumns && !overlapping) {
-                const newEvent = { 
-                    ...draggingEvent, 
-                    i: `event-${nextEventId}`,
-                    x: Number(draggingEvent.x), 
-                    y: Number(draggingEvent.y), 
-                    w: Number(draggingEvent.w), 
-                    h: 1 
-                };
-                room.events.push(newEvent);
-                setNextEventId(nextEventId + 1);
+                var x = draggingEvent.x;
+                var y = draggingEvent.y;
+                var w = draggingEvent.w;
+                
+                var convertedEvent = convertEventForSendingToDB(room, draggingEvent);
+
+                console.log(room);
+                console.log(convertedEvent);
+
+                ApiService.post('/api/event', convertedEvent)
+                .then(result => {
+                    // const newEvent = { 
+                    //     ...draggingEvent, 
+                    //     i: `event-${nextEventId}`,
+                    //     x: Number(x), 
+                    //     y: Number(y), 
+                    //     w: Number(w), 
+                    //     h: 1 
+                    // };
+
+                    // room.events.push(newEvent);
+                    // setNextEventId(nextEventId + 1);
+                })
+                .catch(error => {
+                    console.log(error);
+                });
             }
             setDraggingEvent(null);
             setIsCreatingEvent(false);
