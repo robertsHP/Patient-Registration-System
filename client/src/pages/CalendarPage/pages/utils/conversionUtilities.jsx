@@ -11,8 +11,13 @@ const getDayIndex = (date, monthStart) => {
 };
 
 export function convertEventForLayoutSupport (event, date) {
+    var beginDate = new LVDate(event.begin_date);
+    var endDate = new LVDate(event.end_date);
+
     return {
         ...event,
+        begin_date: beginDate,
+        end_date: endDate,
         i: `event-${event.id}`,
         x: getDayIndex(event.begin_date, date) + 8,
         y: 0,

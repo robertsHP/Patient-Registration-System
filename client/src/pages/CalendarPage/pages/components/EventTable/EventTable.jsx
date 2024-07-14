@@ -19,10 +19,6 @@ import './EventTable.css';
 
 export default function EventTable({ data }) {
     const config = useTableConfigurations(data.date);
-
-    const [nextEventId, setNextEventId] = useState(
-        data.rooms.flatMap(room => room.events.map(event => event.id_event)).length
-    );
     const [selectedEvent, setSelectedEvent] = useState(null);
 
     return (
@@ -36,8 +32,6 @@ export default function EventTable({ data }) {
                         data={data}
                         roomIndex={roomIndex}
                         config={config}
-                        nextEventId={nextEventId}
-                        setNextEventId={setNextEventId}
                         selectedEvent={selectedEvent}
                         setSelectedEvent={setSelectedEvent}
                     />

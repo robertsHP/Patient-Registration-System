@@ -5,7 +5,7 @@ import ApiService from '../../../../services/ApiService';
 import {
     convertEventForLayoutSupport,
     convertEventForSendingToDB
-} from '../utils/conversionFunctions'
+} from '../utils/conversionUtilities'
 
 export default function useDataFetch(floorID, tempDate) {
     const [date, setDate] = useState(tempDate);

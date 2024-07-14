@@ -15,22 +15,24 @@ export default function SumRow({ data, config }) {
 
     // Helper function to check if an event occurs on a specific date
     const isEventOnDate = (event, date) => {
-        //////////
         const eventStart = event.begin_date;
         const eventEnd = event.end_date;
-        //////////
 
         const dateObj = date.getDate();
         const eventStartDateObj = eventStart.getDate();
         const eventEndDateObj = eventEnd.getDate();
 
-        if (dateObj >= eventStartDateObj && dateObj < eventEndDateObj) {
-            console.log('eventStartDateObj = '+eventStartDateObj);
-            console.log('eventEndDateObj = '+eventEndDateObj);
-            console.log('dateObj = '+dateObj);
-        }
+        // if (dateObj >= eventStartDateObj && dateObj < eventEndDateObj) {
+        //     console.log('eventStartDateObj = '+eventStartDateObj);
+        //     console.log('eventEndDateObj = '+eventEndDateObj);
+        //     console.log('dateObj = '+dateObj);
+        // }
 
-        return dateObj >= eventStartDateObj && dateObj < eventEndDateObj;
+        console.log('eventStartDateObj = '+eventStartDateObj);
+        console.log('eventEndDateObj = '+eventEndDateObj);
+        console.log('dateObj = '+dateObj);
+
+        return dateObj >= eventStartDateObj && dateObj <= eventEndDateObj;
     };
 
     useEffect(() => {
@@ -40,9 +42,9 @@ export default function SumRow({ data, config }) {
             const date = new LVDate(year, month, dateItem.num);
 
             return Object.values(data.rooms).reduce((sum, room) => {
-                return sum + room.events.reduce((eventSum, event) => 
-                    eventSum + isEventOnDate(event, date)
-                , 0);
+                return sum + room.events.reduce((eventSum, event) => {
+                    return eventSum + isEventOnDate(event, date);
+                }, 0);
             }, 0);
         });
         setDateSums(updatedDateSums);

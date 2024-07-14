@@ -2,7 +2,7 @@ import React, { useState, useRef } from 'react';
 
 import GridLayout from 'react-grid-layout';
 
-import { convertEventForSendingToDB } from '../../utils/conversionFunctions'
+import { convertEventForSendingToDB } from '../../utils/conversionUtilities.jsx'
 
 import ApiService from '../../../../../services/ApiService';
 
@@ -13,7 +13,7 @@ import 'react-resizable/css/styles.css';
 
 import './EventRow.css';
 
-export default function EventRow({ data, roomIndex, config, nextEventId, setNextEventId, selectedEvent, setSelectedEvent }) {
+export default function EventRow({ data, roomIndex, config, selectedEvent, setSelectedEvent }) {
     const gridRef = useRef(null);
 
     const [room, setRoom] = useState(data.getRoomWithID(roomIndex));
@@ -23,7 +23,8 @@ export default function EventRow({ data, roomIndex, config, nextEventId, setNext
 
     const [lastClickTime, setLastClickTime] = useState(0);
 
-    const lastColumnStart = config.columnWidths.slice(0, config.columnWidths.length - 2).reduce((acc, width) => acc + width, 0);
+    const lastColumnStart = config.columnWidths.slice(0, config.columnWidths.length - 2)
+        .reduce((acc, width) => acc + width, 0);
 
     const isValidEventPosition = (layoutItem) => {
         const dateColumnsStart = config.columnWidths.slice(0, 2).reduce((acc, width) => acc + width, 0);
@@ -73,13 +74,15 @@ export default function EventRow({ data, roomIndex, config, nextEventId, setNext
 
     const getDateBasedOnLayoutPosition = (pos) => {
         var finalDate = null;
-        config.dateLayout.forEach( date => {
-            if (pos == date.x)
+
+        config.dateLayout.forEach(date => {
+            if (pos == date.x) {
                 finalDate = new LVDate(
-                    data.date.getFullYear(), 
-                    data.date.getMonth(), 
+                    data.date.getFullYear(),
+                    data.date.getMonth(),
                     date.num
-                );    
+                );
+            }
         });
         return finalDate;
     };
@@ -98,6 +101,7 @@ export default function EventRow({ data, roomIndex, config, nextEventId, setNext
 
                     event.begin_date = getDateBasedOnLayoutPosition(startDatePos);
                     event.end_date = getDateBasedOnLayoutPosition(endDatePos);
+
                     event.x = newLayout.x;
                     event.w = newLayout.w;
                 }
@@ -118,7 +122,8 @@ export default function EventRow({ data, roomIndex, config, nextEventId, setNext
                 const doubleClickThreshold = 300;
                 
                 if (now - lastClickTime < doubleClickThreshold) {
-                    const reactFiberKey = Object.keys(clickedEventElement).find(key => key.startsWith('__reactFiber$'));
+                    const reactFiberKey = Object.keys(clickedEventElement)
+                        .find(key => key.startsWith('__reactFiber$'));
                     const objEl = clickedEventElement[reactFiberKey];
                     const eventKey = objEl.key.replace('event-', '');
                     const event = data.getEventWithID(roomIndex, eventKey);
@@ -202,10 +207,7 @@ export default function EventRow({ data, roomIndex, config, nextEventId, setNext
             var overlapping = isOverlapping(draggingEvent, room.events, 'event-temp');
 
             if (inDateColumns && !overlapping) {
-                var x = draggingEvent.x;
-                var y = draggingEvent.y;
-                var w = draggingEvent.w;
-                
+                var tempDraggingEvent = draggingEvent;
                 var convertedEvent = convertEventForSendingToDB(room, draggingEvent);
 
                 console.log(room);
@@ -213,17 +215,15 @@ export default function EventRow({ data, roomIndex, config, nextEventId, setNext
 
                 ApiService.post('/api/event', convertedEvent)
                 .then(result => {
-                    // const newEvent = { 
-                    //     ...draggingEvent, 
-                    //     i: `event-${nextEventId}`,
-                    //     x: Number(x), 
-                    //     y: Number(y), 
-                    //     w: Number(w), 
-                    //     h: 1 
-                    // };
-
-                    // room.events.push(newEvent);
-                    // setNextEventId(nextEventId + 1);
+                    const newEvent = { 
+                        ...tempDraggingEvent, 
+                        i: `event-${result}`,
+                        x: Number(tempDraggingEvent.x), 
+                        y: Number(tempDraggingEvent.y), 
+                        w: Number(tempDraggingEvent.w), 
+                        h: 1 
+                    };
+                    room.events.push(newEvent);
                 })
                 .catch(error => {
                     console.log(error);
