@@ -6,6 +6,8 @@ import { convertEventForSendingToDB } from '../../utils/conversionFunctions'
 
 import ApiService from '../../../../../services/ApiService';
 
+import LVDate from '../../../../../models/LVDate.jsx';
+
 import 'react-grid-layout/css/styles.css';
 import 'react-resizable/css/styles.css';
 
@@ -73,9 +75,9 @@ export default function EventRow({ data, roomIndex, config, nextEventId, setNext
         var finalDate = null;
         config.dateLayout.forEach( date => {
             if (pos == date.x)
-                finalDate = new Date(
+                finalDate = new LVDate(
                     data.date.getFullYear(), 
-                    data.date.getMonth() - 1, 
+                    data.date.getMonth(), 
                     date.num
                 );    
         });

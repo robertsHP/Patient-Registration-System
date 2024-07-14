@@ -23,19 +23,6 @@ export default function useDataFetch(floorID, tempDate) {
         }));
         return newRooms;
     };
-    
-    // const convertLayoutToRoomData = (curRooms) => {
-    //     if (!curRooms) {
-    //         return;
-    //     }
-    //     const newRooms = curRooms.map(room => ({
-    //         ...room,
-    //         events: room.events.filter(event => event.i.startsWith('event-')).map(event => (
-    //             convertEventForSendingToDB(event)
-    //         ))
-    //     }));
-    //     return newRooms;
-    // };
 
     const getRoomWithID = (id) => {
         return rooms.find(room => room.id == id);
@@ -77,15 +64,17 @@ export default function useDataFetch(floorID, tempDate) {
 
     useEffect(() => {
         var params = `?floorId=${floorID}&year=${date.getFullYear()}&month=${date.getMonth()}`;
-    
+
         ApiService.get('/api/calendar-page/table'+params)
-        .then(result => {
-            var data = result.data[0].rooms;
-            setRooms(convertRoomDataToLayout(data));
-        })
-        .catch(error => {
-            console.error('Failed to get data in useDataFetch - ' + error);
-        });
+            .then(result => {
+                var data = result.data[0].rooms;
+                var finalData = convertRoomDataToLayout(data);
+
+                setRooms(convertRoomDataToLayout(finalData));
+            })
+            .catch(error => {
+                console.error('Failed to get data in useDataFetch - ' + error);
+            });
     }, [floorID, date]);
 
     return { 

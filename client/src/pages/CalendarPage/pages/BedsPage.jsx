@@ -5,12 +5,12 @@ import useDataFetch from './hooks/useDataFetch.jsx';
 import EventTable from './components/EventTable/EventTable.jsx';
 import GridUI from './components/GridUI/GridUI.jsx';
 
-import DateContainer from '../../../models/DateContainer.jsx';
+import LVDate from '../../../models/LVDate.jsx';
 
 import './Page.css'
 
 export default function BedsPage () {
-    const data = useDataFetch(0, new Date(2024, 6, 1));
+    const data = useDataFetch(0, new LVDate(2024, 6, 1));
 
     // console.log(data.rooms);
 
@@ -21,3 +21,4 @@ export default function BedsPage () {
         </>
     );
 }
+

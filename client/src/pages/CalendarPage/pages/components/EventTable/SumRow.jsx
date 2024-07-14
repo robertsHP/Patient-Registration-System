@@ -2,6 +2,8 @@ import React, { useState, useEffect } from 'react';
 
 import GridLayout from 'react-grid-layout';
 
+import LVDate from '../../../../../models/LVDate.jsx';
+
 import 'react-grid-layout/css/styles.css';
 import 'react-resizable/css/styles.css';
 
@@ -13,19 +15,25 @@ export default function SumRow({ data, config }) {
 
     // Helper function to check if an event occurs on a specific date
     const isEventOnDate = (event, date) => {
-        const eventStart = new Date(event.begin_date);
-        const eventEnd = new Date(event.end_date);
+        const eventStart = new LVDate(event.begin_date);
+        const eventEnd = new LVDate(event.end_date);
 
-        // console.log();
+        const dateObj = date.getDate();
+        const eventStartDateObj = eventStart.getDate();
+        const eventEndDateObj = eventEnd.getDate();
 
-        return date >= eventStart && date <= eventEnd;
+        console.log('eventStartDateObj = '+eventStartDateObj);
+        console.log('eventEndDateObj = '+eventEndDateObj);
+        console.log('dateObj = '+dateObj);
+
+        return dateObj >= eventStartDateObj && dateObj < eventEndDateObj;
     };
 
     useEffect(() => {
         const updatedDateSums = config.dateLayout.map(dateItem => {
             const year = data.date.getFullYear();
             const month = data.date.getMonth();
-            const date = new Date(year, month, dateItem.num);
+            const date = new LVDate(year, month, dateItem.num);
 
             return Object.values(data.rooms).reduce((sum, room) => {
                 console.log(sum);

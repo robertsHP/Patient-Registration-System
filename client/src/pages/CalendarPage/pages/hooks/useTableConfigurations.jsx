@@ -1,12 +1,16 @@
 import { useMemo } from 'react';
 
+import LVDate from '../../../../models/LVDate.jsx';
+
 export default function useTableConfigurations (date) {
     const getDaysOfMonth = (year, month) => {
-        const date = new Date(year, month, 1);
         const days = [];
+        var dayIndex = 1;
+
         while (date.getMonth() === month) {
-            days.push(new Date(date));
-            date.setDate(date.getDate() + 1);
+            date = new LVDate(year, month, dayIndex);
+            days.push(date);
+            dayIndex++;
         }
         return days;
     };
@@ -20,7 +24,7 @@ export default function useTableConfigurations (date) {
         w: 1,
         h: 1,
         static: true,
-        num: day.getDate()
+        num: index + 1
     }));
     const sumOfAllColWidths = columnWidths.reduce((acc, width) => acc + width, 0);
 
