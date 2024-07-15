@@ -20,9 +20,7 @@ export default class LVDate {
         } else {
             const [year, month, day, hours = 0, minutes = 0, seconds = 0, milliseconds = 0] = args;
 
-            const eetDate = new Date(year, month - 1, day, hours, minutes, seconds, milliseconds);
-
-            this.#date = eetDate;
+            this.#date = new Date(year, month - 1, day, hours, minutes, seconds, milliseconds);
             
             if (isNaN(this.#date)) {
                 throw new Error("Invalid date format");

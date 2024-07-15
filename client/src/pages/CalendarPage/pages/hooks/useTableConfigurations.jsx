@@ -7,16 +7,24 @@ export default function useTableConfigurations (date) {
         const days = [];
         var dayIndex = 1;
 
-        while (date.getMonth() === month) {
+        console.log('ĻOOOP');
+
+        while (date.getMonth() == month) {
             date = new LVDate(year, month, dayIndex);
             days.push(date);
             dayIndex++;
+
+            console.log(date.getMonth());
+            console.log(month);
         }
         return days;
     };
 
     const daysOfMonth = getDaysOfMonth(date.getFullYear(), date.getMonth());
     const columnWidths = [4, 4, ...daysOfMonth.map(() => 1), 1, 4];
+
+    console.log('daysOfMonth');
+    console.log(daysOfMonth);
 
     const dateLayout = daysOfMonth.map((day, index) => ({
         i: `day-${index + 1}`, 
@@ -27,6 +35,7 @@ export default function useTableConfigurations (date) {
         static: true,
         num: index + 1
     }));
+
     const sumOfAllColWidths = columnWidths.reduce((acc, width) => acc + width, 0);
 
     return {

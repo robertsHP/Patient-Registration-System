@@ -94,10 +94,13 @@ exports.buildGetEventQuery = (year, month, floorId, limit, offset) => {
                 jsonb_build_object(
                     'id', r.id,
                     'room_num', r.room_num,
-                    'events', (
-                        SELECT jsonb_agg(event_data)
-                        FROM EventDetails ed
-                        WHERE ed.id = r.id
+                    'events', COALESCE(
+                        (
+                            SELECT jsonb_agg(event_data)
+                            FROM EventDetails ed
+                            WHERE ed.id = r.id
+                        ), 
+                        '[]'::jsonb
                     )
                 )
             ) AS rooms

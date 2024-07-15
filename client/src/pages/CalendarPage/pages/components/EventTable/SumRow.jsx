@@ -22,11 +22,11 @@ export default function SumRow({ data, config }) {
         const eventStartDateObj = eventStart.getDate();
         const eventEndDateObj = eventEnd.getDate();
 
-        // if (dateObj >= eventStartDateObj && dateObj < eventEndDateObj) {
-        //     console.log('eventStartDateObj = '+eventStartDateObj);
-        //     console.log('eventEndDateObj = '+eventEndDateObj);
-        //     console.log('dateObj = '+dateObj);
-        // }
+        if (dateObj >= eventStartDateObj && dateObj < eventEndDateObj) {
+            console.log('eventStartDateObj = '+eventStartDateObj);
+            console.log('eventEndDateObj = '+eventEndDateObj);
+            console.log('dateObj = '+dateObj);
+        }
 
         // console.log('eventStartDateObj = '+eventStartDateObj);
         // console.log('eventEndDateObj = '+eventEndDateObj);
@@ -40,6 +40,8 @@ export default function SumRow({ data, config }) {
             const year = data.date.getFullYear();
             const month = data.date.getMonth();
             const date = new LVDate(year, month, dateItem.num);
+
+            console.log(date.getDate());
 
             return Object.values(data.rooms).reduce((sum, room) => {
                 return sum + room.events.reduce((eventSum, event) => {
