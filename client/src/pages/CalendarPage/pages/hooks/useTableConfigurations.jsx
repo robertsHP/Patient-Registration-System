@@ -5,26 +5,19 @@ import LVDate from '../../../../models/LVDate.jsx';
 export default function useTableConfigurations (date) {
     const getDaysOfMonth = (year, month) => {
         const days = [];
+        var date = new LVDate(year, month, 1);
         var dayIndex = 1;
 
-        console.log('ĻOOOP');
-
         while (date.getMonth() == month) {
-            date = new LVDate(year, month, dayIndex);
             days.push(date);
             dayIndex++;
-
-            console.log(date.getMonth());
-            console.log(month);
+            date.setDay(dayIndex);
         }
         return days;
     };
 
     const daysOfMonth = getDaysOfMonth(date.getFullYear(), date.getMonth());
     const columnWidths = [4, 4, ...daysOfMonth.map(() => 1), 1, 4];
-
-    console.log('daysOfMonth');
-    console.log(daysOfMonth);
 
     const dateLayout = daysOfMonth.map((day, index) => ({
         i: `day-${index + 1}`, 

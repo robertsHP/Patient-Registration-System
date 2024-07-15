@@ -66,18 +66,12 @@ export default function useDataFetch(floorID, tempDate) {
         var params = `?floorId=${floorID}&year=${date.getFullYear()}&month=${date.getMonth()}`;
 
         ApiService.get('/api/calendar-page/table'+params)
-            .then(result => {
-                var data = result.data[0].rooms;
+        .then(result => {
+            var data = result.data[0].rooms;
+            var finalData = convertRoomDataToLayout(data);
 
-                console.log(data);
-
-                var finalData = convertRoomDataToLayout(data);
-
-                setRooms(finalData);
-            })
-            // .catch(error => {
-            //     console.error('Failed to get data in useDataFetch - ' + error);
-            // });
+            setRooms(finalData);
+        });
     }, [floorID, date]);
 
     return { 
