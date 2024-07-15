@@ -27,6 +27,7 @@ export default class LVDate {
             const [year, month, day, hours = 0, minutes = 0, seconds = 0, milliseconds = 0] = args;
 
             this.#date = new Date(Date.UTC(year, month - 1, day, hours, minutes, seconds, milliseconds));
+            
             if (isNaN(this.#date)) {
                 throw new Error("Invalid date format");
             }

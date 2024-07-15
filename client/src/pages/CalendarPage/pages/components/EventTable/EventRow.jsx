@@ -97,7 +97,7 @@ export default function EventRow({ data, roomIndex, config, selectedEvent, setSe
 
                 if (validPosition && notOverlapping) {
                     var startDatePos = newLayout.x;
-                    var endDatePos = newLayout.x + newLayout.w;
+                    var endDatePos = newLayout.x + newLayout.w - 1;
 
                     event.begin_date = getDateBasedOnLayoutPosition(startDatePos);
                     event.end_date = getDateBasedOnLayoutPosition(endDatePos);
