@@ -58,12 +58,14 @@ exports.updateInTable = async (req, res) => {
     const { tableName, id } = req.params;
     const data = req.body;
     const sanitizedTableName = prefix + globalServices.sanitizeTableName(tableName);
+    
     const updates = Object.keys(data).map((key, index) => `${key} = $${index + 2}`);
-    const values = Object.values(data);
-    values.push(id);
+    const values = [parseInt(id), ...Object.values(data)];
 
     try {
-        const result = await pool.query(`UPDATE ${sanitizedTableName} SET ${updates.join(', ')} WHERE id = $1 RETURNING *`, values);
+        const query = `UPDATE ${sanitizedTableName} SET ${updates.join(', ')} WHERE id = $1 RETURNING *`;
+
+        const result = await pool.query(query, values);
         if (result.rows.length === 0) {
             return res.status(404).send('Row not found');
         }

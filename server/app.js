@@ -1,5 +1,5 @@
-
 const express = require('express');
+const cors = require('cors');
 const app = express();
 
 const errorHandler = require('./src/middleware/errorHandler.js'); 
@@ -10,21 +10,16 @@ require('dotenv').config({ path: '../.env' });
 
 const port = process.env.SERVER_PORT;
 
+// Use CORS with default settings (allows all origins)
+app.use(cors());
+
 app.listen(port, () => {
     console.log(`Server running at http://localhost:${port}`);
 });
 
-//----------------USING----------------------
 app.use(express.json());
 
-//Remove in production
-app.use((req, res, next) => {
-    res.header('Access-Control-Allow-Origin', '*');
-    res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept');
-    next();
-});
-//
-
+// Define your routes
 app.get('/', (req, res) => {
     res.send('Server is running...');
 });
@@ -35,4 +30,6 @@ app.get('/api', (req, res) => {
 
 app.use('/api', calendarPageRoutes);
 app.use('/api', defaultRoute);
+
+// Error handling middleware
 app.use(errorHandler);

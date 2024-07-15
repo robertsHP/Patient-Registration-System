@@ -4,6 +4,8 @@ import GridLayout from 'react-grid-layout';
 
 import { convertEventForSendingToDB } from '../../utils/conversionUtilities.jsx'
 
+import usePageRefresh from '../../../../../hooks/usePageRefresh.jsx';
+
 import ApiService from '../../../../../services/ApiService';
 
 import LVDate from '../../../../../models/LVDate.jsx';
@@ -14,6 +16,8 @@ import 'react-resizable/css/styles.css';
 import './EventRow.css';
 
 export default function EventRow({ data, roomID, config, selectedEvent, setSelectedEvent }) {
+    const pageRefreshed = usePageRefresh();
+
     const gridRef = useRef(null);
 
     const [refresh, setRefresh] = useState(0);
@@ -89,33 +93,33 @@ export default function EventRow({ data, roomID, config, selectedEvent, setSelec
         return finalDate;
     };
 
-    const onLayoutChange = (layout) => {
+    const onLayoutChange = (newLayout) => {
         console.log('onLayoutChange');
         room.events.forEach(event => {
-            const newLayout = layout.find(l => l.i === String(event.i));
+            const newEventLayout = newLayout.find(l => l.i === String(event.i));
 
-            if (newLayout) {
-                const validPosition = isValidEventPosition(newLayout);
-                const notOverlapping = !isOverlapping(newLayout, room.events, event.i);
+            if (newEventLayout) {
+                const validPosition = isValidEventPosition(newEventLayout);
+                const notOverlapping = !isOverlapping(newEventLayout, room.events, event.i);
 
                 if (validPosition && notOverlapping) {
-                    var startDatePos = newLayout.x;
-                    var endDatePos = newLayout.x + newLayout.w - 1;
+                    var startDatePos = newEventLayout.x;
+                    var endDatePos = newEventLayout.x + newEventLayout.w - 1;
 
                     event.begin_date = getDateBasedOnLayoutPosition(startDatePos);
                     event.end_date = getDateBasedOnLayoutPosition(endDatePos);
 
-                    event.x = newLayout.x;
-                    event.w = newLayout.w;
+                    event.x = newEventLayout.x;
+                    event.w = newEventLayout.w;
 
-                    var convertedEvent = convertEventForSendingToDB(room, event);
+                    if(pageRefreshed && !isCreatingEvent) {
+                        var convertedEvent = convertEventForSendingToDB(room, event);
 
-                    // if(!isCreatingEvent && !draggingEvent) {
-                    //     ApiService.put(`/api/event/${event.id}`, convertedEvent)
-                    //         .catch(error => {
-                    //             console.log(error);
-                    //         });
-                    // }
+                        ApiService.put(`/api/event/${event.id}`, convertedEvent)
+                            .catch(error => {
+                                console.log(error);
+                            });
+                    }
                 }
             }
             return event;

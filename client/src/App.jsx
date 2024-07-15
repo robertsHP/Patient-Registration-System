@@ -16,19 +16,21 @@ export default function App() {
     ];
 
 	return (
-		<div className="app">
-			<Router>
-				<Routes>
-					<Route path="/login" element={<LoginPage pages={pages} />} />
-					{pages.map((page) => (
-						<Route key={page.urlName} path={`/${page.urlName}/*`} element={
-							<page.component sidebarPages={pages} parentUrlName={page.urlName}/>
-						} />
-					))}
-					<Route path="*" element={<Navigate to={`/login`} replace />} />
-				</Routes>
-			</Router>
-		</div>
+		<>
+			<div className="app">
+				<Router>
+					<Routes>
+						<Route path="/login" element={<LoginPage pages={pages} />} />
+						{pages.map((page) => (
+							<Route key={page.urlName} path={`/${page.urlName}/*`} element={
+								<page.component sidebarPages={pages} parentUrlName={page.urlName}/>
+							} />
+						))}
+						<Route path="*" element={<Navigate to={`/login`} replace />} />
+					</Routes>
+				</Router>
+			</div>
+		</>
 	)
 }
 

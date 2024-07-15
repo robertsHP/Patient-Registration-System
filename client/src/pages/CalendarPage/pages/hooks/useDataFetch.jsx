@@ -67,13 +67,8 @@ export default function useDataFetch(floorID, tempDate) {
 
         ApiService.get('/api/calendar-page/table'+params)
         .then(result => {
-            // console.log(result);
-
             var data = result.data[0].rooms;
             var finalData = convertRoomDataToLayout(data);
-
-            console.log('date');
-            console.log(data);
 
             setRooms(finalData);
         });

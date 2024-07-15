@@ -33,8 +33,8 @@ export function convertEventForSendingToDB (room, event) {
     return {
         id_room: room.id,
         id_patient: patient_id,
-        begin_date: event.begin_date.getDate(),
-        end_date: event.end_date.getDate(),
+        begin_date: event.begin_date.toDateString(),
+        end_date: event.end_date.toDateString(),
         notes: event.notes,
         id_doctor: doc_id,
     };
