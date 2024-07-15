@@ -34,3 +34,5 @@ curl -X POST http://localhost:5000/api/event \
         "notes": "",
         "id_doctor": null
     }'
+
+curl http://localhost:5000/api/calendar-page/table?floorId=1

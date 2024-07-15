@@ -81,11 +81,11 @@ exports.buildGetEventQuery = (year, month, floorId, limit, offset) => {
                 ) AS event_data
             FROM 
                 ${eventTableName} AS e
-                JOIN ${patientTableName} AS p ON e.id_patient = p.id
-                JOIN ${doctorTableName} AS d ON e.id_doctor = d.id
-                JOIN ${roomTableName} AS r ON e.id_room = r.id
-                JOIN ${floorTableName} AS f ON r.id_floor = f.id
-                JOIN ${patientTypeTableName} AS pt ON p.id_pat_type = pt.id
+                LEFT JOIN ${patientTableName} AS p ON e.id_patient = p.id
+                LEFT JOIN ${doctorTableName} AS d ON e.id_doctor = d.id
+                LEFT JOIN ${roomTableName} AS r ON e.id_room = r.id
+                LEFT JOIN ${floorTableName} AS f ON r.id_floor = f.id
+                LEFT JOIN ${patientTypeTableName} AS pt ON p.id_pat_type = pt.id
             ${eventClause}
         )
 
@@ -106,7 +106,7 @@ exports.buildGetEventQuery = (year, month, floorId, limit, offset) => {
             ) AS rooms
         FROM 
             ${roomTableName} AS r
-            JOIN ${floorTableName} AS f ON r.id_floor = f.id
+            LEFT JOIN ${floorTableName} AS f ON r.id_floor = f.id
         ${roomClause}
         GROUP BY r.id, r.room_num, f.id, f.floor_name
         LIMIT $${params.length + 1}

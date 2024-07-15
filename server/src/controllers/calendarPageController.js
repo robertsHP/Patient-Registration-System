@@ -37,9 +37,6 @@ exports.getEvents = async (req, res) => {
     }
 };
 
-// exports.insertEvent = async (req, res) => {
-
-// };
 
 
 

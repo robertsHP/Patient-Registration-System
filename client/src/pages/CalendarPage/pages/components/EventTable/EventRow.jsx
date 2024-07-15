@@ -16,6 +16,8 @@ import './EventRow.css';
 export default function EventRow({ data, roomID, config, selectedEvent, setSelectedEvent }) {
     const gridRef = useRef(null);
 
+    const [refresh, setRefresh] = useState(0);
+
     const [room, setRoom] = useState(data.getRoomWithID(roomID));
 
     const [draggingEvent, setDraggingEvent] = useState(null);
@@ -88,6 +90,7 @@ export default function EventRow({ data, roomID, config, selectedEvent, setSelec
     };
 
     const onLayoutChange = (layout) => {
+        console.log('onLayoutChange');
         room.events.forEach(event => {
             const newLayout = layout.find(l => l.i === String(event.i));
 
@@ -107,15 +110,21 @@ export default function EventRow({ data, roomID, config, selectedEvent, setSelec
 
                     var convertedEvent = convertEventForSendingToDB(room, event);
 
-                    ApiService.put(`/api/event/${event.id}`, convertedEvent)
-                        .catch(error => {
-                            console.log(error);
-                        });
+                    // if(!isCreatingEvent && !draggingEvent) {
+                    //     ApiService.put(`/api/event/${event.id}`, convertedEvent)
+                    //         .catch(error => {
+                    //             console.log(error);
+                    //         });
+                    // }
                 }
             }
             return event;
         });
         data.setRoomWithID(room.id, room);
+    };
+
+    const refreshRow = () => {
+        setRefresh(refresh + 1);
     };
 
     const onMouseDown = (e) => {
@@ -219,6 +228,8 @@ export default function EventRow({ data, roomID, config, selectedEvent, setSelec
 
                 ApiService.post('/api/event', convertedEvent)
                     .then(result => {
+                        tempDraggingEvent.id = result;
+
                         const newEvent = { 
                             ...tempDraggingEvent, 
                             i: `event-${result}`,
@@ -228,6 +239,8 @@ export default function EventRow({ data, roomID, config, selectedEvent, setSelec
                             h: 1 
                         };
                         room.events.push(newEvent);
+
+                        refreshRow();
                     })
                     .catch(error => {
                         console.log(error);
@@ -303,6 +316,7 @@ export default function EventRow({ data, roomID, config, selectedEvent, setSelec
                         static: true 
                     }
                 ]}
+                key={refresh}
                 cols={config.cols}
                 rowHeight={config.rowHeight}
                 width={config.width}
