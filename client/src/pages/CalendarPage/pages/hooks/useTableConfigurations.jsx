@@ -17,7 +17,7 @@ export default function useTableConfigurations (date) {
     };
 
     const daysOfMonth = getDaysOfMonth(date.getFullYear(), date.getMonth());
-    const columnWidths = [4, 4, ...daysOfMonth.map(() => 1), 1, 4];
+    const columnWidths = [4, 4, ...daysOfMonth.map(() => 1), 3, 4];
 
     const dateLayout = daysOfMonth.map((day, index) => ({
         i: `day-${index + 1}`, 

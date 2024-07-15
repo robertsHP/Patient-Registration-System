@@ -13,7 +13,7 @@ export default function ColumnRow({ config }) {
     return (
         <>
             <GridLayout
-                className="layout"
+                className="column-row"
                 layout={[
                     { 
                         i: 'room-column', 
@@ -70,7 +70,6 @@ export default function ColumnRow({ config }) {
                         {date.num}
                     </div>
                 ))}
-                {/* Add the new column divs */}
                 <div key="sum-column" className="grid-cell header"></div>
                 <div key="hotel-column" className="grid-cell header">Viesnīca</div>
             </GridLayout>

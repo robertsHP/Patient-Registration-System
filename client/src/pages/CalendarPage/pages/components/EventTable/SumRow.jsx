@@ -22,8 +22,6 @@ export default function SumRow({ data, config }) {
         const eventStartDateObj = eventStart.getDate();
         const eventEndDateObj = eventEnd.getDate();
 
-        console.log(dateObj);
-
         return dateObj >= eventStartDateObj && dateObj <= eventEndDateObj;
     };
 
@@ -45,9 +43,12 @@ export default function SumRow({ data, config }) {
         setTotalSum(updatedTotalSum);
     }, [data.rooms]);
 
+    const lastColumnStart = config.columnWidths.slice(0, config.columnWidths.length - 2)
+        .reduce((acc, width) => acc + width, 0);
+
     return (
         <GridLayout
-            className="layout"
+            className="sum-row"
             layout={[
                 { 
                     i: 'room-gap', 
@@ -57,8 +58,8 @@ export default function SumRow({ data, config }) {
                     h: 1, 
                     static: true 
                 },
-                { i
-                    : 'name-gap', 
+                { 
+                    i: 'name-gap', 
                     x: config.columnWidths[0], 
                     y: 0, 
                     w: config.columnWidths[1], 
@@ -74,11 +75,18 @@ export default function SumRow({ data, config }) {
                     static: true
                 })),
                 { 
-                    i: 'sum-column', 
-                    x: config.columnWidths.slice(0, config.columnWidths.length - 2)
-                        .reduce((acc, width) => acc + width, 0), 
+                    i: 'sum-gap', 
+                    x: lastColumnStart,
                     y: 0, 
                     w: config.columnWidths[config.columnWidths.length - 2], 
+                    h: 1, 
+                    static: true 
+                },
+                { 
+                    i: 'hotel-gap', 
+                    x: lastColumnStart + config.columnWidths[config.columnWidths.length - 2], 
+                    y: 0, 
+                    w: config.columnWidths[config.columnWidths.length - 1], 
                     h: 1, 
                     static: true 
                 }
@@ -91,12 +99,13 @@ export default function SumRow({ data, config }) {
         >
             <div key="room-gap"></div>
             <div key="name-gap"></div>
-            {dateSums.map((sum, index) => (
-                <div key={config.dateLayout[index].i} className="grid-cell">
-                    {sum}
+            {config.dateLayout.map((item, index) => (
+                <div key={item.i} className="grid-cell">
+                    {dateSums[index]}
                 </div>
             ))}
-            <div key="sum-column" className="grid-cell">{totalSum}</div>
+            <div key="sum-gap" className="grid-cell">{totalSum}</div>
+            <div key="hotel-gap" className="grid-cell header"></div>
         </GridLayout>
     );
 }

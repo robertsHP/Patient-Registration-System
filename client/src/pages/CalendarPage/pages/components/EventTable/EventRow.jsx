@@ -13,10 +13,10 @@ import 'react-resizable/css/styles.css';
 
 import './EventRow.css';
 
-export default function EventRow({ data, roomIndex, config, selectedEvent, setSelectedEvent }) {
+export default function EventRow({ data, roomID, config, selectedEvent, setSelectedEvent }) {
     const gridRef = useRef(null);
 
-    const [room, setRoom] = useState(data.getRoomWithID(roomIndex));
+    const [room, setRoom] = useState(data.getRoomWithID(roomID));
 
     const [draggingEvent, setDraggingEvent] = useState(null);
     const [isCreatingEvent, setIsCreatingEvent] = useState(false);
@@ -126,7 +126,7 @@ export default function EventRow({ data, roomIndex, config, selectedEvent, setSe
                         .find(key => key.startsWith('__reactFiber$'));
                     const objEl = clickedEventElement[reactFiberKey];
                     const eventKey = objEl.key.replace('event-', '');
-                    const event = data.getEventWithID(roomIndex, eventKey);
+                    const event = data.getEventWithID(roomID, eventKey);
                     
                     handleEventDoubleClick(event);
                 } else {
@@ -246,10 +246,10 @@ export default function EventRow({ data, roomIndex, config, selectedEvent, setSe
             onMouseUp={onMouseUp}
         >
             <GridLayout
-                className="layout"
+                className={`event-row-${roomID}`}
                 layout={[
                     { 
-                        i: `room-input-${roomIndex}`, 
+                        i: `room-input-${roomID}`, 
                         x: 0, 
                         y: 0, 
                         w: 
@@ -258,7 +258,7 @@ export default function EventRow({ data, roomIndex, config, selectedEvent, setSe
                         static: true 
                     },
                     { 
-                        i: `name-input-${roomIndex}`, 
+                        i: `name-input-${roomID}`, 
                         x: config.columnWidths[0], 
                         y: 0, 
                         w: config.columnWidths[1], 
@@ -308,11 +308,11 @@ export default function EventRow({ data, roomIndex, config, selectedEvent, setSe
                 draggableHandle=".event"
                 resizeHandles={['e', 'w']}
             >
-                <div key={`room-input-${roomIndex}`} className="grid-cell">
+                <div key={`room-input-${roomID}`} className="grid-cell">
                     <input type="text" defaultValue={room.room_num} style={{ width: '100%' }} />
                 </div>
 
-                <div key={`name-input-${roomIndex}`} className="grid-cell">
+                <div key={`name-input-${roomID}`} className="grid-cell">
                     <input type="text" defaultValue={room.events[0]?.patient.pat_name} style={{ width: '100%' }} />
                 </div>
 

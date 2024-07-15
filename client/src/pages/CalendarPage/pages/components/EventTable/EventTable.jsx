@@ -26,17 +26,21 @@ export default function EventTable({ data }) {
             <ColumnRow
                 config={config}
             />
-            {data.rooms.map((room, roomIndex) => (
-                <div key={`room-${roomIndex}`} className="grid-cell" style={{ gridColumn: `span ${config.cols}` }}>
-                    <EventRow
-                        data={data}
-                        roomIndex={roomIndex}
-                        config={config}
-                        selectedEvent={selectedEvent}
-                        setSelectedEvent={setSelectedEvent}
-                    />
-                </div>
-            ))}
+            {data.rooms.length !== 0 &&
+                data.rooms.map((room) => 
+                    room && (
+                        <div key={`room-${room.id}`} className="grid-cell" style={{ gridColumn: `span ${config.cols}` }}>
+                            <EventRow
+                                data={data}
+                                roomID={room.id}
+                                config={config}
+                                selectedEvent={selectedEvent}
+                                setSelectedEvent={setSelectedEvent}
+                            />
+                        </div>
+                    )
+                )
+            }
             <SumRow 
                 data={data}
                 config={config}
