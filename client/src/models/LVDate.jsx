@@ -6,15 +6,9 @@ export default class LVDate {
         this.setDate(...args);
     }
 
-    static isValidDate(date) {
-        return date instanceof Date && !isNaN(date);
-    }
-
     setDate (...args) {
         if (args.length == 1) {
             var newDate = args[0];
-
-            // console.log(newDate);
 
             if (newDate instanceof LVDate) {
                 this.#date = new Date(newDate.getDate());
@@ -26,7 +20,9 @@ export default class LVDate {
         } else {
             const [year, month, day, hours = 0, minutes = 0, seconds = 0, milliseconds = 0] = args;
 
-            this.#date = new Date(Date.UTC(year, month - 1, day, hours, minutes, seconds, milliseconds));
+            const eetDate = new Date(year, month - 1, day, hours, minutes, seconds, milliseconds);
+
+            this.#date = eetDate;
             
             if (isNaN(this.#date)) {
                 throw new Error("Invalid date format");
@@ -35,39 +31,39 @@ export default class LVDate {
     }
 
     setYear(year) {
-        this.#date.setUTCFullYear(year);
+        this.#date.setFullYear(year);
     }
 
     setMonth(month) {
-        this.#date.setUTCMonth(month - 1); // months are zero-indexed
+        this.#date.setMonth(month - 1); // months are zero-indexed
     }
 
     setDay(day) {
-        this.#date.setUTCDate(day);
+        this.#date.setDate(day);
     }
 
     setHours(hours) {
-        this.#date.setUTCHours(hours);
+        this.#date.setHours(hours);
     }
 
     setMinutes(minutes) {
-        this.#date.setUTCMinutes(minutes);
+        this.#date.setMinutes(minutes);
     }
 
     setSeconds(seconds) {
-        this.#date.setUTCSeconds(seconds);
+        this.#date.setSeconds(seconds);
     }
 
     setMilliseconds(milliseconds) {
-        this.#date.setUTCMilliseconds(milliseconds);
+        this.#date.setMilliseconds(milliseconds);
     }
 
     getFullYear() {
-        return this.#date.getUTCFullYear();
+        return this.#date.getFullYear();
     }
 
     getMonth() {
-        return this.#date.getUTCMonth() + 1; // months are zero-indexed
+        return this.#date.getMonth() + 1; // months are zero-indexed
     }
 
     getDate() {
@@ -75,23 +71,23 @@ export default class LVDate {
     }
 
     getDay() {
-        return this.#date.getUTCDay();
+        return this.#date.getDay();
     }
 
     getHours() {
-        return this.#date.getUTCHours();
+        return this.#date.getHours();
     }
 
     getMinutes() {
-        return this.#date.getUTCMinutes();
+        return this.#date.getMinutes();
     }
 
     getSeconds() {
-        return this.#date.getUTCSeconds();
+        return this.#date.getSeconds();
     }
 
     getMilliseconds() {
-        return this.#date.getUTCMilliseconds();
+        return this.#date.getMilliseconds();
     }
 
     toISOString() {

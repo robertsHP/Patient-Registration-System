@@ -62,10 +62,10 @@ INSERT INTO LRC_CALENDAR_PAGE_patient_type (id, pat_type) VALUES
 
 INSERT INTO LRC_CALENDAR_PAGE_patient 
 (id, pat_name, phone_num, hotel_stay_start, hotel_stay_end, id_pat_type) VALUES
-(0, 'John Doe', '555-1234', '2024-06-01 12:00:00', '2024-06-05 11:00:00', 0),
-(1, 'Jane Smith', '555-5678', '2024-06-02 14:00:00', '2024-06-06 10:00:00', 1),
-(2, 'Bob Johnson', '555-8765', '2024-06-03 16:00:00', '2024-06-07 09:00:00', 2),
-(3, 'Alice Davis', '555-4321', '2024-06-04 18:00:00', '2024-06-08 08:00:00', 3);
+(0, 'John Doe', '555-1234', '2024-06-01 00:00:00', '2024-06-05 00:00:00', 0),
+(1, 'Jane Smith', '555-5678', '2024-06-02 00:00:00', '2024-06-06 00:00:00', 1),
+(2, 'Bob Johnson', '555-8765', '2024-06-03 00:00:00', '2024-06-07 00:00:00', 2),
+(3, 'Alice Davis', '555-4321', '2024-06-04 00:00:00', '2024-06-08 00:00:00', 3);
 
 INSERT INTO LRC_CALENDAR_PAGE_floor (id, floor_name) VALUES
 (0, 'Ground Floor'),
@@ -91,9 +91,9 @@ INSERT INTO LRC_CALENDAR_PAGE_doctor (id, doc_name) VALUES
 (2, 'Dr. Sarah Wilson');
 
 INSERT INTO LRC_CALENDAR_PAGE_event (id, id_room, id_patient, begin_date, end_date, notes, id_doctor) VALUES
-(0, 0, 0, '2024-06-01 12:00:00', '2024-06-05 11:00:00', 'Routine check-up', 0),
-(1, 1, 1, '2024-06-02 14:00:00', '2024-06-06 10:00:00', 'VIP patient, regular monitoring', 1),
-(2, 2, 2, '2024-06-03 16:00:00', '2024-06-07 09:00:00', 'Emergency surgery', 2),
-(3, 1, 3, '2024-06-04 18:00:00', '2024-06-08 08:00:00', 'Outpatient procedure', 0);
+(0, 0, 0, '2024-06-01 00:00:00', '2024-06-05 00:00:00', 'Routine check-up', 0),
+(1, 1, 1, '2024-06-02 00:00:00', '2024-06-06 00:00:00', 'VIP patient, regular monitoring', 1),
+(2, 2, 2, '2024-06-03 00:00:00', '2024-06-07 00:00:00', 'Emergency surgery', 2),
+(3, 1, 3, '2024-06-04 00:00:00', '2024-06-08 00:00:00', 'Outpatient procedure', 0);
 
 

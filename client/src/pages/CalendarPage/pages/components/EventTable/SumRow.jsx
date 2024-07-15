@@ -28,9 +28,9 @@ export default function SumRow({ data, config }) {
         //     console.log('dateObj = '+dateObj);
         // }
 
-        console.log('eventStartDateObj = '+eventStartDateObj);
-        console.log('eventEndDateObj = '+eventEndDateObj);
-        console.log('dateObj = '+dateObj);
+        // console.log('eventStartDateObj = '+eventStartDateObj);
+        // console.log('eventEndDateObj = '+eventEndDateObj);
+        // console.log('dateObj = '+dateObj);
 
         return dateObj >= eventStartDateObj && dateObj <= eventEndDateObj;
     };
