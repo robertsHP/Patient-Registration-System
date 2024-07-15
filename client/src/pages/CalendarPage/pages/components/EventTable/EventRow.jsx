@@ -104,6 +104,13 @@ export default function EventRow({ data, roomID, config, selectedEvent, setSelec
 
                     event.x = newLayout.x;
                     event.w = newLayout.w;
+
+                    var convertedEvent = convertEventForSendingToDB(room, event);
+
+                    ApiService.put(`/api/event/${event.id}`, convertedEvent)
+                        .catch(error => {
+                            console.log(error);
+                        });
                 }
             }
             return event;
@@ -210,24 +217,21 @@ export default function EventRow({ data, roomID, config, selectedEvent, setSelec
                 var tempDraggingEvent = draggingEvent;
                 var convertedEvent = convertEventForSendingToDB(room, draggingEvent);
 
-                console.log(room);
-                console.log(convertedEvent);
-
                 ApiService.post('/api/event', convertedEvent)
-                .then(result => {
-                    const newEvent = { 
-                        ...tempDraggingEvent, 
-                        i: `event-${result}`,
-                        x: Number(tempDraggingEvent.x), 
-                        y: Number(tempDraggingEvent.y), 
-                        w: Number(tempDraggingEvent.w), 
-                        h: 1 
-                    };
-                    room.events.push(newEvent);
-                })
-                .catch(error => {
-                    console.log(error);
-                });
+                    .then(result => {
+                        const newEvent = { 
+                            ...tempDraggingEvent, 
+                            i: `event-${result}`,
+                            x: Number(tempDraggingEvent.x), 
+                            y: Number(tempDraggingEvent.y), 
+                            w: Number(tempDraggingEvent.w), 
+                            h: 1 
+                        };
+                        room.events.push(newEvent);
+                    })
+                    .catch(error => {
+                        console.log(error);
+                    });
             }
             setDraggingEvent(null);
             setIsCreatingEvent(false);

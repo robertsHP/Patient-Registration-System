@@ -70,6 +70,11 @@ export default function useDataFetch(floorID, tempDate) {
             var data = result.data[0].rooms;
             var finalData = convertRoomDataToLayout(data);
 
+            console.log("data");
+            console.log(data);
+            console.log("finalData");
+            console.log(finalData);
+
             setRooms(finalData);
         });
     }, [floorID, date]);

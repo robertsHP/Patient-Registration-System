@@ -12,7 +12,7 @@ import './Page.css'
 export default function BedsPage () {
     const data = useDataFetch(0, new LVDate(2024, 6, 1));
 
-    // console.log(data.rooms);
+    console.log(data.rooms);
 
     return (
         <>
