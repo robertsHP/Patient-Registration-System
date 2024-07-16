@@ -2,7 +2,7 @@ const express = require('express');
 const cors = require('cors');
 const app = express();
 
-const errorHandler = require('./src/middleware/errorHandler.js'); 
+// const errorHandler = require('./src/middleware/errorHandler.js'); 
 
 const globalRoutes = require('./src/routes/globalRoutes.js'); 
 const calendarPageRoutes = require('./src/routes/calendarPageRoutes.js');
@@ -33,4 +33,4 @@ app.use('/api', calendarPageRoutes);
 app.use('/api', globalRoutes);
 
 // Error handling middleware
-app.use(errorHandler);
+// app.use(errorHandler);

@@ -3,42 +3,40 @@ CREATE TABLE LRC_ADMIN_user (
     username VARCHAR(50) NOT NULL UNIQUE,
     email VARCHAR(100) NOT NULL UNIQUE,
     password_hash CHAR(64) NOT NULL,
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
 CREATE TABLE LRC_ADMIN_role (
     id SERIAL PRIMARY KEY,
     role_name VARCHAR(50) NOT NULL UNIQUE,
     role_description TEXT,
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
 CREATE TABLE LRC_ADMIN_user_role_relation (
     id SERIAL PRIMARY KEY,
     user_id INT,
     role_id INT,
-    AssignedAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
-    FOREIGN KEY (role_id) REFERENCES roles(id) ON DELETE CASCADE
+    assigned_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (user_id) REFERENCES LRC_ADMIN_user(id),
+    FOREIGN KEY (role_id) REFERENCES LRC_ADMIN_role(id)
 );
 
-INSERT INTO LRC_ADMIN_user (username, email, password_hash)
-VALUES
-('john_doe', 'john@example.com', ''),
-('jane_smith', 'jane@example.com', ''),
-('alice_jones', 'alice@example.com', '');
+-- Inserting into LRC_ADMIN_user
+INSERT INTO LRC_ADMIN_user (username, email, password_hash) VALUES
+('admin', 'admin@example.com', 'e3afed0047b08059d0fada10f400c1e5'),  -- Replace with actual hash
+('user1', 'user1@example.com', 'e3afed0047b08059d0fada10f400c1e5'),  -- Replace with actual hash
+('user2', 'user2@example.com', 'e3afed0047b08059d0fada10f400c1e5');  -- Replace with actual hash
 
-INSERT INTO LRC_ADMIN_role (role_name, role_description)
-VALUES
-('admin', 'Administrator with full access'),
-('user', 'User with permissions to modify content');
+-- Inserting into LRC_ADMIN_role
+INSERT INTO LRC_ADMIN_role (role_name, role_description) VALUES
+('Admin', 'Administrator with full access'),
+('User', 'Regular user with limited access'),
+('Moderator', 'User with moderation privileges');
 
-INSERT INTO LRC_ADMIN_user_role_relation (user_id, role_id)
-VALUES
-(1, 1),
-(2, 2),
-(3, 3),
-(1, 2),
-(2, 3);
+-- Inserting into LRC_ADMIN_user_role_relation
+INSERT INTO LRC_ADMIN_user_role_relation (user_id, role_id) VALUES
+(1, 1),  -- Assigning 'Admin' role to 'admin'
+(2, 2),  -- Assigning 'User' role to 'user1'
+(3, 2),  -- Assigning 'User' role to 'user2'
+(3, 3);  -- Assigning 'Moderator' role to 'user2'
