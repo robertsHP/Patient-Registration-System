@@ -3,7 +3,8 @@ const cors = require('cors');
 const app = express();
 
 const errorHandler = require('./src/middleware/errorHandler.js'); 
-const defaultRoute = require('./src/routes/defaultRoutes.js'); 
+
+const globalRoutes = require('./src/routes/globalRoutes.js'); 
 const calendarPageRoutes = require('./src/routes/calendarPageRoutes.js');
 
 require('dotenv').config({ path: '../.env' });
@@ -29,7 +30,7 @@ app.get('/api', (req, res) => {
 });
 
 app.use('/api', calendarPageRoutes);
-app.use('/api', defaultRoute);
+app.use('/api', globalRoutes);
 
 // Error handling middleware
 app.use(errorHandler);

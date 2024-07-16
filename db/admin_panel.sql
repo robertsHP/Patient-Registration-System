@@ -1,4 +1,4 @@
-CREATE TABLE LRC_users (
+CREATE TABLE LRC_ADMIN_user (
     id SERIAL PRIMARY KEY,
     username VARCHAR(50) NOT NULL UNIQUE,
     email VARCHAR(100) NOT NULL UNIQUE,
@@ -7,7 +7,7 @@ CREATE TABLE LRC_users (
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
 );
 
-CREATE TABLE LRC_roles (
+CREATE TABLE LRC_ADMIN_role (
     id SERIAL PRIMARY KEY,
     role_name VARCHAR(50) NOT NULL UNIQUE,
     role_description TEXT,
@@ -15,7 +15,7 @@ CREATE TABLE LRC_roles (
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
 );
 
-CREATE TABLE LRC_roles (
+CREATE TABLE LRC_ADMIN_user_role_relation (
     id SERIAL PRIMARY KEY,
     user_id INT,
     role_id INT,
@@ -24,18 +24,18 @@ CREATE TABLE LRC_roles (
     FOREIGN KEY (role_id) REFERENCES roles(id) ON DELETE CASCADE
 );
 
-INSERT INTO LRC_users (username, email, password_hash)
+INSERT INTO LRC_ADMIN_user (username, email, password_hash)
 VALUES
 ('john_doe', 'john@example.com', ''),
 ('jane_smith', 'jane@example.com', ''),
 ('alice_jones', 'alice@example.com', '');
 
-INSERT INTO LRC_roles (role_name, role_description)
+INSERT INTO LRC_ADMIN_role (role_name, role_description)
 VALUES
 ('admin', 'Administrator with full access'),
 ('user', 'User with permissions to modify content');
 
-INSERT INTO LRC_user_roles (user_id, role_id)
+INSERT INTO LRC_ADMIN_user_role_relation (user_id, role_id)
 VALUES
 (1, 1),
 (2, 2),

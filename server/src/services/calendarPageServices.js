@@ -1,15 +1,11 @@
 const globalServices = require('./globalServices.js');
 
-require('dotenv').config({ path: '../.env' });
-
-const prefix = process.env.CALENDAR_PAGE_TABLE_PREFIX;
-
-const eventTableName = `${prefix}${globalServices.sanitizeTableName('event')}`;
-const patientTableName = `${prefix}${globalServices.sanitizeTableName('patient')}`;
-const doctorTableName = `${prefix}${globalServices.sanitizeTableName('doctor')}`;
-const roomTableName = `${prefix}${globalServices.sanitizeTableName('room')}`;
-const floorTableName = `${prefix}${globalServices.sanitizeTableName('floor')}`;
-const patientTypeTableName = `${prefix}${globalServices.sanitizeTableName('patient_type')}`;
+const eventTableName = globalServices.sanitizeTableName('event');
+const patientTableName = globalServices.sanitizeTableName('patient');
+const doctorTableName = globalServices.sanitizeTableName('doctor');
+const roomTableName = globalServices.sanitizeTableName('room');
+const floorTableName = globalServices.sanitizeTableName('floor');
+const patientTypeTableName = globalServices.sanitizeTableName('patient_type');
 
 function prepareGetEventClauses(year, month, floorId, params) {
     let yearAndMonthCond = '';
