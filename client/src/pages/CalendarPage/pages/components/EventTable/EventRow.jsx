@@ -106,6 +106,10 @@ export default function EventRow({ data, roomID, config, selectedEvent, setSelec
                     var startDatePos = newEventLayout.x;
                     var endDatePos = newEventLayout.x + newEventLayout.w - 1;
 
+                    // if () {
+                        
+                    // }
+
                     event.begin_date = getDateBasedOnLayoutPosition(startDatePos);
                     event.end_date = getDateBasedOnLayoutPosition(endDatePos);
 
