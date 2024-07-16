@@ -1,33 +1,44 @@
-CREATE TABLE users (
-    user_id SERIAL PRIMARY KEY,
+CREATE TABLE LRC_users (
+    id SERIAL PRIMARY KEY,
     username VARCHAR(50) NOT NULL UNIQUE,
     email VARCHAR(100) NOT NULL UNIQUE,
     password_hash CHAR(64) NOT NULL,
-    created_at TIMESTAMP WITHOUT TIME ZONE DEFAULT CURRENT_TIMESTAMP
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
 );
 
-CREATE TABLE roles (
-    role_id SERIAL PRIMARY KEY,
+CREATE TABLE LRC_roles (
+    id SERIAL PRIMARY KEY,
     role_name VARCHAR(50) NOT NULL UNIQUE,
-    description TEXT
+    role_description TEXT,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
 );
 
-CREATE TABLE user_roles (
+CREATE TABLE LRC_roles (
+    id SERIAL PRIMARY KEY,
     user_id INT,
     role_id INT,
-    PRIMARY KEY (user_id, role_id),
-    FOREIGN KEY (user_id) REFERENCES users(user_id) ON DELETE CASCADE,
-    FOREIGN KEY (role_id) REFERENCES roles(role_id) ON DELETE CASCADE
+    AssignedAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
+    FOREIGN KEY (role_id) REFERENCES roles(id) ON DELETE CASCADE
 );
 
-INSERT INTO users (username, email, password_hash) VALUES
-('admin', 'EMAIL', '123'),
-('user', 'EMAIL', '123');
+INSERT INTO LRC_users (username, email, password_hash)
+VALUES
+('john_doe', 'john@example.com', ''),
+('jane_smith', 'jane@example.com', ''),
+('alice_jones', 'alice@example.com', '');
 
-INSERT INTO roles (role_name, description) VALUES
-('Admin', 'Full access to all systems and resources.'),
-('User', 'Standard access with limited permissions.');
+INSERT INTO LRC_roles (role_name, role_description)
+VALUES
+('admin', 'Administrator with full access'),
+('user', 'User with permissions to modify content');
 
-INSERT INTO user_roles (user_id, role_id) VALUES
-(1, 1),  -- admin as Admin
-(2, 2);  -- user as User
+INSERT INTO LRC_user_roles (user_id, role_id)
+VALUES
+(1, 1),
+(2, 2),
+(3, 3),
+(1, 2),
+(2, 3);

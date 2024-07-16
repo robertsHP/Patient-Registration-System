@@ -5,27 +5,7 @@ const globalServices = require('../services/globalServices.js');
 
 require('dotenv').config({ path: '../.env' });
 
-const prefix = process.env.CALENDAR_PAGE_TABLE_PREFIX;
-
-exports.getEvents = async (req, res) => {
-    const { floorId, year = null, month = null, page = 1, limit = 10 } = req.query;
-    const offset = (page - 1) * limit;
-
-    if (!floorId) {
-        return res.status(400).json({ error: '(getEvents) - Floor ID is a required parameter.' });
-    }
-
-    const { query, params } = calendarPageServices.buildGetEventQuery(year, month, floorId, limit, offset);
-
-    try {
-        const dataResult = await pool.query(query, params);
-        const data = dataResult.rows;
-
-        res.json({ data });
-    } catch (err) {
-        res.status(500).json({ error: 'Internal Server Error (getEvents) - ' + err.message });
-    }
-};
+const prefix = process.env.GLOBAL_TABLE_PREFIX;
 
 exports.selectFromTable = async (req, res) => {
     globalServices.selectFromTable(req, res, prefix, pool);

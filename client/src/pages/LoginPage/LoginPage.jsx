@@ -46,6 +46,7 @@ export default function LoginPage ({pages}) {
     return (
         <div className="login-page">
             <div className="login-container">
+                <h4>CLIENT</h4>
                 <form onSubmit={handleSubmit}>
                     <label htmlFor="username">Lietotājvārds:</label>
                     <input

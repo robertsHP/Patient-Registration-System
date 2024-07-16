@@ -8,11 +8,6 @@ import './App.css'
 
 export default function App() {
 	const pages = [
-        {
-            title: "Pieslēgties",
-            urlName: "login",
-            component: LoginPage
-        },
 		{
             title: "Panelis",
             urlName: "dashboard",
@@ -22,16 +17,19 @@ export default function App() {
 
 	return (
 		<>
-			<Router>
-				<Routes>
-					{pages.map((page) => (
-						<Route key={page.urlName} path={`/admin/${page.urlName}/*`} element={
-							<page.component page={page}/>
-						} />
-					))}
-					<Route path="*" element={<Navigate to={`/admin/${pages[0].urlName}`} replace />} />
-				</Routes>
-			</Router>
+			<div className="app">
+				<Router>
+					<Routes>
+						<Route path="/login" element={<LoginPage pages={pages} />} />
+						{pages.map((page) => (
+							<Route key={page.urlName} path={`/${page.urlName}/*`} element={
+								<page.component sidebarPages={pages} parentUrlName={page.urlName}/>
+							} />
+						))}
+						<Route path="*" element={<Navigate to={`/login`} replace />} />
+					</Routes>
+				</Router>
+			</div>
 		</>
 	)
 }

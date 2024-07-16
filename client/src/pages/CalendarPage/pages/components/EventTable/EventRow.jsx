@@ -6,7 +6,7 @@ import { convertEventForSendingToDB } from '../../utils/conversionUtilities.jsx'
 
 import usePageRefresh from '../../../../../hooks/usePageRefresh.jsx';
 
-import ApiService from '../../../../../services/ApiService';
+import ApiService from '../../../../../services/ApiService.js';
 
 import LVDate from '../../../../../models/LVDate.jsx';
 
