@@ -6,6 +6,7 @@ const app = express();
 
 const globalRoutes = require('./src/routes/globalRoutes.js'); 
 const calendarPageRoutes = require('./src/routes/calendarPageRoutes.js');
+const adminRoutes = require('./src/routes/adminRoutes.js'); 
 
 require('dotenv').config({ path: '../.env' });
 
@@ -29,6 +30,7 @@ app.get('/api', (req, res) => {
     res.send('Api is running...');
 });
 
+app.use('/api', adminRoutes);
 app.use('/api', calendarPageRoutes);
 app.use('/api', globalRoutes);
 

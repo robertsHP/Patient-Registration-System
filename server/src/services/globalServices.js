@@ -9,10 +9,12 @@ exports.sanitizeTableName = (tableName) => {
         'user', 'role', 'user_role_relation'
     ];
 
+    tableName = tableName.toLowerCase().replace(/[^a-z0-9_]/g, '');
+
     if (allowedCalendarTables.includes(tableName)) {
-        return process.env.CALENDAR_PAGE_TABLE_PREFIX + tableName.toLowerCase().replace(/[^a-z0-9_]/g, '');
+        return process.env.CALENDAR_PAGE_TABLE_PREFIX + tableName;
     } else if (allowedAdminTables.includes(tableName)) {
-        return process.env.ADMIN_TABLE_PREFIX + tableName.toLowerCase().replace(/[^a-z0-9_]/g, '');
+        return process.env.ADMIN_TABLE_PREFIX + tableName;
     } else {
         var error = `Attempted to access table: '${tableName}'. Invalid table name`;
 

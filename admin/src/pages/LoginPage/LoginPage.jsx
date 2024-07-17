@@ -13,47 +13,37 @@ export default function LoginPage ({page}) {
 
     const navigate = useNavigate();
   
-    const handleSubmit = (event) => {
-        event.preventDefault();
-
-        const adminUser = {
-            username: 'admin',
-            password: 'admin'
-        };
-
-        if (username === adminUser.username && password === adminUser.password) {
-            navigate(`/${pages[0].urlName}`);
-        } else {
-            setError('Nepareizs lietotājvārds vai parole');
-        }
-    };
-
-
-    ///KAD IR ADMIN PANELIS UN LIETOTĀJU PĀRVALDĪBA GATAVA TAD INICIALIZĒ ŠO
-    // const handleSubmit = async (event) => {
+    // const handleSubmit = (event) => {
     //     event.preventDefault();
 
-    //     try {
-    //         ApiService.get('/api/calendar-page/table'+params)
-    //         .then(result => {
-    //             var data = result.data[0].rooms;
-    //             var finalData = convertRoomDataToLayout(data);
-    
-    //             setRooms(finalData);
-    //         });
+    //     const adminUser = {
+    //         username: 'admin',
+    //         password: 'admin'
+    //     };
 
-
-    //         const response = await ApiService.post('/login', { username, password });
-            
-    //         if (response.success) {
-    //             navigate(`/${pages[0].urlName}`);
-    //         } else {
-    //             setError('Nepareizs lietotājvārds vai parole');
-    //         }
-    //     } catch (error) {
-    //         setError(error.message);
+    //     if (username === adminUser.username && password === adminUser.password) {
+    //         navigate(`/${pages[0].urlName}`);
+    //     } else {
+    //         setError('Nepareizs lietotājvārds vai parole');
     //     }
     // };
+
+    //KAD IR ADMIN PANELIS UN LIETOTĀJU PĀRVALDĪBA GATAVA TAD INICIALIZĒ ŠO
+    const handleSubmit = async (event) => {
+        event.preventDefault();
+
+        try {
+            const response = await ApiService.post('/api/user', { username, password });
+            
+            if (response.success) {
+                navigate(`/${pages[0].urlName}`);
+            } else {
+                setError('Nepareizs lietotājvārds vai parole');
+            }
+        } catch (error) {
+            setError(error.message);
+        }
+    };
 
     return (
         <div className="login-page">
