@@ -1,36 +1,54 @@
 import React, { useState } from 'react';
 import { useNavigate, Route, Routes, Link, Navigate } from 'react-router-dom';
+
 import ApiService from '../../services/ApiService';
+
 import './LoginPage.css';
 
-export default function LoginPage({ page }) {
+export default function LoginPage({ pages }) {
     const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
     const [error, setError] = useState('');
 
     const navigate = useNavigate();
 
-    const handleSubmit = async (event) => {
+    const handleSubmit = (event) => {
         event.preventDefault();
 
-        try {
-            const response = await ApiService.post('/api/admin/authenticate', { username, password });
+        const adminUser = {
+            username: 'admin',
+            password: 'admin'
+        };
 
-            if (response.success) {
-                navigate(`/${page[0].urlName}`);
-            } else {
-                setError('Nepareizs lietotājvārds vai parole');
-            }
-        } catch (error) {
-            setError(error.message);
+        if (username === adminUser.username && password === adminUser.password) {
+            navigate(`/${pages[0].urlName}`);
+        } else {
+            setError('Nepareizs lietotājvārds vai parole');
         }
     };
+
+    // const handleSubmit = async (event) => {
+    //     event.preventDefault();
+
+    //     try {
+    //         const response = await ApiService.post('/api/admin/authenticate', { username, password });
+
+    //         if (response.success) {
+    //             navigate(`/${page[0].urlName}`);
+    //         } else {
+    //             setError('Nepareizs lietotājvārds vai parole');
+    //         }
+    //     } catch (error) {
+    //         setError(error.message);
+    //     }
+    // };
 
     return (
         <div className="login-page">
             <div className="login-container">
                 <h4>ADMIN PANELIS</h4>
                 <form onSubmit={handleSubmit}>
+
                     <label htmlFor="username">Lietotājvārds:</label>
                     <input
                         type="text"
@@ -38,6 +56,7 @@ export default function LoginPage({ page }) {
                         value={username}
                         onChange={(e) => setUsername(e.target.value)}
                     />
+
                     <label htmlFor="password">Parole:</label>
                     <input
                         type="password"
