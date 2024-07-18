@@ -1,0 +1,69 @@
+.register-page {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+}
+
+.register-container {
+    max-width: 400px;
+    max-height: 400px;
+    margin: 0 auto;
+    padding: 20px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+}
+
+.register-container label {
+    display: block;
+    margin-bottom: 10px;
+}
+
+.register-container input[type="text"],
+.register-container input[type="password"],
+.register-container input[type="email"] {
+    padding: 10px;
+}
+
+.register-container input[type="text"],
+.register-container input[type="password"],
+.register-container input[type="email"],
+.register-container input[type="submit"] {
+    border: 1px solid #ccc;
+    border-radius: 3px;
+}
+
+.register-container input[type="text"],
+.register-container input[type="password"],
+.register-container input[type="email"] {
+    margin-bottom: 10px;
+}
+
+.register-container input[type="submit"] {
+    background-color: #4CAF50;
+    color: white;
+    padding: 10px 0;
+    cursor: pointer;
+}
+
+.register-container input[type="submit"]:hover {
+    background-color: #45a049;
+}
+
+.register-button {
+    
+}
+
+.back-button {
+    margin-top: 10px;
+    background-color: #f0f0f0;
+    color: #333;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 3px;
+    cursor: pointer;
+}
+
+.back-button:hover {
+    background-color: #e0e0e0;
+}

@@ -50,3 +50,18 @@
 .login-button {
     
 }
+
+.extra-links {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 10px;
+}
+
+.extra-links a {
+    color: #4CAF50;
+    text-decoration: none;
+}
+
+.extra-links a:hover {
+    text-decoration: underline;
+}

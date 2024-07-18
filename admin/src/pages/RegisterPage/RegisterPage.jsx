@@ -1,11 +1,12 @@
 import React, { useState } from 'react';
-import { useNavigate, Route, Routes, Link, Navigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import ApiService from '../../services/ApiService';
-import './LoginPage.css';
+import './RegisterPage.css';
 
-export default function LoginPage({ page }) {
+export default function RegisterPage() {
     const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
+    const [email, setEmail] = useState('');
     const [error, setError] = useState('');
 
     const navigate = useNavigate();
@@ -14,12 +15,12 @@ export default function LoginPage({ page }) {
         event.preventDefault();
 
         try {
-            const response = await ApiService.post('/api/admin/authenticate', { username, password });
+            const response = await ApiService.post('/api/admin/register', { username, password, email });
 
             if (response.success) {
-                navigate(`/${page[0].urlName}`);
+                navigate('/login');
             } else {
-                setError('Nepareizs lietotājvārds vai parole');
+                setError('Reģistrācija neizdevās. Mēģiniet vēlreiz.');
             }
         } catch (error) {
             setError(error.message);
@@ -27,9 +28,9 @@ export default function LoginPage({ page }) {
     };
 
     return (
-        <div className="login-page">
-            <div className="login-container">
-                <h4>ADMIN PANELIS</h4>
+        <div className="register-page">
+            <div className="register-container">
+                <h4>Reģistrēties</h4>
                 <form onSubmit={handleSubmit}>
                     <label htmlFor="username">Lietotājvārds:</label>
                     <input
@@ -45,19 +46,19 @@ export default function LoginPage({ page }) {
                         value={password}
                         onChange={(e) => setPassword(e.target.value)}
                     />
+                    <label htmlFor="email">E-pasts:</label>
+                    <input
+                        type="email"
+                        id="email"
+                        value={email}
+                        onChange={(e) => setEmail(e.target.value)}
+                    />
 
                     {error && <div className="error-message" style={{color: 'red'}}>{error}</div>}
-
-                    <div className="extra-links">
-                        <Link to="/register">Reģistrēties</Link>
-                        <Link to="/forgot-password">Aizmirsi paroli?</Link>
-                    </div>
                     <br/>
-                    <input className="login-button" type="submit" value="Pieslēgties" />
+                    <input className="register-button" type="submit" value="Reģistrēties" />
                 </form>
-                <Routes>
-                    <Route path="*" element={<Navigate to="" replace />} />
-                </Routes>
+                <button className="back-button" onClick={() => navigate('/login')}>Atpakaļ</button>
             </div>
         </div>
     );

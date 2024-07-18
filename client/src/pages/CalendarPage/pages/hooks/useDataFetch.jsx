@@ -65,7 +65,7 @@ export default function useDataFetch(floorID, tempDate) {
     useEffect(() => {
         var params = `?floorId=${floorID}&year=${date.getFullYear()}&month=${date.getMonth()}`;
 
-        ApiService.get('/api/rooms'+params)
+        ApiService.get('/api/calendar-page/rooms'+params)
         .then(result => {
             var data = result.data[0].rooms;
             var finalData = convertRoomDataToLayout(data);
