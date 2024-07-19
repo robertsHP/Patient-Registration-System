@@ -62,21 +62,32 @@ export default function useDataFetch(floorID, tempDate) {
         });
     };
 
+    const loadRooms = (tempDate, callback) => {
+        const params = `?floorId=${floorID}&year=${tempDate.getFullYear()}&month=${tempDate.getMonth()}`;
+        ApiService.get(`/api/calendar-page/rooms${params}`)
+            .then(result => {
+                const data = result.data[0].rooms;
+                const finalData = convertRoomDataToLayout(data);
+                setRooms(finalData);
+                if (callback) callback();
+            });
+    };
+
+    const refreshRooms = (callback) => {
+        console.log(date.getDate());
+        loadRooms(date, callback);
+    };
+
     useEffect(() => {
-        var params = `?floorId=${floorID}&year=${date.getFullYear()}&month=${date.getMonth()}`;
-
-        ApiService.get('/api/calendar-page/rooms'+params)
-        .then(result => {
-            var data = result.data[0].rooms;
-            var finalData = convertRoomDataToLayout(data);
-
-            setRooms(finalData);
-        });
+        loadRooms(date);
     }, [floorID, date]);
 
     return { 
         date, setDate,
+
         rooms, setRooms,
+        loadRooms, refreshRooms,
+
         getRoomWithID, setRoomWithID,
         getEventWithID, setEventWithID, removeEventWithID
     };

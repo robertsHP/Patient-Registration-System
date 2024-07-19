@@ -2,8 +2,7 @@ import React, { useState, useEffect } from 'react';
 
 import useDataFetch from './hooks/useDataFetch.jsx';
 
-import EventTable from './components/EventTable/EventTable.jsx';
-import GridUI from './components/GridUI/GridUI.jsx';
+import EventTable from './components/EventTable.jsx';
 
 import LVDate from '../../../models/LVDate.jsx';
 
@@ -14,8 +13,7 @@ export default function BedsPage () {
 
     return (
         <>
-            <GridUI data={data} />
-            {data.rooms && <EventTable data={data} />}
+            <EventTable data={data} />
         </>
     );
 }

@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 
 import GridLayout from 'react-grid-layout';
 
-import LVDate from '../../../../../models/LVDate.jsx';
+import LVDate from '../../../../models/LVDate.jsx';
 
 import 'react-grid-layout/css/styles.css';
 import 'react-resizable/css/styles.css';
@@ -26,6 +26,12 @@ export default function SumRow({ data, config }) {
     };
 
     useEffect(() => {
+        if (!data.rooms) {
+            setDateSums([]);
+            setTotalSum(0);
+            return;
+        }
+
         const updatedDateSums = config.dateLayout.map(dateItem => {
             const year = data.date.getFullYear();
             const month = data.date.getMonth();

@@ -1,14 +1,15 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useEffect, useContext } from 'react';
 
 import GridLayout from 'react-grid-layout';
 
-import { convertEventForSendingToDB } from '../../utils/conversionUtilities.jsx'
+import { convertEventForSendingToDB } from '../utils/conversionUtilities.jsx'
 
-import usePageRefresh from '../../../../../hooks/usePageRefresh.jsx';
+import usePageRefresh from '../../../../hooks/usePageRefresh.jsx';
 
-import ApiService from '../../../../../services/ApiService.js';
+import ApiService from '../../../../services/ApiService.js';
+import LVDate from '../../../../models/LVDate.jsx';
 
-import LVDate from '../../../../../models/LVDate.jsx';
+import { LayoutContext } from '../contexts/LayoutContext';
 
 import 'react-grid-layout/css/styles.css';
 import 'react-resizable/css/styles.css';
@@ -16,11 +17,12 @@ import 'react-resizable/css/styles.css';
 import './EventRow.css';
 
 export default function EventRow({ data, roomID, config, selectedEvent, setSelectedEvent }) {
+    const { layoutChangeTrigger } = useContext(LayoutContext);
+
     const pageRefreshed = usePageRefresh();
+    const [refresh, setRefresh] = useState(0);
 
     const gridRef = useRef(null);
-
-    const [refresh, setRefresh] = useState(0);
 
     const [room, setRoom] = useState(data.getRoomWithID(roomID));
 
@@ -31,6 +33,14 @@ export default function EventRow({ data, roomID, config, selectedEvent, setSelec
 
     const lastColumnStart = config.columnWidths.slice(0, config.columnWidths.length - 2)
         .reduce((acc, width) => acc + width, 0);
+
+    useEffect(() => {
+        refreshRow();
+    }, [layoutChangeTrigger]);
+
+    const refreshRow = () => {
+        setRefresh(refresh + 1);
+    };
 
     const isValidEventPosition = (layoutItem) => {
         const dateColumnsStart = config.columnWidths.slice(0, 2).reduce((acc, width) => acc + width, 0);
@@ -106,10 +116,6 @@ export default function EventRow({ data, roomID, config, selectedEvent, setSelec
                     var startDatePos = newEventLayout.x;
                     var endDatePos = newEventLayout.x + newEventLayout.w - 1;
 
-                    // if () {
-                        
-                    // }
-
                     event.begin_date = getDateBasedOnLayoutPosition(startDatePos);
                     event.end_date = getDateBasedOnLayoutPosition(endDatePos);
 
@@ -129,10 +135,6 @@ export default function EventRow({ data, roomID, config, selectedEvent, setSelec
             return event;
         });
         data.setRoomWithID(room.id, room);
-    };
-
-    const refreshRow = () => {
-        setRefresh(refresh + 1);
     };
 
     const onMouseDown = (e) => {

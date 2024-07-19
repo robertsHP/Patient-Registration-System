@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 
-import InputAndSelect from '../../../../../components/InputAndSelect';
+import InputAndSelect from '../../../../components/InputAndSelect';
 
 import './EventInputForm.css';
 
