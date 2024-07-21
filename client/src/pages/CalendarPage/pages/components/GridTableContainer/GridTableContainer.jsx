@@ -1,6 +1,8 @@
 import React from 'react';
+
 import DayTable from './DayTable';
-import './MonthTable.css'; // Ensure to import the CSS file
+
+import './GridTableContainer.css'; // Ensure to import the CSS file
 
 const getDaysInMonth = (year, month) => {
     return new Date(year, month + 1, 0).getDate();
@@ -14,7 +16,7 @@ const getDayName = (year, month, day) => {
     return new Date(year, month, day).toLocaleString('default', { weekday: 'long' });
 };
 
-export default function MonthTable({ year, month }) {
+export default function GridTableContainer({ year, month }) {
     const daysInMonth = getDaysInMonth(year, month);
     const monthName = getMonthName(month);
 

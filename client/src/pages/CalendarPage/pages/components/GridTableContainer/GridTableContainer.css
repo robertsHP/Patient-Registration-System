@@ -11,7 +11,7 @@
     padding: 5px;
     box-sizing: border-box; /* Include padding and border in the element's total width and height */
     width: 890px; /* Fixed width */
-    height: 230px; /* Fixed height */
+    height: 100%;
     overflow: hidden; /* Prevent content overflow */
     resize: none; /* Disable resizing */
 }

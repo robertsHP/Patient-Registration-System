@@ -3,7 +3,7 @@ import GridLayout from 'react-grid-layout';
 import 'react-grid-layout/css/styles.css';
 import 'react-resizable/css/styles.css';
 
-const generateLayout = (rowCount, colCount) => {
+const generateLayout = (rows, colCount) => {
     const layout = [];
     // Header row for month and day names
     layout.push({
@@ -26,23 +26,23 @@ const generateLayout = (rowCount, colCount) => {
         });
     }
     // Cells
-    for (let row = 0; row < rowCount; row++) {
+    rows.forEach((row, rowIndex) => {
         for (let col = 0; col < colCount; col++) {
             layout.push({
-                i: `cell-${row}-${col}`,
+                i: `cell-${rowIndex}-${col}`,
                 x: col,
-                y: row + 2,
+                y: rowIndex + 2,
                 w: 1,
                 h: 1,
                 static: true,
             });
         }
-    }
+    });
     // Add button row
     layout.push({
         i: 'add-button',
         x: 0,
-        y: rowCount + 2,
+        y: rows.length + 2,
         w: colCount,
         h: 1,
         static: true,
@@ -52,13 +52,17 @@ const generateLayout = (rowCount, colCount) => {
 };
 
 export default function DayTable({ monthName, dayName, dayNumber }) {
-    const columns = ["Time", "Name and surname", "Phone number", "Notes", "Doctor"];
-    const [rowCount, setRowCount] = useState(3);
+    const columns = ["Time", "Name and surname", "Phone number", "Notes", "Doctor", ""]; // Add an empty column for the button
+    const [rows, setRows] = useState([{}, {}, {}]);
 
-    const layout = generateLayout(rowCount, columns.length);
+    const layout = generateLayout(rows, columns.length);
 
     const handleAddRow = () => {
-        setRowCount(rowCount + 1);
+        setRows([...rows, {}]);
+    };
+
+    const handleDeleteRow = (rowIndex) => {
+        setRows(rows.filter((_, index) => index !== rowIndex));
     };
 
     return (
@@ -68,7 +72,7 @@ export default function DayTable({ monthName, dayName, dayNumber }) {
                 layout={layout}
                 cols={columns.length}
                 rowHeight={30} // Adjust the height as needed
-                width={columns.length * 175} // Adjust the width as needed
+                width={columns.length * 150} // Adjust the width as needed
                 isResizable={false}
                 isDraggable={false}
                 margin={[0, 0]} // No margin between grid items
@@ -82,10 +86,14 @@ export default function DayTable({ monthName, dayName, dayNumber }) {
                         {col}
                     </div>
                 ))}
-                {Array.from({ length: rowCount }).map((_, rowIndex) =>
-                    columns.map((_, colIndex) => (
+                {rows.map((_, rowIndex) =>
+                    columns.map((col, colIndex) => (
                         <div key={`cell-${rowIndex}-${colIndex}`} className="grid-item">
-                            <input type="text" className="grid-input" onChange={() => {}} />
+                            {colIndex === columns.length - 1 ? (
+                                <button className="grid-button" onClick={() => handleDeleteRow(rowIndex)}>X</button>
+                            ) : (
+                                <input type="text" className="grid-input" onChange={() => {}} />
+                            )}
                         </div>
                     ))
                 )}

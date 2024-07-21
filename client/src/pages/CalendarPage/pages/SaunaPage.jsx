@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 
 import useDataFetch from './hooks/useDataFetch.jsx';
 
-import MonthTable from './components/MonthTable/MonthTable.jsx';
+import GridTableContainer from './components/GridTableContainer/GridTableContainer.jsx';
 
 import LVDate from '../../../models/LVDate.jsx';
 
@@ -14,7 +14,7 @@ export default function SaunaPage () {
 
     return (
         <>
-            <MonthTable 
+            <GridTableContainer 
                 // data={data}
                 year={date.getFullYear()}
                 month={date.getMonth()} 

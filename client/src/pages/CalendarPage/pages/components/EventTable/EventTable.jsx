@@ -12,8 +12,6 @@ import EventInputForm from './EventInputForm.jsx';
 
 import { LayoutProvider } from '../../contexts/LayoutContext.jsx';
 
-import Test from './Test.jsx';
-
 import 'react-grid-layout/css/styles.css';
 import 'react-resizable/css/styles.css';
 
@@ -33,7 +31,11 @@ export default function EventTable({ data }) {
                 {data.rooms !== null && data.rooms.length !== 0 &&
                     data.rooms.map((room) => 
                         room && (
-                            <div key={`room-${room.id}`} className="grid-cell" style={{ gridColumn: `span ${config.cols}` }}>
+                            <div 
+                                key={`room-${room.id}`} 
+                                className="grid-cell" 
+                                style={{ gridColumn: `span ${config.cols}` }}
+                            >
                                 <EventRow
                                     data={data}
                                     roomID={room.id}
@@ -53,7 +55,6 @@ export default function EventTable({ data }) {
                     selectedEvent={selectedEvent} 
                     setSelectedEvent={setSelectedEvent} 
                 />}
-                {/* <Test /> */}
             </div>
         </LayoutProvider>
     );
