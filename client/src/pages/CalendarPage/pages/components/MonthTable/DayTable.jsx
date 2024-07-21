@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import GridLayout from 'react-grid-layout';
 import 'react-grid-layout/css/styles.css';
 import 'react-resizable/css/styles.css';
@@ -38,14 +38,28 @@ const generateLayout = (rowCount, colCount) => {
             });
         }
     }
+    // Add button row
+    layout.push({
+        i: 'add-button',
+        x: 0,
+        y: rowCount + 2,
+        w: colCount,
+        h: 1,
+        static: true,
+    });
+
     return layout;
 };
 
 export default function DayTable({ monthName, dayName, dayNumber }) {
     const columns = ["Time", "Name and surname", "Phone number", "Notes", "Doctor"];
-    const rowCount = 5;
+    const [rowCount, setRowCount] = useState(3);
 
     const layout = generateLayout(rowCount, columns.length);
+
+    const handleAddRow = () => {
+        setRowCount(rowCount + 1);
+    };
 
     return (
         <div className="grid-container">
@@ -75,6 +89,9 @@ export default function DayTable({ monthName, dayName, dayNumber }) {
                         </div>
                     ))
                 )}
+                <div key="add-button" className="grid-item add-button" onClick={handleAddRow}>
+                    Add Row
+                </div>
             </GridLayout>
         </div>
     );

@@ -6,12 +6,10 @@ import LogoutButton from './LogoutButton.jsx';
 
 import './Header.css'
 
-export default function Header ({sidebarPages, parentUrlName, subPages}) {
-    const [currentPage, setCurrentPage] = useState(subPages[0].urlName);
-
-    const handlePageChange = (urlName) => {
-        setCurrentPage(urlName);
-    }
+export default function Header ({sidebarPages, parentUrlName, subPages, currentSubPageNum, setCurrentSubPageNum}) {
+    const handlePageChange = (num) => {
+        setCurrentSubPageNum(num);
+    };
 
     return (
         <header>
@@ -20,13 +18,13 @@ export default function Header ({sidebarPages, parentUrlName, subPages}) {
                 <Sidebar sidebarPages={sidebarPages} />
 
                 {/* Subpage buttons */}
-                {subPages.map(({ urlName, title }) => (
-                    <Link key={`${urlName}_link_button`} to={`/${parentUrlName}/${urlName}`}>
+                {subPages.map((page, index) => (
+                    <Link key={`${page.urlName}_link_button`} to={`/${parentUrlName}/${page.urlName}`}>
                         <button
-                            className={`subpage-button ${urlName === currentPage ? 'active-button' : ''}`}
-                            onClick={() => handlePageChange(urlName)}
+                            className={`subpage-button ${index === currentSubPageNum ? 'active-button' : ''}`}
+                            onClick={() => handlePageChange(index)}
                         >
-                            {title}
+                            {page.title}
                         </button>
                     </Link>
                 ))}
@@ -35,6 +33,5 @@ export default function Header ({sidebarPages, parentUrlName, subPages}) {
                 <LogoutButton />
             </div>
         </header>
-
     );
 }

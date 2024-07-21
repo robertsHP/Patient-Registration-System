@@ -27,7 +27,7 @@ export default function MonthTable({ year, month }) {
     return (
         <div className="parent-grid-container">
             {tables.map((table, index) => (
-                <div key={`table-${index}`} className="grid-item">
+                <div key={`table-${index}`} className="grid-item day-table">
                     {table}
                 </div>
             ))}

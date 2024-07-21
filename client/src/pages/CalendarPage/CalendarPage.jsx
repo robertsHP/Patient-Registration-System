@@ -27,10 +27,17 @@ export default function CalendarPage ({sidebarPages, parentUrlName}) {
             component: SaunaPage
         }
     ];
+    const [currentSubPageNum, setCurrentSubPageNum] = useState(0);
 
     return (
         <div className="page-container">
-            <Header sidebarPages={sidebarPages} parentUrlName={parentUrlName} subPages={subPages}/>
+            <Header 
+                sidebarPages={sidebarPages} 
+                parentUrlName={parentUrlName} 
+                subPages={subPages}
+                currentSubPageNum={currentSubPageNum}
+                setCurrentSubPageNum={setCurrentSubPageNum}
+            />
             <main>
                 <Routes>
                     {subPages.map(({urlName, component: Component}) => (
@@ -40,7 +47,7 @@ export default function CalendarPage ({sidebarPages, parentUrlName}) {
                             element={<Component />} 
                         />
                     ))}
-                    <Route path="*" element={<Navigate to={`${subPages[0].urlName}`} replace />} />
+                    <Route path="*" element={<Navigate to={`${subPages[currentSubPageNum].urlName}`} replace />} />
                 </Routes>
             </main>
         </div>

@@ -6,10 +6,14 @@
     box-sizing: border-box; /* Include padding and border in the element's total width and height */
 }
 
-.grid-item {
+.day-table {
     border: 1px solid #ccc; /* Example styling */
     padding: 5px;
     box-sizing: border-box; /* Include padding and border in the element's total width and height */
+    width: 890px; /* Fixed width */
+    height: 230px; /* Fixed height */
+    overflow: hidden; /* Prevent content overflow */
+    resize: none; /* Disable resizing */
 }
 
 .header {
