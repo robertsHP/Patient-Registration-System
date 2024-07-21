@@ -2,14 +2,14 @@ import React, { useState, useRef, useEffect, useContext } from 'react';
 
 import GridLayout from 'react-grid-layout';
 
-import { convertEventForSendingToDB } from '../utils/conversionUtilities.jsx'
+import { convertEventForSendingToDB } from '../../utils/conversionUtilities.jsx'
 
-import usePageRefresh from '../../../../hooks/usePageRefresh.jsx';
+import usePageRefresh from '../../../../../hooks/usePageRefresh.jsx';
 
-import ApiService from '../../../../services/ApiService.js';
-import LVDate from '../../../../models/LVDate.jsx';
+import ApiService from '../../../../../services/ApiService.js';
+import LVDate from '../../../../../models/LVDate.jsx';
 
-import { LayoutContext } from '../contexts/LayoutContext';
+import { LayoutContext } from '../../contexts/LayoutContext.jsx';
 
 import 'react-grid-layout/css/styles.css';
 import 'react-resizable/css/styles.css';

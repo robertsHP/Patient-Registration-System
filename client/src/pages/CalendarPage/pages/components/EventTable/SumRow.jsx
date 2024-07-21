@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 
 import GridLayout from 'react-grid-layout';
 
-import LVDate from '../../../../models/LVDate.jsx';
+import LVDate from '../../../../../models/LVDate.jsx';
 
 import 'react-grid-layout/css/styles.css';
 import 'react-resizable/css/styles.css';

@@ -1,8 +1,8 @@
 import React, { useState, useContext, useEffect } from 'react';
 
-import { LayoutContext } from '../contexts/LayoutContext';
+import { LayoutContext } from '../../contexts/LayoutContext';
 
-import LVDate from '../../../../models/LVDate';
+import LVDate from '../../../../../models/LVDate';
 
 import './GridUI.css';
 
@@ -11,17 +11,16 @@ export default function GridUI({ data }) {
 
     const [leftButtonClicked, setLeftButtonClicked] = useState(false);
     const [rightButtonClicked, setRightButtonClicked] = useState(false);
-    const [date, setDate] = useState(new LVDate(data.date));
 
     useEffect(() => {
-        data.setDate(date);
         data.refreshRooms(() => {
+            console.log(data.rooms);
             triggerLayoutChange();
         });
-    }, [date]);
+    }, [data.date]);
 
     const handleLeftButtonClick = () => {
-        setDate(prevDate => {
+        data.setDate(prevDate => {
             const newDate = new LVDate(prevDate);
             newDate.setMonth(newDate.getMonth() - 1);
             setLeftButtonClicked(true);
@@ -30,7 +29,7 @@ export default function GridUI({ data }) {
     };
 
     const handleRightButtonClick = () => {
-        setDate(prevDate => {
+        data.setDate(prevDate => {
             const newDate = new LVDate(prevDate);
             newDate.setMonth(newDate.getMonth() + 1);
             setRightButtonClicked(true);
@@ -40,10 +39,16 @@ export default function GridUI({ data }) {
 
     return (
         <div className="container">
-            <button className={`sidebar-button ${leftButtonClicked ? 'active-button' : ''}`} onClick={handleLeftButtonClick}>
+            <button 
+                className={`sidebar-button ${leftButtonClicked ? 'active-button' : ''}`} 
+                onClick={handleLeftButtonClick}
+            >
                 &#8592; {/* Left Arrow */}
             </button>
-            <button className={`sidebar-button ${rightButtonClicked ? 'active-button' : ''}`} onClick={handleRightButtonClick}>
+            <button 
+                className={`sidebar-button ${rightButtonClicked ? 'active-button' : ''}`} 
+                onClick={handleRightButtonClick}
+            >
                 &#8594; {/* Right Arrow */}
             </button>
         </div>

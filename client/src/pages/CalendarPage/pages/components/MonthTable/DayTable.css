@@ -1,0 +1,23 @@
+.parent-grid-container {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr); /* This creates two equal columns */
+    gap: 10px; /* Adjust the gap between the items as needed */
+}
+
+.grid-item {
+    border: 1px solid #ccc; /* Example styling */
+    padding: 5px;
+    box-sizing: border-box;
+}
+
+.header {
+    font-weight: bold;
+    background-color: #f0f0f0; /* Example styling */
+}
+
+.month-day-header {
+    text-align: center;
+    font-size: 16px;
+    font-weight: bold;
+    background-color: #e0e0e0; /* Example styling */
+}

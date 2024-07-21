@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 
 import GridLayout from 'react-grid-layout';
 
-import useTableConfigurations from '../hooks/useTableConfigurations.jsx';
+import useTableConfigurations from '../../hooks/useTableConfigurations.jsx';
 
 import GridUI from './GridUI.jsx';
 import ColumnRow from './ColumnRow.jsx';
@@ -10,7 +10,7 @@ import EventRow from './EventRow.jsx';
 import SumRow from './SumRow.jsx';
 import EventInputForm from './EventInputForm.jsx';
 
-import { LayoutProvider } from '../contexts/LayoutContext';
+import { LayoutProvider } from '../../contexts/LayoutContext.jsx';
 
 import Test from './Test.jsx';
 

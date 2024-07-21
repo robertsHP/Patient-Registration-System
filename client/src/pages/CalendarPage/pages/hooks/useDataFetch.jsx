@@ -63,6 +63,9 @@ export default function useDataFetch(floorID, tempDate) {
     };
 
     const loadRooms = (tempDate, callback) => {
+        console.log('date');
+        console.log(tempDate.getDate());
+
         const params = `?floorId=${floorID}&year=${tempDate.getFullYear()}&month=${tempDate.getMonth()}`;
         ApiService.get(`/api/calendar-page/rooms${params}`)
             .then(result => {
@@ -74,7 +77,6 @@ export default function useDataFetch(floorID, tempDate) {
     };
 
     const refreshRooms = (callback) => {
-        console.log(date.getDate());
         loadRooms(date, callback);
     };
 

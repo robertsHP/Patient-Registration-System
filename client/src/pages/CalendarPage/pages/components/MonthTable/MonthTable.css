@@ -1,0 +1,36 @@
+.parent-grid-container {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr); /* This creates two equal columns */
+    gap: 10px; /* Adjust the gap between the items as needed */
+    width: 100%; /* Ensure the container takes full width */
+    box-sizing: border-box; /* Include padding and border in the element's total width and height */
+}
+
+.grid-item {
+    border: 1px solid #ccc; /* Example styling */
+    padding: 5px;
+    box-sizing: border-box; /* Include padding and border in the element's total width and height */
+}
+
+.header {
+    font-weight: bold;
+    background-color: #f0f0f0; /* Example styling */
+    text-align: center; /* Center the text */
+}
+
+.month-day-header {
+    text-align: center;
+    font-size: 16px;
+    font-weight: bold;
+    background-color: #e0e0e0; /* Example styling */
+    grid-column: span 5; /* Make sure the header spans all columns */
+}
+
+.grid-container {
+    width: 100%; /* Ensure the grid container takes full width */
+}
+
+.grid-input {
+    width: 100%; /* Ensure the input takes full width */
+    box-sizing: border-box; /* Include padding and border in the element's total width and height */
+}
