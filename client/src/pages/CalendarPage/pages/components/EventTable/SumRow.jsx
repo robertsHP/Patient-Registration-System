@@ -1,8 +1,10 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 
 import GridLayout from 'react-grid-layout';
 
 import LVDate from '../../../../../models/LVDate.jsx';
+
+import { EventTableContext } from '../../contexts/EventTableContext.jsx';
 
 import 'react-grid-layout/css/styles.css';
 import 'react-resizable/css/styles.css';
@@ -10,6 +12,8 @@ import 'react-resizable/css/styles.css';
 import './SumRow.css';
 
 export default function SumRow({ data, config }) {
+    const { sumRowEffectTrigger } = useContext(EventTableContext);
+
     const [dateSums, setDateSums] = useState([]);
     const [totalSum, setTotalSum] = useState(0);
 
@@ -26,6 +30,8 @@ export default function SumRow({ data, config }) {
     };
 
     useEffect(() => {
+        console.log("SUM ROW");
+
         if (!data.rooms) {
             setDateSums([]);
             setTotalSum(0);
@@ -47,7 +53,7 @@ export default function SumRow({ data, config }) {
 
         const updatedTotalSum = updatedDateSums.reduce((sum, dateSum) => sum + dateSum, 0);
         setTotalSum(updatedTotalSum);
-    }, [data.rooms]);
+    }, [sumRowEffectTrigger, data.rooms]);
 
     const lastColumnStart = config.columnWidths.slice(0, config.columnWidths.length - 2)
         .reduce((acc, width) => acc + width, 0);

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 
 import GridLayout from 'react-grid-layout';
 
@@ -10,25 +10,38 @@ import EventRow from './EventRow.jsx';
 import SumRow from './SumRow.jsx';
 import EventInputForm from './EventInputForm.jsx';
 
-import { LayoutProvider } from '../../contexts/LayoutContext.jsx';
+import { EventTableProvider, EventTableContext } from '../../contexts/EventTableContext.jsx';
 
 import 'react-grid-layout/css/styles.css';
 import 'react-resizable/css/styles.css';
 
 import './EventTable.css';
 
-export default function EventTable({ data }) {
+function EventTableContent ({ data }) {
     const config = useTableConfigurations(data.date);
     const [selectedEvent, setSelectedEvent] = useState(null);
 
+    const { triggerSumRowEffect, triggerEventRowEffect } = useContext(EventTableContext);
+
+    useEffect(() => {
+        console.log("LOAD ROOMS");
+        data.loadRooms(data.date);
+    }, [data.date]);
+
+    useEffect(() => {
+        console.log('DATA ROOMS');
+        triggerEventRowEffect();
+        triggerSumRowEffect();
+    }, [data.dataLoadedTrigger]);
+
     return (
-        <LayoutProvider>
-            <div className="grid-container">
-                <GridUI data={data} />
-                <ColumnRow
-                    config={config}
-                />
-                {data.rooms !== null && data.rooms.length !== 0 &&
+        <div className="grid-container">
+            <GridUI 
+                data={data} 
+            />
+            <ColumnRow config={config} />
+            {typeof data.rooms !== 'undefined' && data.rooms != null &&
+                (data.rooms.length !== 0 &&
                     data.rooms.map((room) => 
                         room && (
                             <div 
@@ -46,16 +59,25 @@ export default function EventTable({ data }) {
                             </div>
                         )
                     )
-                }
-                <SumRow 
-                    data={data}
-                    config={config}
-                />
-                {selectedEvent && <EventInputForm 
+                )
+            }
+            <SumRow data={data} config={config} />
+            {selectedEvent && 
+                <EventInputForm 
                     selectedEvent={selectedEvent} 
                     setSelectedEvent={setSelectedEvent} 
-                />}
-            </div>
-        </LayoutProvider>
+                />
+            }
+        </div>
+    );
+}
+
+export default function EventTable ({data}) {
+    return (
+        <EventTableProvider>
+            <EventTableContent 
+                data={data}
+            />
+        </EventTableProvider>
     );
 }

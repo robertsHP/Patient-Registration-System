@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useContext } from 'react';
 
 import ApiService from '../../../../services/ApiService';
 
@@ -11,6 +11,11 @@ export default function useDataFetch(floorID, tempDate) {
     const [date, setDate] = useState(tempDate);
     const [rooms, setRooms] = useState(null);
 
+    const [dataLoadedTrigger, setDataLoadedTrigger] = useState(0);
+    const triggerDataLoaded = () => {
+        setDataLoadedTrigger(prev => prev + 1);
+    };
+
     const convertRoomDataToLayout = (curRooms) => {
         if (!curRooms) {
             return;
@@ -22,6 +27,24 @@ export default function useDataFetch(floorID, tempDate) {
             ))
         }));
         return newRooms;
+    };
+
+    const loadRooms = (tempDate) => {
+        const params = `?floorId=${floorID}&year=${tempDate.getFullYear()}&month=${tempDate.getMonth()}`;
+        ApiService.get(`/api/calendar-page/rooms${params}`)
+            .then(result => {
+                const data = result.data[0].rooms;
+                const finalData = convertRoomDataToLayout(data);
+
+                console.log("LOADED ROOMS");
+
+                setRooms(finalData);
+                triggerDataLoaded();
+            });
+    };
+
+    const refreshRooms = () => {
+        loadRooms(date);
     };
 
     const getRoomWithID = (id) => {
@@ -62,30 +85,10 @@ export default function useDataFetch(floorID, tempDate) {
         });
     };
 
-    const loadRooms = (tempDate, callback) => {
-        console.log('date');
-        console.log(tempDate.getDate());
-
-        const params = `?floorId=${floorID}&year=${tempDate.getFullYear()}&month=${tempDate.getMonth()}`;
-        ApiService.get(`/api/calendar-page/rooms${params}`)
-            .then(result => {
-                const data = result.data[0].rooms;
-                const finalData = convertRoomDataToLayout(data);
-                setRooms(finalData);
-                if (callback) callback();
-            });
-    };
-
-    const refreshRooms = (callback) => {
-        loadRooms(date, callback);
-    };
-
-    useEffect(() => {
-        loadRooms(date);
-    }, [floorID, date]);
-
     return { 
         date, setDate,
+
+        dataLoadedTrigger,
 
         rooms, setRooms,
         loadRooms, refreshRooms,

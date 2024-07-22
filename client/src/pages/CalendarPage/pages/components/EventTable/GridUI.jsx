@@ -1,40 +1,33 @@
 import React, { useState, useContext, useEffect } from 'react';
 
-import { LayoutContext } from '../../contexts/LayoutContext';
+import { EventTableContext } from '../../contexts/EventTableContext.jsx';
 
 import LVDate from '../../../../../models/LVDate';
 
 import './GridUI.css';
 
 export default function GridUI({ data }) {
-    const { triggerLayoutChange } = useContext(LayoutContext);
+    const { triggerLayoutChange } = useContext(EventTableContext);
 
     const [leftButtonClicked, setLeftButtonClicked] = useState(false);
     const [rightButtonClicked, setRightButtonClicked] = useState(false);
 
-    useEffect(() => {
-        data.refreshRooms(() => {
-            console.log(data.rooms);
-            triggerLayoutChange();
-        });
-    }, [data.date]);
-
     const handleLeftButtonClick = () => {
-        data.setDate(prevDate => {
-            const newDate = new LVDate(prevDate);
-            newDate.setMonth(newDate.getMonth() - 1);
-            setLeftButtonClicked(true);
-            return newDate;
-        });
+        const newDate = new LVDate(data.date);
+
+        newDate.setMonth(newDate.getMonth() - 1);
+        data.setDate(newDate);
+
+        setLeftButtonClicked(true);
     };
 
     const handleRightButtonClick = () => {
-        data.setDate(prevDate => {
-            const newDate = new LVDate(prevDate);
-            newDate.setMonth(newDate.getMonth() + 1);
-            setRightButtonClicked(true);
-            return newDate;
-        });
+        const newDate = new LVDate(data.date);
+
+        newDate.setMonth(newDate.getMonth() + 1);
+        data.setDate(newDate);
+
+        setRightButtonClicked(true);
     };
 
     return (

@@ -9,7 +9,7 @@ import usePageRefresh from '../../../../../hooks/usePageRefresh.jsx';
 import ApiService from '../../../../../services/ApiService.js';
 import LVDate from '../../../../../models/LVDate.jsx';
 
-import { LayoutContext } from '../../contexts/LayoutContext.jsx';
+import { EventTableContext } from '../../contexts/EventTableContext.jsx';
 
 import 'react-grid-layout/css/styles.css';
 import 'react-resizable/css/styles.css';
@@ -17,14 +17,20 @@ import 'react-resizable/css/styles.css';
 import './EventRow.css';
 
 export default function EventRow({ data, roomID, config, selectedEvent, setSelectedEvent }) {
-    const { layoutChangeTrigger } = useContext(LayoutContext);
+    const { eventRowEffectTrigger } = useContext(EventTableContext);
 
     const pageRefreshed = usePageRefresh();
     const [refresh, setRefresh] = useState(0);
+    const refreshRow = () => {
+        setRefresh(refresh + 1);
+    };
 
     const gridRef = useRef(null);
 
     const [room, setRoom] = useState(data.getRoomWithID(roomID));
+
+    // console.log('ŖEFRESH MODAAFUCK');
+    // console.log(room);
 
     const [draggingEvent, setDraggingEvent] = useState(null);
     const [isCreatingEvent, setIsCreatingEvent] = useState(false);
@@ -35,12 +41,10 @@ export default function EventRow({ data, roomID, config, selectedEvent, setSelec
         .reduce((acc, width) => acc + width, 0);
 
     useEffect(() => {
+        console.log("LAYOUT CHANGE");
+        setRoom(data.getRoomWithID(roomID));
         refreshRow();
-    }, [layoutChangeTrigger]);
-
-    const refreshRow = () => {
-        setRefresh(refresh + 1);
-    };
+    }, [eventRowEffectTrigger]);
 
     const isValidEventPosition = (layoutItem) => {
         const dateColumnsStart = config.columnWidths.slice(0, 2).reduce((acc, width) => acc + width, 0);
@@ -104,7 +108,6 @@ export default function EventRow({ data, roomID, config, selectedEvent, setSelec
     };
 
     const onLayoutChange = (newLayout) => {
-        console.log('onLayoutChange');
         room.events.forEach(event => {
             const newEventLayout = newLayout.find(l => l.i === String(event.i));
 
@@ -124,6 +127,8 @@ export default function EventRow({ data, roomID, config, selectedEvent, setSelec
 
                     if(pageRefreshed && !isCreatingEvent) {
                         var convertedEvent = convertEventForSendingToDB(room, event);
+
+                        console.log("UPDATE");
 
                         ApiService.put(`/api/event/${event.id}`, convertedEvent)
                             .catch(error => {
@@ -348,7 +353,6 @@ export default function EventRow({ data, roomID, config, selectedEvent, setSelec
                     <div className="event" key={event.i}>
                         <div className="event-name no-select">
                             {event.i}
-                            {/* {(event.patient == null) ? '' : event.patient.pat_name} */}
                         </div>
                     </div>
                 ))}
