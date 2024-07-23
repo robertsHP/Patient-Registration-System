@@ -30,30 +30,29 @@ export default function SumRow({ data, config }) {
     };
 
     useEffect(() => {
-        console.log("SUM ROW");
-
         if (!data.rooms) {
             setDateSums([]);
             setTotalSum(0);
-            return;
-        }
+        } else {
+            console.log("SUM ROW");
 
-        const updatedDateSums = config.dateLayout.map(dateItem => {
-            const year = data.date.getFullYear();
-            const month = data.date.getMonth();
-            const date = new LVDate(year, month, dateItem.num);
-
-            return Object.values(data.rooms).reduce((sum, room) => {
-                return sum + room.events.reduce((eventSum, event) => {
-                    return eventSum + isEventOnDate(event, date);
+            const updatedDateSums = config.dateLayout.map(dateItem => {
+                const year = data.date.getFullYear();
+                const month = data.date.getMonth();
+                const date = new LVDate(year, month, dateItem.num);
+    
+                return Object.values(data.rooms).reduce((sum, room) => {
+                    return sum + room.events.reduce((eventSum, event) => {
+                        return eventSum + isEventOnDate(event, date);
+                    }, 0);
                 }, 0);
-            }, 0);
-        });
-        setDateSums(updatedDateSums);
-
-        const updatedTotalSum = updatedDateSums.reduce((sum, dateSum) => sum + dateSum, 0);
-        setTotalSum(updatedTotalSum);
-    }, [sumRowEffectTrigger, data.rooms]);
+            });
+            setDateSums(updatedDateSums);
+    
+            const updatedTotalSum = updatedDateSums.reduce((sum, dateSum) => sum + dateSum, 0);
+            setTotalSum(updatedTotalSum);
+        }
+    }, [data.fullDataUpdateTrigger, data.singleDataUpdateTrigger]);
 
     const lastColumnStart = config.columnWidths.slice(0, config.columnWidths.length - 2)
         .reduce((acc, width) => acc + width, 0);

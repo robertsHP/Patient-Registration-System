@@ -11,9 +11,13 @@ export default function useDataFetch(floorID, tempDate) {
     const [date, setDate] = useState(tempDate);
     const [rooms, setRooms] = useState(null);
 
-    const [dataLoadedTrigger, setDataLoadedTrigger] = useState(0);
-    const triggerDataLoaded = () => {
-        setDataLoadedTrigger(prev => prev + 1);
+    const [fullDataUpdateTrigger, setFullDataUpdateTrigger] = useState(0);
+    const triggerFullDataUpdate = () => {
+        setFullDataUpdateTrigger(prev => prev + 1);
+    };
+    const [singleDataUpdateTrigger, setSingleDataUpdateTrigger] = useState(0);
+    const triggerSingleDataUpdate = () => {
+        setSingleDataUpdateTrigger(prev => prev + 1);
     };
 
     const convertRoomDataToLayout = (curRooms) => {
@@ -36,10 +40,10 @@ export default function useDataFetch(floorID, tempDate) {
                 const data = result.data[0].rooms;
                 const finalData = convertRoomDataToLayout(data);
 
-                console.log("LOADED ROOMS");
+                console.log("GET ROOMS");
 
                 setRooms(finalData);
-                triggerDataLoaded();
+                triggerFullDataUpdate();
             });
     };
 
@@ -53,6 +57,7 @@ export default function useDataFetch(floorID, tempDate) {
 
     const setRoomWithID = (id, room) => {
         setRooms(rooms.map(r => r.id == id ? room : r));
+        triggerSingleDataUpdate();
     };
 
     const getEventWithID = (roomID, eventID) => {
@@ -72,6 +77,7 @@ export default function useDataFetch(floorID, tempDate) {
             ...room,
             events: room.events.map(e => e.id == id ? event : e)
         });
+        triggerSingleDataUpdate();
     };
 
     const removeEventWithID = (roomID, eventID) => {
@@ -83,12 +89,18 @@ export default function useDataFetch(floorID, tempDate) {
             ...room,
             events: room.events.filter(e => e.id !== eventID)
         });
+        triggerSingleDataUpdate();
     };
+
+    useEffect(() => {
+        console.log("LOAD ROOMS");
+        loadRooms(date);
+    }, [date]);
 
     return { 
         date, setDate,
 
-        dataLoadedTrigger,
+        fullDataUpdateTrigger, singleDataUpdateTrigger,
 
         rooms, setRooms,
         loadRooms, refreshRooms,

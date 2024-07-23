@@ -17,20 +17,23 @@ import 'react-resizable/css/styles.css';
 import './EventRow.css';
 
 export default function EventRow({ data, roomID, config, selectedEvent, setSelectedEvent }) {
-    const { eventRowEffectTrigger } = useContext(EventTableContext);
+    // const { eventRowEffectTrigger } = useContext(EventTableContext);
 
     const pageRefreshed = usePageRefresh();
+
+    const [manualRefresh, setManualRefresh] = useState(false);
     const [refresh, setRefresh] = useState(0);
     const refreshRow = () => {
-        setRefresh(refresh + 1);
+        setManualRefresh(true);
+        setRefresh(prev => prev + 1);
     };
+
+    const [gridItemDragged, setGridItemDragged] = useState(false);
+    const [gridItemResized, setGridItemResized] = useState(false);
 
     const gridRef = useRef(null);
 
     const [room, setRoom] = useState(data.getRoomWithID(roomID));
-
-    // console.log('ŖEFRESH MODAAFUCK');
-    // console.log(room);
 
     const [draggingEvent, setDraggingEvent] = useState(null);
     const [isCreatingEvent, setIsCreatingEvent] = useState(false);
@@ -41,10 +44,10 @@ export default function EventRow({ data, roomID, config, selectedEvent, setSelec
         .reduce((acc, width) => acc + width, 0);
 
     useEffect(() => {
-        console.log("LAYOUT CHANGE");
-        setRoom(data.getRoomWithID(roomID));
+        console.log("SET ROOM USEFFECT");
+        setRoom(data.getRoomWithID(roomID)); //LOCAL ROOM
         refreshRow();
-    }, [eventRowEffectTrigger]);
+    }, [data.fullDataUpdateTrigger]);
 
     const isValidEventPosition = (layoutItem) => {
         const dateColumnsStart = config.columnWidths.slice(0, 2).reduce((acc, width) => acc + width, 0);
@@ -107,7 +110,8 @@ export default function EventRow({ data, roomID, config, selectedEvent, setSelec
         return finalDate;
     };
 
-    const onLayoutChange = (newLayout) => {
+    const updateLayout = (newLayout) => {
+        console.log("!TRIGGER CHANGE");
         room.events.forEach(event => {
             const newEventLayout = newLayout.find(l => l.i === String(event.i));
 
@@ -131,16 +135,50 @@ export default function EventRow({ data, roomID, config, selectedEvent, setSelec
                         console.log("UPDATE");
 
                         ApiService.put(`/api/event/${event.id}`, convertedEvent)
-                            .catch(error => {
-                                console.log(error);
-                            });
+                        .catch(error => {
+                            console.log(error);
+                        });
                     }
                 }
             }
             return event;
         });
         data.setRoomWithID(room.id, room);
+    }
+
+    const onLayoutChange = (newLayout) => {
+        console.log("ON LAYOUT CHANGE");
+
+        console.log("gridItemDragged = "+gridItemDragged);
+        console.log("gridItemResized = "+gridItemResized);
+        console.log("manualRefresh = "+manualRefresh);
+
+        if (gridItemDragged) {
+            setGridItemDragged(false);
+        } else if (gridItemResized) {
+            setGridItemResized(false);
+        } else if (manualRefresh) {
+            updateLayout(newLayout);
+            setManualRefresh(false);
+        }
     };
+
+    const onDragStop = (layout, oldItem, newItem, placeholder, e, element) => {
+        console.log("DRAGEDD");
+
+        updateLayout(layout);
+        setGridItemDragged(true);
+    };
+
+    // Handle resize stop
+    const onResizeStop = (layout, oldItem, newItem, placeholder, e, element) => {
+        console.log("RESIZE");
+
+        updateLayout(layout);
+        setGridItemResized(true);
+    };
+
+
 
     const onMouseDown = (e) => {
         if (e.target.closest('.react-resizable-handle')) {
@@ -204,6 +242,7 @@ export default function EventRow({ data, roomID, config, selectedEvent, setSelec
         
                 setIsCreatingEvent(true);
             }
+            refreshRow();
         }
     };
     
@@ -228,6 +267,7 @@ export default function EventRow({ data, roomID, config, selectedEvent, setSelec
                 };
 
                 setDraggingEvent(newDragEv);
+                refreshRow();
             }
         }
     };
@@ -336,6 +376,8 @@ export default function EventRow({ data, roomID, config, selectedEvent, setSelec
                 rowHeight={config.rowHeight}
                 width={config.width}
                 onLayoutChange={onLayoutChange}
+                onDragStop={onDragStop}
+                onResizeStop={onResizeStop}
                 isDraggable
                 isResizable
                 draggableHandle=".event"

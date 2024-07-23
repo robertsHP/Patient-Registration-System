@@ -7,8 +7,6 @@ import LVDate from '../../../../../models/LVDate';
 import './GridUI.css';
 
 export default function GridUI({ data }) {
-    const { triggerLayoutChange } = useContext(EventTableContext);
-
     const [leftButtonClicked, setLeftButtonClicked] = useState(false);
     const [rightButtonClicked, setRightButtonClicked] = useState(false);
 

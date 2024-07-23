@@ -21,19 +21,6 @@ function EventTableContent ({ data }) {
     const config = useTableConfigurations(data.date);
     const [selectedEvent, setSelectedEvent] = useState(null);
 
-    const { triggerSumRowEffect, triggerEventRowEffect } = useContext(EventTableContext);
-
-    useEffect(() => {
-        console.log("LOAD ROOMS");
-        data.loadRooms(data.date);
-    }, [data.date]);
-
-    useEffect(() => {
-        console.log('DATA ROOMS');
-        triggerEventRowEffect();
-        triggerSumRowEffect();
-    }, [data.dataLoadedTrigger]);
-
     return (
         <div className="grid-container">
             <GridUI 
