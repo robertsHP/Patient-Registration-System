@@ -44,7 +44,6 @@ export default function EventRow({ data, roomID, config, selectedEvent, setSelec
         .reduce((acc, width) => acc + width, 0);
 
     useEffect(() => {
-        console.log("SET ROOM USEFFECT");
         setRoom(data.getRoomWithID(roomID)); //LOCAL ROOM
         refreshRow();
     }, [data.fullDataUpdateTrigger]);
@@ -149,10 +148,6 @@ export default function EventRow({ data, roomID, config, selectedEvent, setSelec
     const onLayoutChange = (newLayout) => {
         console.log("ON LAYOUT CHANGE");
 
-        console.log("gridItemDragged = "+gridItemDragged);
-        console.log("gridItemResized = "+gridItemResized);
-        console.log("manualRefresh = "+manualRefresh);
-
         if (gridItemDragged) {
             setGridItemDragged(false);
         } else if (gridItemResized) {
@@ -164,16 +159,12 @@ export default function EventRow({ data, roomID, config, selectedEvent, setSelec
     };
 
     const onDragStop = (layout, oldItem, newItem, placeholder, e, element) => {
-        console.log("DRAGEDD");
-
         updateLayout(layout);
         setGridItemDragged(true);
     };
 
     // Handle resize stop
     const onResizeStop = (layout, oldItem, newItem, placeholder, e, element) => {
-        console.log("RESIZE");
-
         updateLayout(layout);
         setGridItemResized(true);
     };
@@ -245,7 +236,7 @@ export default function EventRow({ data, roomID, config, selectedEvent, setSelec
             refreshRow();
         }
     };
-    
+
     const onMouseMove = (e) => {
         if (isCreatingEvent && draggingEvent) {
             const gridRect = gridRef.current.getBoundingClientRect();
@@ -382,6 +373,11 @@ export default function EventRow({ data, roomID, config, selectedEvent, setSelec
                 isResizable
                 draggableHandle=".event"
                 resizeHandles={['e', 'w']}
+
+                compactType={null}  // Disable compacting
+                // isBounded={true}    // Keep items within the grid bounds
+                preventCollision={true} 
+
             >
                 <div key={`room-input-${roomID}`} className="grid-cell">
                     <input type="text" defaultValue={room.room_num} style={{ width: '100%' }} />
