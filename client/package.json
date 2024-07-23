@@ -24,6 +24,8 @@
     "ra-data-json-server": "^4.16.15",
     "react": "^18.3.1",
     "react-beautiful-dnd": "^13.1.1",
+    "react-dnd": "^16.0.1",
+    "react-dnd-html5-backend": "^16.0.1",
     "react-dom": "^18.3.1",
     "react-grid-layout": "^1.4.4",
     "react-resizable": "^3.0.5",

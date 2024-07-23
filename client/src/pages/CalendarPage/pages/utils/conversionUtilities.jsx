@@ -22,7 +22,9 @@ export function convertEventForLayoutSupport (event, date) {
         x: getDayIndex(event.begin_date, date) + 8,
         y: 0,
         w: getDayIndex(event.end_date, date) - getDayIndex(event.begin_date, date) + 1,
-        h: 1
+        h: 1,
+        extendsToPreviousMonth: false,
+        extendsToNextMonth: false,
     };
 }
 

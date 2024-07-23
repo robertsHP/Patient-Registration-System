@@ -159,17 +159,89 @@ export default function EventRow({ data, roomID, config, selectedEvent, setSelec
     };
 
     const onDragStop = (layout, oldItem, newItem, placeholder, e, element) => {
+        const dateColumnsStart = config.columnWidths.slice(0, 2).reduce((acc, width) => acc + width, 0);
+        const dateColumnsEnd = dateColumnsStart + config.columnWidths.slice(2, config.columnWidths.length - 2)
+            .reduce((acc, width) => acc + width, 0);
+    
+        const updatedEvents = room.events.map(event => {
+            if (event.i === newItem.i) {
+                const startDatePos = newItem.x;
+                const endDatePos = newItem.x + newItem.w - 1;
+    
+                const updatedEvent = {
+                    ...event,
+                    x: newItem.x,
+                    w: newItem.w
+                };
+
+                // console.log("startDatePos");
+                // console.log(startDatePos);
+                // console.log("dateColumnsStart");
+                // console.log(dateColumnsStart);
+                // console.log("endDatePos");
+                // console.log(endDatePos);
+                // console.log("dateColumnsEnd");
+                // console.log(dateColumnsEnd);
+
+                var startLoss = 0;
+                var endLoss = 0;
+
+                if (startDatePos < dateColumnsStart) {
+                    const daysCountInPrevMonth = getDaysInMonth(data.date.getMonth() - 1);
+
+                    startLoss = dateColumnsStart - startDatePos;
+
+                    updatedEvent.extendsToPreviousMonth = true;
+                    updatedEvent.begin_date = new LVDate(
+                        data.date.getFullYear(), 
+                        data.date.getMonth() - 1, 
+                        daysCountInPrevMonth - startLoss
+                    );
+                }
+
+                if (endDatePos > dateColumnsEnd) {
+                    endLoss = dateColumnsEnd - endDatePos;
+
+                    updatedEvent.extendsToNextMonth = true;
+                    updatedEvent.begin_date = new LVDate(
+                        data.date.getFullYear(), 
+                        data.date.getMonth() + 1, 
+                        endLoss
+                    );
+                }
+                
+                if (startLoss > 0) {
+                    updatedEvent.extendsToNextMonth = false;
+                    updatedEvent.end_date = getDateBasedOnLayoutPosition(endDatePos - startLoss);
+                } else if (endLoss > 0) {
+                    updatedEvent.extendsToPreviousMonth = false;
+                    updatedEvent.begin_date = getDateBasedOnLayoutPosition(startDatePos + endLoss);
+                }
+
+                console.log("updatedEvent.begin_date");
+                console.log(updatedEvent.begin_date.getDate());
+                console.log("updatedEvent.end_date");
+                console.log(updatedEvent.end_date.getDate());
+    
+                return updatedEvent;
+            }
+            return event;
+        });
+    
+        setRoom({ ...room, events: updatedEvents });
         updateLayout(layout);
         setGridItemDragged(true);
     };
+    
+    const getDaysInMonth = (month) => {
+        return new Date(data.date.getFullYear(), month + 1, 0).getDate();
+    };    
 
     // Handle resize stop
     const onResizeStop = (layout, oldItem, newItem, placeholder, e, element) => {
         updateLayout(layout);
         setGridItemResized(true);
     };
-
-
 
     const onMouseDown = (e) => {
         if (e.target.closest('.react-resizable-handle')) {
@@ -228,7 +300,9 @@ export default function EventRow({ data, roomID, config, selectedEvent, setSelec
                     y: 0,
                     w: 1,
                     h: 1,
-                    startX: x
+                    startX: x,
+                    extendsToPreviousMonth: false,
+                    extendsToNextMonth: false
                 });
         
                 setIsCreatingEvent(true);
@@ -282,7 +356,9 @@ export default function EventRow({ data, roomID, config, selectedEvent, setSelec
                             x: Number(tempDraggingEvent.x), 
                             y: Number(tempDraggingEvent.y), 
                             w: Number(tempDraggingEvent.w), 
-                            h: 1 
+                            h: 1,
+                            extendsToPreviousMonth: false,
+                            extendsToNextMonth: false
                         };
                         room.events.push(newEvent);
 
@@ -302,64 +378,63 @@ export default function EventRow({ data, roomID, config, selectedEvent, setSelec
     };
 
     return (
-        <div 
-            ref={gridRef} 
-            onMouseDown={onMouseDown} 
-            onMouseMove={onMouseMove} 
+        <div
+            ref={gridRef}
+            onMouseDown={onMouseDown}
+            onMouseMove={onMouseMove}
             onMouseUp={onMouseUp}
         >
             <GridLayout
                 className={`event-row-${roomID}`}
                 layout={[
-                    { 
-                        i: `room-input-${roomID}`, 
-                        x: 0, 
-                        y: 0, 
-                        w: 
-                        config.columnWidths[0], 
-                        h: 1, 
-                        static: true 
+                    {
+                        i: `room-input-${roomID}`,
+                        x: 0,
+                        y: 0,
+                        w: config.columnWidths[0],
+                        h: 1,
+                        static: true
                     },
-                    { 
-                        i: `name-input-${roomID}`, 
-                        x: config.columnWidths[0], 
-                        y: 0, 
-                        w: config.columnWidths[1], 
-                        h: 1, 
-                        static: true 
+                    {
+                        i: `name-input-${roomID}`,
+                        x: config.columnWidths[0],
+                        y: 0,
+                        w: config.columnWidths[1],
+                        h: 1,
+                        static: true
                     },
                     ...room.events.map(event => ({
                         ...event,
                         i: String(event.i),
                         h: 1,
                         x: Math.min(Math.max(
-                            event.x, 
-                            config.columnWidths[0] + config.columnWidths[1]), 
+                            event.x,
+                            config.columnWidths[0] + config.columnWidths[1]),
                             lastColumnStart - event.w
                         ),
                     })),
                     ...(draggingEvent ? [
-                        { 
-                            ...draggingEvent, 
-                            h: 1, 
-                            x: Math.min(Math.max(draggingEvent.x, config.columnWidths[0] + config.columnWidths[1]), 
-                            lastColumnStart - draggingEvent.w) 
+                        {
+                            ...draggingEvent,
+                            h: 1,
+                            x: Math.min(Math.max(draggingEvent.x, config.columnWidths[0] + config.columnWidths[1]),
+                                lastColumnStart - draggingEvent.w)
                         }
                     ] : []),
-                    { 
-                        i: 'sum-value', 
-                        x: lastColumnStart, 
-                        y: 0, 
-                        w: config.columnWidths[config.columnWidths.length - 2], 
-                        h: 1, 
-                        static: true 
+                    {
+                        i: 'sum-value',
+                        x: lastColumnStart,
+                        y: 0,
+                        w: config.columnWidths[config.columnWidths.length - 2],
+                        h: 1,
+                        static: true
                     },
-                    { 
-                        i: 'hotel-input', 
-                        x: lastColumnStart + config.columnWidths[config.columnWidths.length - 2], 
-                        y: 0, w: config.columnWidths[config.columnWidths.length - 1], 
-                        h: 1, 
-                        static: true 
+                    {
+                        i: 'hotel-input',
+                        x: lastColumnStart + config.columnWidths[config.columnWidths.length - 2],
+                        y: 0, w: config.columnWidths[config.columnWidths.length - 1],
+                        h: 1,
+                        static: true
                     }
                 ]}
                 key={refresh}
@@ -373,32 +448,32 @@ export default function EventRow({ data, roomID, config, selectedEvent, setSelec
                 isResizable
                 draggableHandle=".event"
                 resizeHandles={['e', 'w']}
-
-                compactType={null}  // Disable compacting
-                // isBounded={true}    // Keep items within the grid bounds
-                preventCollision={true} 
-
+                compactType={null}
+                // preventCollision={true}
+                // isBounded={true}
             >
                 <div key={`room-input-${roomID}`} className="grid-cell">
                     <input type="text" defaultValue={room.room_num} style={{ width: '100%' }} />
                 </div>
-
+    
                 <div key={`name-input-${roomID}`} className="grid-cell">
                     <input type="text" defaultValue={room.events[0]?.patient.pat_name} style={{ width: '100%' }} />
                 </div>
-
+    
                 {room.events.map(event => (
                     <div className="event" key={event.i}>
                         <div className="event-name no-select">
                             {event.i}
                         </div>
+                        {event.extendsToPreviousMonth && <div className="extends-previous">...</div>}
+                        {event.extendsToNextMonth && <div className="extends-next">...</div>}
                     </div>
                 ))}
-
+    
                 {draggingEvent && (
                     <div className="event" key={draggingEvent.i}></div>
                 )}
-
+    
                 <div key="sum-value" className="grid-cell">
                     1
                 </div>
@@ -407,5 +482,5 @@ export default function EventRow({ data, roomID, config, selectedEvent, setSelec
                 </div>
             </GridLayout>
         </div>
-    );
+    );    
 }
