@@ -11,7 +11,7 @@ export default class LVDate {
             var newDate = args[0];
 
             if (newDate instanceof LVDate) {
-                this.#date = new Date(newDate.getDate());
+                this.#date = new Date(newDate.getObject());
             } else if (newDate instanceof Date || typeof newDate == 'string') {
                 this.#date = new Date(newDate);
             } else {
@@ -68,12 +68,12 @@ export default class LVDate {
         return this.#date.getMonth() + 1; // months are zero-indexed
     }
 
-    getObject() {
-        return this.#date;
-    }
-
     getDate() {
         return this.#date.getDate();
+    }
+
+    getObject() {
+        return this.#date;
     }
 
     getDay() {

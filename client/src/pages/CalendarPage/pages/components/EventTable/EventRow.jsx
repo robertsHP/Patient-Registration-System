@@ -256,7 +256,7 @@ export default function EventRow({ data, roomID, config, selectedEvent, setSelec
         console.log("!TRIGGER CHANGE");
         room.events.forEach(event => {
             if(gridItemDragged) {
-                event = manageGridDragging(newLayout, event);
+                // event = manageGridDragging(newLayout, event);
             }
             event = updateEvent(newLayout, event);
             return event;
