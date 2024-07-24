@@ -1,20 +1,10 @@
 import React from 'react';
 
-import DayTable from './DayTable';
+import DayTable from './DayTable.jsx';
+
+import { getDaysInMonth, getMonthName, getDayName } from '../../utils/monthUtilities.jsx';
 
 import './GridTableContainer.css'; // Ensure to import the CSS file
-
-const getDaysInMonth = (year, month) => {
-    return new Date(year, month + 1, 0).getDate();
-};
-
-const getMonthName = (month) => {
-    return new Date(0, month).toLocaleString('default', { month: 'long' });
-};
-
-const getDayName = (year, month, day) => {
-    return new Date(year, month, day).toLocaleString('default', { weekday: 'long' });
-};
 
 export default function GridTableContainer({ year, month }) {
     const daysInMonth = getDaysInMonth(year, month);

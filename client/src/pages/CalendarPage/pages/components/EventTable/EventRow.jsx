@@ -2,7 +2,8 @@ import React, { useState, useRef, useEffect, useContext } from 'react';
 
 import GridLayout from 'react-grid-layout';
 
-import { convertEventForSendingToDB } from '../../utils/conversionUtilities.jsx'
+import { convertEventForSendingToDB } from '../../utils/conversionUtilities.jsx';
+import { getDaysInMonth } from '../../utils/monthUtilities.jsx';
 
 import usePageRefresh from '../../../../../hooks/usePageRefresh.jsx';
 
@@ -109,37 +110,41 @@ export default function EventRow({ data, roomID, config, selectedEvent, setSelec
         return finalDate;
     };
 
+    const updateEvent = (newLayout, event) => {
+        const newEventLayout = newLayout.find(l => l.i === String(event.i));
+
+        if (newEventLayout) {
+            const validPosition = isValidEventPosition(newEventLayout);
+            const notOverlapping = !isOverlapping(newEventLayout, room.events, event.i);
+
+            if (validPosition && notOverlapping) {
+                var startDatePos = newEventLayout.x;
+                var endDatePos = newEventLayout.x + newEventLayout.w - 1;
+
+                event.begin_date = getDateBasedOnLayoutPosition(startDatePos);
+                event.end_date = getDateBasedOnLayoutPosition(endDatePos);
+
+                event.x = newEventLayout.x;
+                event.w = newEventLayout.w;
+
+                if(pageRefreshed && !isCreatingEvent) {
+                    var convertedEvent = convertEventForSendingToDB(room, event);
+
+                    console.log("UPDATE");
+
+                    ApiService.put(`/api/event/${event.id}`, convertedEvent)
+                    .catch(error => {
+                        console.log(error);
+                    });
+                }
+            }
+        }
+    };
+
     const updateLayout = (newLayout) => {
         console.log("!TRIGGER CHANGE");
         room.events.forEach(event => {
-            const newEventLayout = newLayout.find(l => l.i === String(event.i));
-
-            if (newEventLayout) {
-                const validPosition = isValidEventPosition(newEventLayout);
-                const notOverlapping = !isOverlapping(newEventLayout, room.events, event.i);
-
-                if (validPosition && notOverlapping) {
-                    var startDatePos = newEventLayout.x;
-                    var endDatePos = newEventLayout.x + newEventLayout.w - 1;
-
-                    event.begin_date = getDateBasedOnLayoutPosition(startDatePos);
-                    event.end_date = getDateBasedOnLayoutPosition(endDatePos);
-
-                    event.x = newEventLayout.x;
-                    event.w = newEventLayout.w;
-
-                    if(pageRefreshed && !isCreatingEvent) {
-                        var convertedEvent = convertEventForSendingToDB(room, event);
-
-                        console.log("UPDATE");
-
-                        ApiService.put(`/api/event/${event.id}`, convertedEvent)
-                        .catch(error => {
-                            console.log(error);
-                        });
-                    }
-                }
-            }
+            updateEvent(newLayout, event);
             return event;
         });
         data.setRoomWithID(room.id, room);
@@ -165,65 +170,112 @@ export default function EventRow({ data, roomID, config, selectedEvent, setSelec
     
         const updatedEvents = room.events.map(event => {
             if (event.i === newItem.i) {
-                const startDatePos = newItem.x;
-                const endDatePos = newItem.x + newItem.w - 1;
-    
-                const updatedEvent = {
-                    ...event,
-                    x: newItem.x,
-                    w: newItem.w
-                };
+                var startDatePos = newItem.x;
+                var endDatePos = newItem.x + newItem.w - 1;
 
-                // console.log("startDatePos");
-                // console.log(startDatePos);
-                // console.log("dateColumnsStart");
-                // console.log(dateColumnsStart);
+                var finalBeginDate = null;
+                var finalExtendsToPreviousMonth = false;
+                var finalEndDate = null;
+                var finalExtendsToNextMonth = false;
+
+                var startLoss = 0;
+                var endLoss = 0;
+
+                const daysCountInPrevMonth = getDaysInMonth(
+                    data.date.getFullYear(),
+                    data.date.getMonth() - 1
+                );
+
+                // console.log("-----OLD EVENT----");
+                // console.log("event.begin_date");
+                // console.log(event.begin_date.getObject());
+                // console.log("event.end_date");
+                // console.log(event.end_date.getObject());
+
+                if (startDatePos < dateColumnsStart) {
+                    startLoss = dateColumnsStart - startDatePos;
+
+                    finalExtendsToPreviousMonth = true;
+                    finalBeginDate = new LVDate(
+                        data.date.getFullYear(), 
+                        data.date.getMonth() - 1, 
+                        daysCountInPrevMonth - startLoss
+                    );
+                } if (event.extendsToPreviousMonth) {
+                    // console.log("!!!!!LIFE AND DEATH");
+
+                    var startGains = daysCountInPrevMonth - event.begin_date.getDate();
+
+                    // console.log(startGains);
+
+                    finalExtendsToPreviousMonth = false;
+                    finalBeginDate = new LVDate(
+                        data.date.getFullYear(), 
+                        data.date.getMonth(), 
+                        startGains
+                    );
+                }
+
+                // console.log("-------------------------------------------");
+
                 // console.log("endDatePos");
                 // console.log(endDatePos);
                 // console.log("dateColumnsEnd");
                 // console.log(dateColumnsEnd);
 
-                var startLoss = 0;
-                var endLoss = 0;
-
-                if (startDatePos < dateColumnsStart) {
-                    const daysCountInPrevMonth = getDaysInMonth(data.date.getMonth() - 1);
-
-                    startLoss = dateColumnsStart - startDatePos;
-
-                    updatedEvent.extendsToPreviousMonth = true;
-                    updatedEvent.begin_date = new LVDate(
-                        data.date.getFullYear(), 
-                        data.date.getMonth() - 1, 
-                        daysCountInPrevMonth - startLoss
-                    );
-                }
-
                 if (endDatePos > dateColumnsEnd) {
                     endLoss = dateColumnsEnd - endDatePos;
 
-                    updatedEvent.extendsToNextMonth = true;
-                    updatedEvent.begin_date = new LVDate(
+                    finalExtendsToNextMonth = true;
+                    finalEndDate = new LVDate(
                         data.date.getFullYear(), 
                         data.date.getMonth() + 1, 
                         endLoss
                     );
                 }
-                
-                if (startLoss > 0) {
-                    updatedEvent.extendsToNextMonth = false;
-                    updatedEvent.end_date = getDateBasedOnLayoutPosition(endDatePos - startLoss);
-                } else if (endLoss > 0) {
-                    updatedEvent.extendsToPreviousMonth = false;
-                    updatedEvent.begin_date = getDateBasedOnLayoutPosition(startDatePos + endLoss);
+
+                // console.log("BEFOER-------------------------------------------");
+
+                // console.log("finalBeginDate");
+                // console.log(finalBeginDate);
+                // console.log("finalEndDate");
+                // console.log(finalEndDate);
+
+                if (finalEndDate == null) {
+                    if (startLoss > 0) {
+                        endDatePos -= startLoss;
+                    }
+                    finalEndDate = getDateBasedOnLayoutPosition(endDatePos);
                 }
 
-                console.log("updatedEvent.begin_date");
-                console.log(updatedEvent.begin_date.getDate());
-                console.log("updatedEvent.end_date");
-                console.log(updatedEvent.end_date.getDate());
-    
-                return updatedEvent;
+                if (finalBeginDate == null) {
+                    if (endLoss > 0) {
+                        startDatePos += endLoss;
+                    }
+                    finalBeginDate = getDateBasedOnLayoutPosition(startDatePos);
+                }
+
+                // console.log("AFTER-------------------------------------------");
+
+                // console.log("begin_date");
+                // console.log(finalBeginDate.getObject());
+                // console.log("finalEndDate");
+                // console.log(finalEndDate.getObject());
+
+                // console.log("-------------------------------------------");
+
+                // console.log("startLoss");
+                // console.log(startLoss);
+                // console.log("endLoss");
+                // console.log(endLoss);
+
+                event.x = startDatePos;
+                event.w = endDatePos - startDatePos + 1;
+
+                event.extendsToPreviousMonth = finalExtendsToPreviousMonth;
+                event.begin_date = finalBeginDate;
+                event.extendsToNextMonth = finalExtendsToNextMonth;
+                event.end_date = finalEndDate;
             }
             return event;
         });
@@ -232,10 +284,6 @@ export default function EventRow({ data, roomID, config, selectedEvent, setSelec
         updateLayout(layout);
         setGridItemDragged(true);
     };
-    
-    const getDaysInMonth = (month) => {
-        return new Date(data.date.getFullYear(), month + 1, 0).getDate();
-    };    
 
     // Handle resize stop
     const onResizeStop = (layout, oldItem, newItem, placeholder, e, element) => {

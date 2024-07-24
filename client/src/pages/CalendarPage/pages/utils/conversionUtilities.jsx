@@ -5,7 +5,7 @@ const getDayIndex = (date, monthStart) => {
     const currentDate = new LVDate(date);
     const startDate = new LVDate(monthStart.getFullYear(), monthStart.getMonth(), 1);
 
-    var result = Math.floor((currentDate.getDate() - startDate.getDate()) / (1000 * 60 * 60 * 24));
+    var result = Math.floor((currentDate.getObject() - startDate.getObject()) / (1000 * 60 * 60 * 24));
 
     return result;
 };

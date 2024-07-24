@@ -22,9 +22,9 @@ export default function SumRow({ data, config }) {
         const eventStart = event.begin_date;
         const eventEnd = event.end_date;
 
-        const dateObj = date.getDate();
-        const eventStartDateObj = eventStart.getDate();
-        const eventEndDateObj = eventEnd.getDate();
+        const dateObj = date.getObject();
+        const eventStartDateObj = eventStart.getObject();
+        const eventEndDateObj = eventEnd.getObject();
 
         return dateObj >= eventStartDateObj && dateObj <= eventEndDateObj;
     };

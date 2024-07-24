@@ -3,10 +3,10 @@ export default class LVDate {
     #date
 
     constructor(...args) {
-        this.setDate(...args);
+        this.setObject(...args);
     }
 
-    setDate (...args) {
+    setObject (...args) {
         if (args.length == 1) {
             var newDate = args[0];
 
@@ -36,8 +36,12 @@ export default class LVDate {
         this.#date.setMonth(month - 1); // months are zero-indexed
     }
 
+    setDate(date) {
+        this.#date.setDate(date);
+    }
+
     setDay(day) {
-        this.#date.setDate(day);
+        this.#date.setDay(day);
     }
 
     setHours(hours) {
@@ -64,8 +68,12 @@ export default class LVDate {
         return this.#date.getMonth() + 1; // months are zero-indexed
     }
 
-    getDate() {
+    getObject() {
         return this.#date;
+    }
+
+    getDate() {
+        return this.#date.getDate();
     }
 
     getDay() {

@@ -11,7 +11,7 @@ export default function useTableConfigurations (date) {
         while (date.getMonth() == month) {
             days.push(date);
             dayIndex++;
-            date.setDay(dayIndex);
+            date.setDate(dayIndex);
         }
         return days;
     };
