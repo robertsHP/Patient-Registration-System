@@ -8,9 +8,6 @@ import 'react-resizable/css/styles.css';
 import './ColumnRow.css';
 
 export default function ColumnRow({ config }) {
-    const lastColumnStart = config.columnWidths.slice(0, config.columnWidths.length - 2)
-        .reduce((acc, width) => acc + width, 0);
-
     return (
         <>
             <GridLayout
@@ -43,7 +40,7 @@ export default function ColumnRow({ config }) {
                     // Add the two additional columns at the end
                     { 
                         i: 'sum-column', 
-                        x: lastColumnStart, 
+                        x: config.getDateColumnsEnd(), 
                         y: 0, 
                         w: config.columnWidths[config.columnWidths.length - 2], 
                         h: 1, 
@@ -51,7 +48,7 @@ export default function ColumnRow({ config }) {
                     },
                     { 
                         i: 'hotel-column', 
-                        x: lastColumnStart + config.columnWidths[config.columnWidths.length - 2], 
+                        x: config.getDateColumnsEnd() + config.columnWidths[config.columnWidths.length - 2], 
                         y: 0, 
                         w: config.columnWidths[config.columnWidths.length - 1], 
                         h: 1, 

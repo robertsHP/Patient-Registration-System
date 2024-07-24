@@ -50,14 +50,10 @@ export default function EventRow({ data, roomID, config, selectedEvent, setSelec
     }, [data.fullDataUpdateTrigger]);
 
     const isValidEventPosition = (layoutItem) => {
-        const dateColumnsStart = config.columnWidths.slice(0, 2).reduce((acc, width) => acc + width, 0);
-        const dateColumnsEnd = config.columnWidths.slice(2, config.columnWidths.length - 2)
-            .reduce((acc, width) => acc + width, dateColumnsStart);
-
         // Ensure the event is within date columns
         return (
-            layoutItem.x >= dateColumnsStart &&
-            (layoutItem.x + layoutItem.w) <= dateColumnsEnd
+            layoutItem.x >= config.getDateColumnsStart() &&
+            (layoutItem.x + layoutItem.w) <= config.getDateColumnsEnd()
         );
     };
 
@@ -88,11 +84,7 @@ export default function EventRow({ data, roomID, config, selectedEvent, setSelec
     };
 
     const isInDateColumns = (x, w) => {
-        const dateColumnsStart = config.columnWidths.slice(0, 2).reduce((acc, width) => acc + width, 0);
-        const dateColumnsEnd = dateColumnsStart + config.columnWidths.slice(2, config.columnWidths.length - 2)
-            .reduce((acc, width) => acc + width, 0);
-
-        return x >= dateColumnsStart && (x + w) <= dateColumnsEnd;
+        return x >= config.getDateColumnsStart() && (x + w) <= config.getDateColumnsEnd();
     };
 
     const getDateBasedOnLayoutPosition = (pos) => {
@@ -108,6 +100,123 @@ export default function EventRow({ data, roomID, config, selectedEvent, setSelec
             }
         });
         return finalDate;
+    };
+
+    const manageGridDragging = (newLayout, event) => {
+        const newEventLayout = newLayout.find(l => l.i === String(event.i));
+
+        if (newEventLayout) {
+            console.log("WORKY");
+
+            var startDatePos = newLayout.x;
+            var endDatePos = newLayout.x + newLayout.w - 1;
+
+            var finalBeginDate = null;
+            var finalExtendsToPreviousMonth = false;
+            var finalEndDate = null;
+            var finalExtendsToNextMonth = false;
+
+            var startLoss = 0;
+            var endLoss = 0;
+
+            const daysCountInPrevMonth = getDaysInMonth(
+                data.date.getFullYear(),
+                data.date.getMonth() - 1
+            );
+
+            // console.log("-----OLD EVENT----");
+            // console.log("event.begin_date");
+            // console.log(event.begin_date.getObject());
+            // console.log("event.end_date");
+            // console.log(event.end_date.getObject());
+
+            if (startDatePos < config.getDateColumnsStart()) {
+                startLoss = config.getDateColumnsStart() - startDatePos;
+
+                finalExtendsToPreviousMonth = true;
+                finalBeginDate = new LVDate(
+                    data.date.getFullYear(), 
+                    data.date.getMonth() - 1, 
+                    daysCountInPrevMonth - startLoss
+                );
+            } if (event.extendsToPreviousMonth) {
+                // console.log("!!!!!LIFE AND DEATH");
+
+                var startGains = daysCountInPrevMonth - event.begin_date.getDate();
+
+                // console.log(startGains);
+
+                finalExtendsToPreviousMonth = false;
+                finalBeginDate = new LVDate(
+                    data.date.getFullYear(), 
+                    data.date.getMonth(), 
+                    startGains
+                );
+            }
+
+            // console.log("-------------------------------------------");
+
+            // console.log("endDatePos");
+            // console.log(endDatePos);
+            // console.log("config.dateColumnsEnd");
+            // console.log(config.dateColumnsEnd);
+
+            if (endDatePos > config.getDateColumnsEnd()) {
+                endLoss = config.getDateColumnsEnd() - endDatePos;
+
+                finalExtendsToNextMonth = true;
+                finalEndDate = new LVDate(
+                    data.date.getFullYear(), 
+                    data.date.getMonth() + 1, 
+                    endLoss
+                );
+            }
+
+            // console.log("BEFOER-------------------------------------------");
+
+            // console.log("finalBeginDate");
+            // console.log(finalBeginDate);
+            // console.log("finalEndDate");
+            // console.log(finalEndDate);
+
+            if (finalEndDate == null) {
+                if (startLoss > 0) {
+                    endDatePos -= startLoss;
+                }
+                finalEndDate = getDateBasedOnLayoutPosition(endDatePos);
+            }
+
+            if (finalBeginDate == null) {
+                if (endLoss > 0) {
+                    startDatePos += endLoss;
+                }
+                finalBeginDate = getDateBasedOnLayoutPosition(startDatePos);
+            }
+
+            // console.log("AFTER-------------------------------------------");
+
+            // console.log("begin_date");
+            // console.log(finalBeginDate.getObject());
+            // console.log("finalEndDate");
+            // console.log(finalEndDate.getObject());
+
+            // console.log("-------------------------------------------");
+
+            // console.log("startLoss");
+            // console.log(startLoss);
+            // console.log("endLoss");
+            // console.log(endLoss);
+
+            event.x = startDatePos;
+            event.w = endDatePos - startDatePos + 1;
+
+            event.extendsToPreviousMonth = finalExtendsToPreviousMonth;
+            event.begin_date = finalBeginDate;
+            event.extendsToNextMonth = finalExtendsToNextMonth;
+            event.end_date = finalEndDate;
+        }
+
+        return event;
     };
 
     const updateEvent = (newLayout, event) => {
@@ -139,12 +248,17 @@ export default function EventRow({ data, roomID, config, selectedEvent, setSelec
                 }
             }
         }
+
+        return event;
     };
 
     const updateLayout = (newLayout) => {
         console.log("!TRIGGER CHANGE");
         room.events.forEach(event => {
-            updateEvent(newLayout, event);
+            if(gridItemDragged) {
+                event = manageGridDragging(newLayout, event);
+            }
+            event = updateEvent(newLayout, event);
             return event;
         });
         data.setRoomWithID(room.id, room);
@@ -164,123 +278,6 @@ export default function EventRow({ data, roomID, config, selectedEvent, setSelec
     };
 
     const onDragStop = (layout, oldItem, newItem, placeholder, e, element) => {
-        const dateColumnsStart = config.columnWidths.slice(0, 2).reduce((acc, width) => acc + width, 0);
-        const dateColumnsEnd = dateColumnsStart + config.columnWidths.slice(2, config.columnWidths.length - 2)
-            .reduce((acc, width) => acc + width, 0);
-    
-        const updatedEvents = room.events.map(event => {
-            if (event.i === newItem.i) {
-                var startDatePos = newItem.x;
-                var endDatePos = newItem.x + newItem.w - 1;
-
-                var finalBeginDate = null;
-                var finalExtendsToPreviousMonth = false;
-                var finalEndDate = null;
-                var finalExtendsToNextMonth = false;
-
-                var startLoss = 0;
-                var endLoss = 0;
-
-                const daysCountInPrevMonth = getDaysInMonth(
-                    data.date.getFullYear(),
-                    data.date.getMonth() - 1
-                );
-
-                // console.log("-----OLD EVENT----");
-                // console.log("event.begin_date");
-                // console.log(event.begin_date.getObject());
-                // console.log("event.end_date");
-                // console.log(event.end_date.getObject());
-
-                if (startDatePos < dateColumnsStart) {
-                    startLoss = dateColumnsStart - startDatePos;
-
-                    finalExtendsToPreviousMonth = true;
-                    finalBeginDate = new LVDate(
-                        data.date.getFullYear(), 
-                        data.date.getMonth() - 1, 
-                        daysCountInPrevMonth - startLoss
-                    );
-                } if (event.extendsToPreviousMonth) {
-                    // console.log("!!!!!LIFE AND DEATH");
-
-                    var startGains = daysCountInPrevMonth - event.begin_date.getDate();
-
-                    // console.log(startGains);
-
-                    finalExtendsToPreviousMonth = false;
-                    finalBeginDate = new LVDate(
-                        data.date.getFullYear(), 
-                        data.date.getMonth(), 
-                        startGains
-                    );
-                }
-
-                // console.log("-------------------------------------------");
-
-                // console.log("endDatePos");
-                // console.log(endDatePos);
-                // console.log("dateColumnsEnd");
-                // console.log(dateColumnsEnd);
-
-                if (endDatePos > dateColumnsEnd) {
-                    endLoss = dateColumnsEnd - endDatePos;
-
-                    finalExtendsToNextMonth = true;
-                    finalEndDate = new LVDate(
-                        data.date.getFullYear(), 
-                        data.date.getMonth() + 1, 
-                        endLoss
-                    );
-                }
-
-                // console.log("BEFOER-------------------------------------------");
-
-                // console.log("finalBeginDate");
-                // console.log(finalBeginDate);
-                // console.log("finalEndDate");
-                // console.log(finalEndDate);
-
-                if (finalEndDate == null) {
-                    if (startLoss > 0) {
-                        endDatePos -= startLoss;
-                    }
-                    finalEndDate = getDateBasedOnLayoutPosition(endDatePos);
-                }
-
-                if (finalBeginDate == null) {
-                    if (endLoss > 0) {
-                        startDatePos += endLoss;
-                    }
-                    finalBeginDate = getDateBasedOnLayoutPosition(startDatePos);
-                }
-
-                // console.log("AFTER-------------------------------------------");
-
-                // console.log("begin_date");
-                // console.log(finalBeginDate.getObject());
-                // console.log("finalEndDate");
-                // console.log(finalEndDate.getObject());
-
-                // console.log("-------------------------------------------");
-
-                // console.log("startLoss");
-                // console.log(startLoss);
-                // console.log("endLoss");
-                // console.log(endLoss);
-
-                event.x = startDatePos;
-                event.w = endDatePos - startDatePos + 1;
-
-                event.extendsToPreviousMonth = finalExtendsToPreviousMonth;
-                event.begin_date = finalBeginDate;
-                event.extendsToNextMonth = finalExtendsToNextMonth;
-                event.end_date = finalEndDate;
-            }
-            return event;
-        });
-    
-        setRoom({ ...room, events: updatedEvents });
         updateLayout(layout);
         setGridItemDragged(true);
     };

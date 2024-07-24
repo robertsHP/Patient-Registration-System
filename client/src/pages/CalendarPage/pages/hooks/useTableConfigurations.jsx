@@ -29,15 +29,46 @@ export default function useTableConfigurations (date) {
         num: index + 1
     }));
 
-    const sumOfAllColWidths = columnWidths.reduce((acc, width) => acc + width, 0);
+
+    // const dateColumnsStart = config.columnWidths.slice(0, 2).reduce((acc, width) => acc + width, 0);
+    // const dateColumnsEnd = config.columnWidths.slice(2, config.columnWidths.length - 2)
+    //     .reduce((acc, width) => acc + width, dateColumnsStart);
+
+    // const dateColumnsStart = config.columnWidths.slice(0, 2).reduce((acc, width) => acc + width, 0);
+    // const dateColumnsEnd = dateColumnsStart + config.columnWidths.slice(2, config.columnWidths.length - 2)
+    //     .reduce((acc, width) => acc + width, 0);
+
+
+    // const dateColumnsStart = config.columnWidths.slice(0, 2).reduce((acc, width) => acc + width, 0);
+    // const dateColumnsEnd = dateColumnsStart + config.columnWidths.slice(2, config.columnWidths.length - 2)
+    //     .reduce((acc, width) => acc + width, 0);
+
+    const getDateColumnsStart = () => {
+        return columnWidths.slice(0, 2).reduce((acc, width) => acc + width, 0);
+    };
+
+    const getDateColumnsEnd = () => {
+        const dateColumnsStart = getDateColumnsStart();
+
+        return dateColumnsStart + columnWidths.slice(2, columnWidths.length - 2)
+            .reduce((acc, width) => acc + width, 0);
+    };
+
+    const getSumOfAllColumns = () => {
+        return columnWidths.reduce((acc, width) => acc + width, 0);
+    };
 
     return {
-        cols: sumOfAllColWidths,
+        cols: getSumOfAllColumns(),
         rowHeight: 20,
         width: 1200,
 
-        daysOfMonth: daysOfMonth,
-        dateLayout: dateLayout,
-        columnWidths: columnWidths
+        daysOfMonth,
+        dateLayout,
+        columnWidths,
+
+        getDateColumnsStart,
+        getDateColumnsEnd,
+        getSumOfAllColumns
     };
 };

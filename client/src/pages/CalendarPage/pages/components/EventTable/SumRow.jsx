@@ -54,9 +54,6 @@ export default function SumRow({ data, config }) {
         }
     }, [data.fullDataUpdateTrigger, data.singleDataUpdateTrigger]);
 
-    const lastColumnStart = config.columnWidths.slice(0, config.columnWidths.length - 2)
-        .reduce((acc, width) => acc + width, 0);
-
     return (
         <GridLayout
             className="sum-row"
@@ -87,7 +84,7 @@ export default function SumRow({ data, config }) {
                 })),
                 { 
                     i: 'sum-gap', 
-                    x: lastColumnStart,
+                    x: config.getDateColumnsEnd(),
                     y: 0, 
                     w: config.columnWidths[config.columnWidths.length - 2], 
                     h: 1, 
@@ -95,7 +92,7 @@ export default function SumRow({ data, config }) {
                 },
                 { 
                     i: 'hotel-gap', 
-                    x: lastColumnStart + config.columnWidths[config.columnWidths.length - 2], 
+                    x: config.getDateColumnsEnd() + config.columnWidths[config.columnWidths.length - 2], 
                     y: 0, 
                     w: config.columnWidths[config.columnWidths.length - 1], 
                     h: 1, 
