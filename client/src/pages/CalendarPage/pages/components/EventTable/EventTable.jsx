@@ -3,6 +3,7 @@ import React, { useState, useEffect, useContext } from 'react';
 import GridLayout from 'react-grid-layout';
 
 import useTableConfigurations from '../../hooks/useTableConfigurations.jsx';
+import usePageRefresh from '../../../../../hooks/usePageRefresh.jsx';
 
 import GridUI from './GridUI.jsx';
 import ColumnRow from './ColumnRow.jsx';
@@ -20,6 +21,8 @@ import './EventTable.css';
 function EventTableContent ({ data }) {
     const config = useTableConfigurations(data.date);
     const [selectedEvent, setSelectedEvent] = useState(null);
+
+    const pageRefreshed = usePageRefresh();
 
     return (
         <div className="grid-container">
@@ -42,6 +45,7 @@ function EventTableContent ({ data }) {
                                     config={config}
                                     selectedEvent={selectedEvent}
                                     setSelectedEvent={setSelectedEvent}
+                                    pageRefreshed={pageRefreshed}
                                 />
                             </div>
                         )

@@ -4,8 +4,6 @@ import useDataFetch from './hooks/useDataFetch.jsx';
 
 import EventTable from './components/EventTable/EventTable.jsx';
 
-import CalendarTable from './components/CalendarTable.jsx';
-
 import LVDate from '../../../models/LVDate.jsx';
 
 import './Page.css';
@@ -15,7 +13,6 @@ export default function BedsPage () {
 
     return (
         <>
-            {/* <CalendarTable /> */}
             <EventTable data={data} />
         </>
     );
