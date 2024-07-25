@@ -1,4 +1,3 @@
-
 export default class LVDate {
     #date
 
@@ -6,7 +5,7 @@ export default class LVDate {
         this.setObject(...args);
     }
 
-    setObject (...args) {
+    setObject(...args) {
         if (args.length == 1) {
             var newDate = args[0];
 
@@ -21,7 +20,7 @@ export default class LVDate {
             const [year, month, day, hours = 0, minutes = 0, seconds = 0, milliseconds = 0] = args;
 
             this.#date = new Date(year, month - 1, day, hours, minutes, seconds, milliseconds);
-            
+
             if (isNaN(this.#date)) {
                 throw new Error("Invalid date format");
             }
@@ -58,6 +57,62 @@ export default class LVDate {
 
     setMilliseconds(milliseconds) {
         this.#date.setMilliseconds(milliseconds);
+    }
+
+    incrementYear(years = 1) {
+        this.#date.setFullYear(this.#date.getFullYear() + years);
+    }
+
+    decrementYear(years = 1) {
+        this.incrementYear(-years);
+    }
+
+    incrementMonth(months = 1) {
+        this.#date.setMonth(this.#date.getMonth() + months);
+    }
+
+    decrementMonth(months = 1) {
+        this.incrementMonth(-months);
+    }
+
+    incrementDate(days = 1) {
+        this.#date.setDate(this.#date.getDate() + days);
+    }
+
+    decrementDate(days = 1) {
+        this.incrementDate(-days);
+    }
+
+    incrementHours(hours = 1) {
+        this.#date.setHours(this.#date.getHours() + hours);
+    }
+
+    decrementHours(hours = 1) {
+        this.incrementHours(-hours);
+    }
+
+    incrementMinutes(minutes = 1) {
+        this.#date.setMinutes(this.#date.getMinutes() + minutes);
+    }
+
+    decrementMinutes(minutes = 1) {
+        this.incrementMinutes(-minutes);
+    }
+
+    incrementSeconds(seconds = 1) {
+        this.#date.setSeconds(this.#date.getSeconds() + seconds);
+    }
+
+    decrementSeconds(seconds = 1) {
+        this.incrementSeconds(-seconds);
+    }
+
+    incrementMilliseconds(milliseconds = 1) {
+        this.#date.setMilliseconds(this.#date.getMilliseconds() + milliseconds);
+    }
+
+    decrementMilliseconds(milliseconds = 1) {
+        this.incrementMilliseconds(-milliseconds);
     }
 
     getFullYear() {

@@ -36,6 +36,7 @@ export default class EventRow extends Component {
         this.refreshRow = this.refreshRow.bind(this);
         this.updateLayout = this.updateLayout.bind(this);
         this.onLayoutChange = this.onLayoutChange.bind(this);
+        this.onDrag = this.onDrag.bind(this);
         this.onDragStop = this.onDragStop.bind(this);
         this.onResizeStop = this.onResizeStop.bind(this);
         this.onMouseDown = this.onMouseDown.bind(this);
@@ -107,16 +108,58 @@ export default class EventRow extends Component {
     getDateBasedOnLayoutPosition(pos) {
         var finalDate = null;
 
-        this.props.config.dateLayout.forEach((date) => {
-            if (pos === date.x) {
-                finalDate = new LVDate(
-                    this.props.data.date.getFullYear(),
-                    this.props.data.date.getMonth(),
-                    date.num
-                );
-            }
-        });
+        if (pos < this.props.config.getDateColumnsStart()) {
+            const daysCountInPrevMonth = getDaysInMonth(
+                this.props.data.date.getFullYear(),
+                this.props.data.date.getMonth() - 1
+            );
+            const dateNum = daysCountInPrevMonth - (this.props.config.getDateColumnsStart() - pos);
+
+            finalDate = new LVDate(
+                this.props.data.date.getFullYear(),
+                this.props.data.date.getMonth() - 1,
+                dateNum
+            );
+        } else if (pos > this.props.config.getDateColumnsEnd()) {
+            const dateNum = this.props.config.getDateColumnsEnd() - pos;
+
+            finalDate = new LVDate(
+                this.props.data.date.getFullYear(),
+                this.props.data.date.getMonth() + 1,
+                dateNum
+            );
+        } else {
+            this.props.config.dateLayout.forEach((date) => {
+                if (pos === date.x) {
+                    finalDate = new LVDate(
+                        this.props.data.date.getFullYear(),
+                        this.props.data.date.getMonth(),
+                        date.num
+                    );
+                }
+            });
+        }
         return finalDate;
+    }
+
+    getPositionBasedOnDate (tempDate) {
+        var finalPos = null;
+
+        if (tempDate.getMonth() == data.date.getMonth()) {
+            this.props.config.dateLayout.forEach((date) => {
+                if (tempDate.getDate() == date.num) {
+                    finalPos = date.x;
+                }
+            });
+        } else {
+            if (tempDate.getMonth() < data.date.getMonth()) {
+                finalPos = this.props.config.getDateColumnsStart();
+            } else {
+                finalPos = this.props.config.getDateColumnsEnd();
+            }
+        }
+
+        return finalPos;
     }
 
     updateLayout(newLayout) {
@@ -177,11 +220,28 @@ export default class EventRow extends Component {
         }
     }
 
+    onDrag (layout, oldItem, newItem, placeholder, e, element) {
+        // const newLayout = layout.map((item) => {
+        //     if (item.i === newItem.i) {
+        //         return { ...item, w: newItem.w, h: newItem.h };
+        //     }
+        //     return item;
+        // });
+        // setLayout(newLayout);
+
+
+    };
+
     onDragStop(layout, oldItem, newItem, placeholder, e, element) {
         const updatedEvents = this.state.room.events.map((event) => {
             if (event.i === newItem.i) {
-                var startDatePos = newItem.x;
-                var endDatePos = newItem.x + newItem.w - 1;
+                var prevEvent = event;
+
+                var newStartDatePos = newItem.x;
+                var newEndDatePos = newItem.x + newItem.w - 1;
+
+                var newStartDate = this.getDateBasedOnLayoutPosition(newStartDatePos);
+                var newEndDate = this.getDateBasedOnLayoutPosition(newEndDatePos);
 
                 var finalBeginDate = null;
                 var finalExtendsToPreviousMonth = false;
@@ -217,68 +277,118 @@ export default class EventRow extends Component {
                     )
                 );
 
-                // if (event.extendsToPreviousMonth && startDatePos < dateColumnsStart) {
-                //     startLoss = dateColumnsStart - startDatePos;
 
-                //     finalExtendsToPreviousMonth = true;
-                //     finalBeginDate = new LVDate(
-                //         event.begin_date.getFullYear(),
-                //         event.begin_date.getMonth(),
-                //         daysCountInPrevMonth - startLoss
-                //     );
-                // } else 
-                
-                if (event.extendsToPreviousMonth && startDatePos >= dateColumnsStartAsDate) {
-                    startGains = daysCountInPrevMonth - event.begin_date.getDate();
+                /*
+                    if (extToPrev && extToNext) {
+                        check which side gets loss and which gets gains
 
-                    console.log("startGains");
-                    console.log(startGains);
+                        adjust start and end accordingly
+                        set event start as DateColStart and end as DateColEnd
+                        set extToPrev and extToNext
+                    } else {
+                        if (extToPrev && startPos < dateColStart) {
+                            check wether there are losses or gains
 
-                    finalExtendsToPreviousMonth = false;
-                    finalBeginDate = new LVDate(
-                        this.props.data.date.getFullYear(), 
-                        this.props.data.date.getMonth(), 
-                        startGains
-                    );
-                } else if (startDatePos < dateColumnsStart) {
-                    startLoss = dateColumnsStart - startDatePos;
 
-                    finalExtendsToPreviousMonth = true;
-                    finalBeginDate = new LVDate(
-                        this.props.data.date.getFullYear(),
-                        this.props.data.date.getMonth() - 1,
-                        daysCountInPrevMonth - startLoss
-                    );
-                }
+                        } else if (extToPrev && startPos >= dateColStart) {
+                            done
+                        } else if (startPos >= dateColStart) {
+                            done
+                        }
 
-                if (endDatePos > dateColumnsEnd) {
-                    endLoss = dateColumnsEnd - endDatePos;
+                        if (extToNext && endPos > dateColEnd) {
 
-                    finalExtendsToNextMonth = true;
-                    finalEndDate = new LVDate(
-                        this.props.data.date.getFullYear(), 
-                        this.props.data.date.getMonth() + 1, 
-                        endLoss
-                    );
-                }
+                        } else if (extToNext && endPos <= dateColEnd) {
 
-                if (finalEndDate == null) {
-                    finalEndDate = this.getDateBasedOnLayoutPosition(endDatePos);
-
-                    if (startLoss > 0) {
-                        endDatePos -= startLoss;
-                    } else if (startGains > 0) {
-                        startDatePos += startGains;
+                        } else if (endPos <= dateColEnd) {
+                        
+                        }
                     }
-                }
+                        
+                */
 
-                if (finalBeginDate == null) {
-                    finalBeginDate = this.getDateBasedOnLayoutPosition(startDatePos);
+                if (event.extendsToPreviousMonth && event.extendsToNextMonth) {
+                    // var prevBeginDate = prevEvent.begin_date.getDate();
+                    // var prevEndDate = prevEvent.end_date.getDate();
 
-                    if (endLoss > 0) {
-                        startDatePos += endLoss;
-                    } else if (endGains > 0) {
-                        startDatePos -= endGains;
+                    // var newStartDate = this.getPositionBasedOnDate(newStartDatePos);
+                    // var newEndDate = this.getPositionBasedOnDate(newEndDatePos);
+
+                    // finalExtendsToPreviousMonth = true;
+                    // finalBeginDate = new LVDate(
+                    //     this.props.data.date.getFullYear(),
+                    //     this.props.data.date.getMonth() - 1,
+                        
+                    // );
+                } else {
+                    if (event.extendsToPreviousMonth && newStartDatePos < dateColumnsStart) {
+                        startLoss = dateColumnsStart - newStartDatePos;
+
+                        var prevBeginDate = prevEvent.begin_date.getDate();
+
+                        finalExtendsToPreviousMonth = true;
+                        finalBeginDate = new LVDate(
+                            this.props.data.date.getFullYear(),
+                            this.props.data.date.getMonth() - 1,
+                            prevBeginDate - startLoss
+                        );
+                        newStartDatePos = this.getPositionBasedOnDate(finalBeginDate);
+                    } else if (event.extendsToPreviousMonth && newStartDatePos >= dateColumnsStart) {
+                        startGains = daysCountInPrevMonth - event.begin_date.getDate();
+
+                        var date = (newStartDatePos - dateColumnsStart) - startGains + 1;
+
+                        finalExtendsToPreviousMonth = false;
+                        finalBeginDate = new LVDate(
+                            this.props.data.date.getFullYear(),
+                            this.props.data.date.getMonth(),
+                            date
+                        );
+                        newStartDatePos = this.getPositionBasedOnDate(finalBeginDate);
+                    } else if (newStartDatePos < dateColumnsStart) {
+                        startLoss = dateColumnsStart - newStartDatePos;
+    
+                        finalExtendsToPreviousMonth = true;
+                        finalBeginDate = new LVDate(
+                            this.props.data.date.getFullYear(),
+                            this.props.data.date.getMonth() - 1,
+                            daysCountInPrevMonth - startLoss
+                        );
+                        newStartDatePos = this.getPositionBasedOnDate(finalBeginDate);
+                    }
+
+                    if (event.extendsToNextMonth && newEndDatePos > dateColumnsEndAsDate) {
+
+                    } else if (event.extendsToNextMonth && newEndDatePos <= dateColumnsEndAsDate) {
+                        
+                    } else if (newEndDatePos > dateColumnsEnd) {
+                        endLoss = dateColumnsEnd - newEndDatePos;
+    
+                        finalExtendsToNextMonth = true;
+                        finalEndDate = new LVDate(
+                            this.props.data.date.getFullYear(), 
+                            this.props.data.date.getMonth() + 1, 
+                            endLoss
+                        );
+                    }
+
+                    if (finalEndDate == null) {
+                        if (startLoss > 0) {
+                            newEndDatePos -= startLoss;
+                        } else if (startGains > 0) {
+                            newStartDatePos += startGains;
+                        }
+                        finalEndDate = this.getDateBasedOnLayoutPosition(newEndDatePos);
+                    }
+    
+                    if (finalBeginDate == null) {
+                        finalBeginDate = this.getDateBasedOnLayoutPosition(newStartDatePos);
+    
+                        if (endLoss > 0) {
+                            newStartDatePos += endLoss;
+                        } else if (endGains > 0) {
+                            newEndDatePos -= endGains;
+                        }
                     }
                 }
 
@@ -296,8 +406,8 @@ export default class EventRow extends Component {
                 // console.log("endLoss");
                 // console.log(endLoss);
 
-                event.x = startDatePos;
-                event.w = endDatePos - startDatePos + 1;
+                event.x = newStartDatePos;
+                event.w = newEndDatePos - newStartDatePos + 1;
 
                 event.extendsToPreviousMonth = finalExtendsToPreviousMonth;
                 event.begin_date = finalBeginDate;
@@ -546,6 +656,7 @@ export default class EventRow extends Component {
                     rowHeight={config.rowHeight}
                     width={config.width}
                     onLayoutChange={this.onLayoutChange}
+                    onDrag={this.onDrag}
                     onDragStop={this.onDragStop}
                     onResizeStop={this.onResizeStop}
                     isDraggable
