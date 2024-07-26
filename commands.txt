@@ -23,11 +23,45 @@ Ja ir:
         Tad ieslēdz postgresql serveri
 
 CURL:
-curl -X POST http://localhost:5000/api/drag-table/get-rooms \
+curl -X POST http://localhost:5000/api/drag-table/appointment \
     -H "Content-Type: application/json" \
     -d '
         {
-            "id": 0,
+        "id": null,
+        "patient": {
+            "pat_name": null,
+            "phone_num": null,
+            "id": null,
+            "patient_type": {
+            "pat_type": null,
+            "id": null
+        },
+            "hotel_stay_end": null,
+            "hotel_stay_start": null
+        },
+        "end_date": "Wed Aug 21 2024",
+        "begin_date": "Tue Aug 13 2024",
+        "notes": "",
+        "doctor": {
+            "doc_name": null,
+            "id": null
+        },
+        "hotel_stay_start": null,
+        "hotel_stay_end": null,
+        "appointment_type": {
+            "id": null,
+            "type_name": null
+        },
+        "id_room": 0
+        }
+    '
+
+
+curl -X PUT http://localhost:5000/api/drag-table/appointment/0 \
+    -H "Content-Type: application/json" \
+    -d '
+        {
+            "id": 6,
             "notes": "Routine checkup",
             "doctor": {
                 "id": 0,
@@ -48,15 +82,3 @@ curl -X POST http://localhost:5000/api/drag-table/get-rooms \
             "hotel_stay_start": "2024-08-01T09:00:00"
         }
     '
-
-
-curl -X PUT http://localhost:5000/api/event/0 \
-    -H "Content-Type: application/json" \
-    -d '{
-        "id_room": 0,
-        "id_patient": null,
-        "begin_date": "2024-06-13T21:00:00.000Z",
-        "end_date": "2024-06-22T21:00:00.000Z",
-        "notes": "",
-        "id_doctor": null
-    }'

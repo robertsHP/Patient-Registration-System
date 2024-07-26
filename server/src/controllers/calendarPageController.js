@@ -24,36 +24,42 @@ exports.getRooms = async (req, res) => {
     }
 };
 
-exports.insertAppointment = async (req, res) => {
-    const data = req.body; // Assuming JSON body with keys matching table columns
+exports.insertAppointmentAndOtherData = async (req, res) => {
+    var data = req.body; // Assuming JSON body with keys matching table columns
     try {
-        data = calendarPageServices.checkPatientAndDoctor(data);
+        if(data.id != undefined || data.id != null) {
+            delete data.id;
+        }
+        data = await calendarPageServices.convertObjects(data);
 
         const result = await globalServices.insertIntoTable(
             'drag_table_appointment', 
             data
         );
 
-        res.json({ id: result.rows[0].id, data });
+        res.json(result.rows[0].id);
     } catch (err) {
-        res.status(500).json({ error: 'Internal Server Error (insertIntoTable) - ' + err.message });
+        res.status(500).json({ error: 'Internal Server Error (insertAppointment) - ' + err.message });
     }
 };
 
-exports.updateAppointment = async (req, res) => {
+exports.updateAppointmentAndOtherData = async (req, res) => {
     const { id } = req.params;
-    const data = req.body; // Assuming JSON body with keys matching table columns
+    var data = req.body; // Assuming JSON body with keys matching table columns
+    
     try {
-        data = calendarPageServices.checkPatientAndDoctor(data);
-
-        const result = await globalServices.insertIntoTable(
+        if(data.id != undefined || data.id != null) {
+            delete data.id;
+        }
+        data = await calendarPageServices.convertObjects(data);
+        
+        const result = await globalServices.updateInTable(
             'drag_table_appointment', 
             id, 
             data
         );
-
-        res.json({ id: result.rows[0].id, data });
+        res.json(result.rows[0]);
     } catch (err) {
-        res.status(500).json({ error: 'Internal Server Error (insertIntoTable) - ' + err.message });
+        res.status(500).json({ error: 'Internal Server Error (updateAppointment) - ' + err.message });
     }
 };

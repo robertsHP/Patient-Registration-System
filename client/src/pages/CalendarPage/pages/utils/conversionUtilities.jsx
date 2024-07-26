@@ -10,31 +10,34 @@ const getDayIndex = (date, monthStart) => {
     return result;
 };
 
-export function convertAppointmentForLayoutSupport (event, date) {
-    var beginDate = new LVDate(event.begin_date);
-    var endDate = new LVDate(event.end_date);
+export function convertAppointmentForLayoutSupport (appointment, date) {
+    var beginDate = new LVDate(appointment.begin_date);
+    var endDate = new LVDate(appointment.end_date);
 
     return {
-        ...event,
+        ...appointment,
         begin_date: beginDate,
         end_date: endDate,
-        i: `event-${event.id}`,
-        x: getDayIndex(event.begin_date, date) + 8,
+        i: `appointment-${appointment.id}`,
+        x: getDayIndex(appointment.begin_date, date) + 8,
         y: 0,
-        w: getDayIndex(event.end_date, date) - getDayIndex(event.begin_date, date) + 1,
+        w: getDayIndex(appointment.end_date, date) - getDayIndex(appointment.begin_date, date) + 1,
         h: 1,
         extendsToPreviousMonth: false,
         extendsToNextMonth: false,
     };
 }
 
-export function convertAppointmentForSendingToDB (room, event) {
+export function convertAppointmentForSendingToDB (room, appointment) {
     return {
         id_room: room.id,
-        patient: event.patient,
-        begin_date: event.begin_date.toDateString(),
-        end_date: event.end_date.toDateString(),
-        notes: event.notes,
-        doctor: event.doctor,
+        patient: appointment.patient,
+        begin_date: appointment.begin_date.toDateString(),
+        end_date: appointment.end_date.toDateString(),
+        notes: appointment.notes,
+        doctor: appointment.doctor,
+        hotel_stay_start: appointment.hotel_stay_start,
+        hotel_stay_end: appointment.hotel_stay_end,
+        appointment_type: appointment.appointment_type
     };
 }

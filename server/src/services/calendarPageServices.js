@@ -117,28 +117,27 @@ exports.buildGetAppointmentQuery = (year, month, floorId, limit, offset) => {
     };
 }
 
-exports.checkPatientAndDoctor = async (data) => {
-    // Handling patient data
-    if (data.patient) {
-        if (data.patient.id === null) {
-            data.id_patient = null;
-        } else if (data.patient.id) {
-            // If patient id exists, update the patient record
-            const patientResult = await updateInTable('patient', data.patient.id, data.patient);
-            data.id_patient = patientResult.rows[0].id;
+exports.convertObjects = async (data) => {
+    // Helper function to update table and set ID
+    const updateRecord = async (table, obj, idField) => {
+        if (obj == null || obj.id == null) {
+            data[idField] = null;
+            delete data[table];
+        } else {
+            const result = await globalServices.updateInTable(table, obj.id, obj);
+            data[idField] = result.rows[0].id;
+            delete data[table];
         }
-    }
+    };
 
-    // Handling doctor data
-    if (data.doctor) {
-        if (data.doctor.id === null) {
-            data.id_doctor = null;
-        } else if (data.doctor.id) {
-            // If doctor id exists, update the doctor record
-            const doctorResult = await updateInTable('doctor', data.doctor.id, data.doctor);
-            data.id_doctor = doctorResult.rows[0].id;
-        }
-    }
+    // Update patient record
+    await updateRecord('patient', data.patient, 'id_patient');
+
+    // Update doctor record
+    await updateRecord('doctor', data.doctor, 'id_doctor');
+
+    // Update appointment type record
+    await updateRecord('appointment_type', data.appointment_type, 'id_appointment_type');
 
     return data;
 };

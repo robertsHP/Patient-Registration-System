@@ -179,9 +179,6 @@ export default class RoomRow extends Component {
                     appointment.w = newAppointmentLayout.w;
 
                     if (this.pageRefreshed && !this.state.isCreatingAppointment) {
-                        console.log("appointment");
-                        console.log(appointment);
-
                         var convertedAppointment = convertAppointmentForSendingToDB(room, appointment);
 
                         ApiService.put(`/api/drag-table/appointment/${appointment.id}`, convertedAppointment)
@@ -477,24 +474,24 @@ export default class RoomRow extends Component {
                 this.setState({
                     draggingAppointment: {
                         id: null,
+                        patient: {
+                            pat_name: null,
+                            phone_num: null,
+                            id: null,
+                        },
+                        end_date: endDate,
+                        begin_date: startDate,
                         notes: "",
                         doctor: {
                             doc_name: null,
                             id: null,
                         },
-                        patient: {
-                            pat_name: null,
-                            phone_num: null,
+                        hotel_stay_start: null,
+                        hotel_stay_end: null,
+                        appointment_type: {
                             id: null,
-                            patient_type: {
-                                pat_type: null,
-                                id: null,
-                            },
-                            hotel_stay_end: null,
-                            hotel_stay_start: null,
+                            type_name: null,
                         },
-                        end_date: endDate,
-                        begin_date: startDate,
                         i: 'appointment-temp',
                         x: x,
                         y: 0,
@@ -544,33 +541,39 @@ export default class RoomRow extends Component {
 
             if (inDateColumns && !overlapping) {
                 var tempDraggingAppointment = this.state.draggingAppointment;
-                var convertedAppointment = convertAppointmentForSendingToDB(this.state.room, this.state.draggingAppointment);
+                var convertedAppointment = convertAppointmentForSendingToDB(
+                    this.state.room, 
+                    this.state.draggingAppointment
+                );
+
+                console.log("POST");
+                console.log(convertedAppointment);
 
                 ApiService.post('/api/drag-table/appointment', convertedAppointment)
-                    .then((result) => {
-                        tempDraggingAppointment.id = result;
+                .then((result) => {
+                    tempDraggingAppointment.id = result;
 
-                        const newAppointment = {
-                            ...tempDraggingAppointment,
-                            i: `appointment-${result}`,
-                            x: Number(tempDraggingAppointment.x),
-                            y: Number(tempDraggingAppointment.y),
-                            w: Number(tempDraggingAppointment.w),
-                            h: 1,
-                            extendsToPreviousMonth: false,
-                            extendsToNextMonth: false,
-                        };
-                        this.setState((prevState) => ({
-                            room: {
-                                ...prevState.room,
-                                appointments: [...prevState.room.appointments, newAppointment],
-                            },
-                        }));
-                        this.refreshRow();
-                    })
-                    .catch((error) => {
-                        console.log(error);
-                    });
+                    const newAppointment = {
+                        ...tempDraggingAppointment,
+                        i: `appointment-${result}`,
+                        x: Number(tempDraggingAppointment.x),
+                        y: Number(tempDraggingAppointment.y),
+                        w: Number(tempDraggingAppointment.w),
+                        h: 1,
+                        extendsToPreviousMonth: false,
+                        extendsToNextMonth: false,
+                    };
+                    this.setState((prevState) => ({
+                        room: {
+                            ...prevState.room,
+                            appointments: [...prevState.room.appointments, newAppointment],
+                        },
+                    }));
+                    this.refreshRow();
+                })
+                .catch((error) => {
+                    console.log(error);
+                });
             }
             this.setState({
                 draggingAppointment: null,
