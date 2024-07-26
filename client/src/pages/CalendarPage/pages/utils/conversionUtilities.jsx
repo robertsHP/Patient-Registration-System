@@ -10,7 +10,7 @@ const getDayIndex = (date, monthStart) => {
     return result;
 };
 
-export function convertEventForLayoutSupport (event, date) {
+export function convertAppointmentForLayoutSupport (event, date) {
     var beginDate = new LVDate(event.begin_date);
     var endDate = new LVDate(event.end_date);
 
@@ -28,16 +28,13 @@ export function convertEventForLayoutSupport (event, date) {
     };
 }
 
-export function convertEventForSendingToDB (room, event) {
-    var doc_id = event.doctor.id == null ? null : event.doctor.id;
-    var patient_id = event.patient.id == null ? null : event.patient.id;
-
+export function convertAppointmentForSendingToDB (room, event) {
     return {
         id_room: room.id,
-        id_patient: patient_id,
+        patient: event.patient,
         begin_date: event.begin_date.toDateString(),
         end_date: event.end_date.toDateString(),
         notes: event.notes,
-        id_doctor: doc_id,
+        doctor: event.doctor,
     };
 }

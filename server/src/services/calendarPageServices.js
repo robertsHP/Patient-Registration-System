@@ -1,17 +1,17 @@
 const globalServices = require('./globalServices.js');
 
-const eventTableName = globalServices.sanitizeTableName('event');
+const dragAppointmentTableName = globalServices.sanitizeTableName('drag_table_appointment');
 const patientTableName = globalServices.sanitizeTableName('patient');
 const doctorTableName = globalServices.sanitizeTableName('doctor');
 const roomTableName = globalServices.sanitizeTableName('room');
 const floorTableName = globalServices.sanitizeTableName('floor');
-const patientTypeTableName = globalServices.sanitizeTableName('patient_type');
+const appointmentTypeTableName = globalServices.sanitizeTableName('appointment_type');
 
-function prepareGetEventClauses(year, month, floorId, params) {
+function prepareGetAppointmentClauses(year, month, floorId, params) {
     let yearAndMonthCond = '';
     let floorCond = '';
 
-    let eventConditions = [];
+    let appointmentConditions = [];
     let roomConditions = [];
     
     if (year !== null && month !== null) {
@@ -24,65 +24,65 @@ function prepareGetEventClauses(year, month, floorId, params) {
                 AND EXTRACT(MONTH FROM e.end_date AT TIME ZONE 'EET') = $${params.length + 2})
             )
         `;
-        eventConditions.push(yearAndMonthCond);
+        appointmentConditions.push(yearAndMonthCond);
         params.push(year, month);
     }
     
     if (floorId !== null) {
         floorCond = `f.id = $${params.length + 1}`;
-        eventConditions.push(floorCond);
+        appointmentConditions.push(floorCond);
         roomConditions.push(floorCond);
         params.push(floorId);
     }
     
-    const eventClause = eventConditions.length > 0
-        ? 'WHERE ' + eventConditions.join(' AND ')
+    const appointmentClause = appointmentConditions.length > 0
+        ? 'WHERE ' + appointmentConditions.join(' AND ')
         : '';
     const roomClause = roomConditions.length > 0
         ? 'WHERE ' + roomConditions.join(' AND ')
         : '';
 
-    return { eventClause, roomClause };
+    return { appointmentClause, roomClause };
 }
 
-exports.buildGetEventQuery = (year, month, floorId, limit, offset) => {
+exports.buildGetAppointmentQuery = (year, month, floorId, limit, offset) => {
     const params = [];
 
-    const { eventClause, roomClause } = prepareGetEventClauses(year, month, floorId, params);
+    const { appointmentClause, roomClause } = prepareGetAppointmentClauses(year, month, floorId, params);
 
     let query = `
-        WITH EventDetails AS (
+        WITH AppointmentDetails AS (
             SELECT
                 r.id,
                 jsonb_build_object(
                     'id', e.id,
-                    'begin_date', e.begin_date,
-                    'end_date', e.end_date,
-                    'notes', e.notes,
                     'patient', jsonb_build_object(
                         'id', p.id,
                         'pat_name', p.pat_name,
-                        'phone_num', p.phone_num,
-                        'hotel_stay_start', p.hotel_stay_start,
-                        'hotel_stay_end', p.hotel_stay_end,
-                        'patient_type', jsonb_build_object(
-                            'id', pt.id,
-                            'pat_type', pt.pat_type
-                        )
+                        'phone_num', p.phone_num
                     ),
+                    'begin_date', e.begin_date,
+                    'end_date', e.end_date,
+                    'notes', e.notes,
                     'doctor', jsonb_build_object(
                         'id', d.id,
                         'doc_name', d.doc_name
+                    ),
+                    'hotel_stay_start', e.hotel_stay_start,
+                    'hotel_stay_end', e.hotel_stay_end,
+                    'appointment_type', jsonb_build_object(
+                        'id', at.id,
+                        'type_name', at.type_name
                     )
-                ) AS event_data
+                ) AS appointment_data
             FROM 
-                ${eventTableName} AS e
-                LEFT JOIN ${patientTableName} AS p ON e.id_patient = p.id
-                LEFT JOIN ${doctorTableName} AS d ON e.id_doctor = d.id
-                LEFT JOIN ${roomTableName} AS r ON e.id_room = r.id
-                LEFT JOIN ${floorTableName} AS f ON r.id_floor = f.id
-                LEFT JOIN ${patientTypeTableName} AS pt ON p.id_pat_type = pt.id
-            ${eventClause}
+                ${dragAppointmentTableName} AS e
+                LEFT JOIN ${patientTableName} AS p          ON e.id_patient = p.id
+                LEFT JOIN ${doctorTableName} AS d           ON e.id_doctor = d.id
+                LEFT JOIN ${roomTableName} AS r             ON e.id_room = r.id
+                LEFT JOIN ${floorTableName} AS f            ON r.id_floor = f.id
+                LEFT JOIN ${appointmentTypeTableName} AS at ON e.id_appointment_type = at.id
+            ${appointmentClause}
         )
 
         SELECT 
@@ -90,10 +90,10 @@ exports.buildGetEventQuery = (year, month, floorId, limit, offset) => {
                 jsonb_build_object(
                     'id', r.id,
                     'room_num', r.room_num,
-                    'events', COALESCE(
+                    'appointments', COALESCE(
                         (
-                            SELECT jsonb_agg(event_data)
-                            FROM EventDetails ed
+                            SELECT jsonb_agg(appointment_data)
+                            FROM AppointmentDetails ed
                             WHERE ed.id = r.id
                         ), 
                         '[]'::jsonb
@@ -116,3 +116,29 @@ exports.buildGetEventQuery = (year, month, floorId, limit, offset) => {
         params
     };
 }
+
+exports.checkPatientAndDoctor = async (data) => {
+    // Handling patient data
+    if (data.patient) {
+        if (data.patient.id === null) {
+            data.id_patient = null;
+        } else if (data.patient.id) {
+            // If patient id exists, update the patient record
+            const patientResult = await updateInTable('patient', data.patient.id, data.patient);
+            data.id_patient = patientResult.rows[0].id;
+        }
+    }
+
+    // Handling doctor data
+    if (data.doctor) {
+        if (data.doctor.id === null) {
+            data.id_doctor = null;
+        } else if (data.doctor.id) {
+            // If doctor id exists, update the doctor record
+            const doctorResult = await updateInTable('doctor', data.doctor.id, data.doctor);
+            data.id_doctor = doctorResult.rows[0].id;
+        }
+    }
+
+    return data;
+};

@@ -3,8 +3,8 @@ import React, { useEffect, useState, useContext } from 'react';
 import ApiService from '../../../../services/ApiService';
 
 import {
-    convertEventForLayoutSupport,
-    convertEventForSendingToDB
+    convertAppointmentForLayoutSupport,
+    convertAppointmentForSendingToDB
 } from '../utils/conversionUtilities'
 
 export default function useDataFetch(floorID, tempDate) {
@@ -26,21 +26,24 @@ export default function useDataFetch(floorID, tempDate) {
         }
         const newRooms = curRooms.map((room) => ({
             ...room,
-            events: room.events.map(event => (
-                convertEventForLayoutSupport(event, date)
+            appointments: room.appointments.map(appointment => (
+                convertAppointmentForLayoutSupport(appointment, date)
             ))
         }));
         return newRooms;
     };
 
     const loadRooms = (tempDate) => {
-        const params = `?floorId=${floorID}&year=${tempDate.getFullYear()}&month=${tempDate.getMonth()}`;
-        ApiService.get(`/api/calendar-page/rooms${params}`)
+        const params = `floorId=${floorID}&year=${tempDate.getFullYear()}&month=${tempDate.getMonth()}`;
+        ApiService.get(`/api/drag-table/get-rooms?${params}`)
             .then(result => {
+                console.log(result);
+
                 const data = result.data[0].rooms;
                 const finalData = convertRoomDataToLayout(data);
 
                 console.log("GET ROOMS");
+                // console.log(finalData);
 
                 setRooms(finalData);
                 triggerFullDataUpdate();
@@ -60,34 +63,34 @@ export default function useDataFetch(floorID, tempDate) {
         triggerSingleDataUpdate();
     };
 
-    const getEventWithID = (roomID, eventID) => {
+    const getAppointmentWithID = (roomID, appointmentID) => {
         const room = getRoomWithID(roomID);
         if (!room) {
             return null;
         }
-        return room.events.find(event => event.id == eventID);
+        return room.appointments.find(appointment => appointment.id == appointmentID);
     };
 
-    const setEventWithID = (roomID, event) => {
+    const setAppointmentWithID = (roomID, appointment) => {
         const room = getRoomWithID(roomID);
         if (!room) {
             return;
         }
         setRoomWithID(roomID, {
             ...room,
-            events: room.events.map(e => e.id == id ? event : e)
+            appointments: room.appointments.map(e => e.id == id ? appointment : e)
         });
         triggerSingleDataUpdate();
     };
 
-    const removeEventWithID = (roomID, eventID) => {
+    const removeAppointmentWithID = (roomID, appointmentID) => {
         const room = getRoomWithID(roomID);
         if (!room) {
             return;
         }
         setRoomWithID(roomID, {
             ...room,
-            events: room.events.filter(e => e.id !== eventID)
+            appointments: room.appointments.filter(e => e.id !== appointmentID)
         });
         triggerSingleDataUpdate();
     };
@@ -106,6 +109,6 @@ export default function useDataFetch(floorID, tempDate) {
         loadRooms, refreshRooms,
 
         getRoomWithID, setRoomWithID,
-        getEventWithID, setEventWithID, removeEventWithID
+        getAppointmentWithID, setAppointmentWithID, removeAppointmentWithID
     };
 }

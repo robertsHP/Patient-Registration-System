@@ -2,9 +2,9 @@ import React, { useState } from 'react';
 
 import InputAndSelect from '../../../../../components/InputAndSelect';
 
-import './EventInputForm.css';
+import './AppointmentInputForm.css';
 
-export default function EventInputForm ({ selectedEvent, setSelectedEvent }) {
+export default function AppointmentInputForm ({ selectedAppointment, setSelectedAppointment }) {
     const [formData, setFormData] = useState({
         begin_date: '',
         end_date: '',
@@ -16,7 +16,7 @@ export default function EventInputForm ({ selectedEvent, setSelectedEvent }) {
     const [patients, setPatients] = useState(['John Doe', 'Jane Smith']);
 
     const handleCloseModal = () => {
-        setSelectedEvent(null);
+        setSelectedAppointment(null);
     };
 
     const handleInputChange = (e) => {
@@ -45,10 +45,12 @@ export default function EventInputForm ({ selectedEvent, setSelectedEvent }) {
     const handleDeleteOption = (option, type) => {
         if (type === 'doctor') {
             setDoctors(doctors.filter(doc => doc !== option));
-            if (formData.doc_name === option) setFormData({ ...formData, doc_name: '' });
+            if (formData.doc_name === option) 
+                setFormData({ ...formData, doc_name: '' });
         } else if (type === 'patient') {
             setPatients(patients.filter(pat => pat !== option));
-            if (formData.pat_name === option) setFormData({ ...formData, pat_name: '' });
+            if (formData.pat_name === option) 
+                setFormData({ ...formData, pat_name: '' });
         }
     };
 
@@ -60,7 +62,7 @@ export default function EventInputForm ({ selectedEvent, setSelectedEvent }) {
         console.log('Delete function called');
     };
 
-    // console.log(selectedEvent);
+    // console.log(selectedAppointment);
 
     return (
         <div className="window-overlay">

@@ -23,17 +23,31 @@ Ja ir:
         Tad ieslēdz postgresql serveri
 
 CURL:
-curl -X POST http://localhost:5000/api/event \
+curl -X POST http://localhost:5000/api/drag-table/get-rooms \
     -H "Content-Type: application/json" \
-    -d '{
-        "id": null,
-        "id_room": 0,
-        "id_patient": null,
-        "begin_date": "2024-06-13T21:00:00.000Z",
-        "end_date": "2024-06-22T21:00:00.000Z",
-        "notes": "",
-        "id_doctor": null
-    }'
+    -d '
+        {
+            "id": 0,
+            "notes": "Routine checkup",
+            "doctor": {
+                "id": 0,
+                "doc_name": "Dr. Alice Walker"
+            },
+            "patient": {
+                "id": 1,
+                "pat_name": "Jane Smith",
+                "phone_num": "234-567-8901"
+            },
+            "end_date": "2024-08-05T11:00:00",
+            "begin_date": "2024-08-01T10:00:00",
+            "hotel_stay_end": "2024-08-01T12:00:00",
+            "appointment_type": {
+                "id": 0,
+                "type_name": "AAA"
+            },
+            "hotel_stay_start": "2024-08-01T09:00:00"
+        }
+    '
 
 
 curl -X PUT http://localhost:5000/api/event/0 \

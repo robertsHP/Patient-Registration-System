@@ -1,5 +1,5 @@
 
-.event-name {
+.appointment-name {
     user-select: none; /* Disable text selection */
     -webkit-user-select: none; /* Safari */
     -moz-user-select: none; /* Firefox */

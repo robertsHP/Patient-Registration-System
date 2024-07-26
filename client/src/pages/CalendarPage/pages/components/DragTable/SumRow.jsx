@@ -4,29 +4,25 @@ import GridLayout from 'react-grid-layout';
 
 import LVDate from '../../../../../models/LVDate.jsx';
 
-import { EventTableContext } from '../../contexts/EventTableContext.jsx';
-
 import 'react-grid-layout/css/styles.css';
 import 'react-resizable/css/styles.css';
 
 import './SumRow.css';
 
 export default function SumRow({ data, config }) {
-    const { sumRowEffectTrigger } = useContext(EventTableContext);
-
     const [dateSums, setDateSums] = useState([]);
     const [totalSum, setTotalSum] = useState(0);
 
-    // Helper function to check if an event occurs on a specific date
-    const isEventOnDate = (event, date) => {
-        const eventStart = event.begin_date;
-        const eventEnd = event.end_date;
+    // Helper function to check if an appointment occurs on a specific date
+    const isAppointmentOnDate = (appointment, date) => {
+        const appointmentStart = appointment.begin_date;
+        const appointmentEnd = appointment.end_date;
 
         const dateObj = date.getObject();
-        const eventStartDateObj = eventStart.getObject();
-        const eventEndDateObj = eventEnd.getObject();
+        const appointmentStartDateObj = appointmentStart.getObject();
+        const appointmentEndDateObj = appointmentEnd.getObject();
 
-        return dateObj >= eventStartDateObj && dateObj <= eventEndDateObj;
+        return dateObj >= appointmentStartDateObj && dateObj <= appointmentEndDateObj;
     };
 
     useEffect(() => {
@@ -42,8 +38,8 @@ export default function SumRow({ data, config }) {
                 const date = new LVDate(year, month, dateItem.num);
     
                 return Object.values(data.rooms).reduce((sum, room) => {
-                    return sum + room.events.reduce((eventSum, event) => {
-                        return eventSum + isEventOnDate(event, date);
+                    return sum + room.appointments.reduce((appointmentSum, appointment) => {
+                        return appointmentSum + isAppointmentOnDate(appointment, date);
                     }, 0);
                 }, 0);
             });

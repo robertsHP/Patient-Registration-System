@@ -65,7 +65,9 @@ export default function InputAndSelect ({ options, value, onChange, onAddOption,
                         {options.map((option) => (
                             <li key={option} className="custom-select-option" onClick={() => handleSelectOption(option)}>
                                 {option}
-                                <button className="delete-option-button" onClick={(e) => handleDeleteOption(option, e)}>X</button>
+                                <button className="delete-option-button" onClick={(e) => handleDeleteOption(option, e)}>
+                                    X
+                                </button>
                             </li>
                         ))}
                     </ul>

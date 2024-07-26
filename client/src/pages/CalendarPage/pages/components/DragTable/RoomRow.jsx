@@ -1,22 +1,18 @@
 import React, { Component, createRef } from 'react';
 import GridLayout from 'react-grid-layout';
 
-import { convertEventForSendingToDB } from '../../utils/conversionUtilities.jsx';
+import { convertAppointmentForSendingToDB } from '../../utils/conversionUtilities.jsx';
 import { getDaysInMonth } from '../../utils/monthUtilities.jsx';
 
 import ApiService from '../../../../../services/ApiService.js';
 import LVDate from '../../../../../models/LVDate.jsx';
 
-import { EventTableContext } from '../../contexts/EventTableContext.jsx';
-
 import 'react-grid-layout/css/styles.css';
 import 'react-resizable/css/styles.css';
 
-import './EventRow.css';
+import './RoomRow.css';
 
-export default class EventRow extends Component {
-    static contextType = EventTableContext;
-
+export default class RoomRow extends Component {
     constructor(props) {
         super(props);
 
@@ -26,8 +22,8 @@ export default class EventRow extends Component {
             gridItemDragged: false,
             gridItemResized: false,
             room: props.data.getRoomWithID(props.roomID),
-            draggingEvent: null,
-            isCreatingEvent: false,
+            draggingAppointment: null,
+            isCreatingAppointment: false,
             lastClickTime: 0,
         };
 
@@ -42,7 +38,7 @@ export default class EventRow extends Component {
         this.onMouseDown = this.onMouseDown.bind(this);
         this.onMouseMove = this.onMouseMove.bind(this);
         this.onMouseUp = this.onMouseUp.bind(this);
-        this.handleEventDoubleClick = this.handleEventDoubleClick.bind(this);
+        this.handleAppointmentDoubleClick = this.handleAppointmentDoubleClick.bind(this);
     }
 
     componentDidUpdate(prevProps) {
@@ -61,40 +57,40 @@ export default class EventRow extends Component {
         }));
     }
 
-    isValidEventPosition(layoutItem) {
+    isValidAppointmentPosition(layoutItem) {
         const dateColumnsStart = this.props.config.getDateColumnsStart();
         const dateColumnsEnd = this.props.config.getDateColumnsEnd();
 
-        // Ensure the event is within date columns
+        // Ensure the appointment is within date columns
         return (
             layoutItem.x >= dateColumnsStart &&
             (layoutItem.x + layoutItem.w) <= dateColumnsEnd
         );
     }
 
-    isOverlapping(newLayout, events, currentEventId) {
-        const overlapping = (event1, event2) => {
+    isOverlapping(newLayout, appointments, currentAppointmentId) {
+        const overlapping = (appointment1, appointment2) => {
             // Check if y-coordinates are the same
-            if (event1.y !== event2.y) {
+            if (appointment1.y !== appointment2.y) {
                 return false;
             }
 
-            // Check if both the starts and ends of the events overlap
-            const start1 = event1.x;
-            const end1 = event1.x + event1.w;
-            const start2 = event2.x;
-            const end2 = event2.x + event2.w;
+            // Check if both the starts and ends overlap
+            const start1 = appointment1.x;
+            const end1 = appointment1.x + appointment1.w;
+            const start2 = appointment2.x;
+            const end2 = appointment2.x + appointment2.w;
 
-            // Check for overlap: either event2 starts within event1 or event1 starts within event2
+            // Check for overlap: either appointment2 starts within appointment1 or appointment1 starts within appointment2
             const startsOverlap = (start1 >= start2 && start1 <= end2) || (start2 >= start1 && start2 <= end1);
-            // Check for overlap: either event2 ends within event1 or event1 ends within event2
+            // Check for overlap: either appointment2 ends within appointment1 or appointment1 ends within appointment2
             const endsOverlap = (end1 >= start2 && end1 <= end2) || (end2 >= start1 && end2 <= end1);
 
             return startsOverlap && endsOverlap;
         };
 
-        return events.some(
-            (event) => event.i !== currentEventId && overlapping(event, newLayout)
+        return appointments.some(
+            (appointment) => appointment.i !== currentAppointmentId && overlapping(appointment, newLayout)
         );
     }
 
@@ -145,14 +141,14 @@ export default class EventRow extends Component {
     getPositionBasedOnDate (tempDate) {
         var finalPos = null;
 
-        if (tempDate.getMonth() == data.date.getMonth()) {
+        if (tempDate.getMonth() == this.props.data.date.getMonth()) {
             this.props.config.dateLayout.forEach((date) => {
                 if (tempDate.getDate() == date.num) {
                     finalPos = date.x;
                 }
             });
         } else {
-            if (tempDate.getMonth() < data.date.getMonth()) {
+            if (tempDate.getMonth() < this.props.data.date.getMonth()) {
                 finalPos = this.props.config.getDateColumnsStart();
             } else {
                 finalPos = this.props.config.getDateColumnsEnd();
@@ -165,35 +161,37 @@ export default class EventRow extends Component {
     updateLayout(newLayout) {
         console.log("!TRIGGER CHANGE");
         const room = this.state.room;
-        room.events.forEach((event) => {
-            const newEventLayout = newLayout.find((l) => l.i === String(event.i));
+        room.appointments.forEach((appointment) => {
+            const newAppointmentLayout = newLayout.find((l) => l.i === String(appointment.i));
 
-            if (newEventLayout) {
-                const validPosition = this.isValidEventPosition(newEventLayout);
-                const notOverlapping = !this.isOverlapping(newEventLayout, room.events, event.i);
+            if (newAppointmentLayout) {
+                const validPosition = this.isValidAppointmentPosition(newAppointmentLayout);
+                const notOverlapping = !this.isOverlapping(newAppointmentLayout, room.appointments, appointment.i);
 
                 if (validPosition && notOverlapping) {
-                    var startDatePos = newEventLayout.x;
-                    var endDatePos = newEventLayout.x + newEventLayout.w - 1;
+                    var startDatePos = newAppointmentLayout.x;
+                    var endDatePos = newAppointmentLayout.x + newAppointmentLayout.w - 1;
 
-                    event.begin_date = this.getDateBasedOnLayoutPosition(startDatePos);
-                    event.end_date = this.getDateBasedOnLayoutPosition(endDatePos);
+                    appointment.begin_date = this.getDateBasedOnLayoutPosition(startDatePos);
+                    appointment.end_date = this.getDateBasedOnLayoutPosition(endDatePos);
 
-                    event.x = newEventLayout.x;
-                    event.w = newEventLayout.w;
+                    appointment.x = newAppointmentLayout.x;
+                    appointment.w = newAppointmentLayout.w;
 
-                    if (this.pageRefreshed && !this.state.isCreatingEvent) {
-                        var convertedEvent = convertEventForSendingToDB(room, event);
+                    if (this.pageRefreshed && !this.state.isCreatingAppointment) {
+                        console.log("appointment");
+                        console.log(appointment);
 
-                        console.log("UPDATE");
+                        var convertedAppointment = convertAppointmentForSendingToDB(room, appointment);
 
-                        ApiService.put(`/api/event/${event.id}`, convertedEvent).catch((error) => {
+                        ApiService.put(`/api/drag-table/appointment/${appointment.id}`, convertedAppointment)
+                        .catch((error) => {
                             console.log(error);
                         });
                     }
                 }
             }
-            return event;
+            return appointment;
         });
         this.props.data.setRoomWithID(room.id, room);
     }
@@ -201,12 +199,12 @@ export default class EventRow extends Component {
     onLayoutChange(newLayout) {
         console.log("ON LAYOUT CHANGE");
 
-        console.log("gridItemDragged");
-        console.log(this.state.gridItemDragged);
-        console.log("gridItemResized");
-        console.log(this.state.gridItemResized);
-        console.log("manualRefresh");
-        console.log(this.state.manualRefresh);
+        // console.log("gridItemDragged");
+        // console.log(this.state.gridItemDragged);
+        // console.log("gridItemResized");
+        // console.log(this.state.gridItemResized);
+        // console.log("manualRefresh");
+        // console.log(this.state.manualRefresh);
 
         if (this.state.gridItemDragged || this.state.gridItemResized || this.state.manualRefresh) {
             if (this.state.gridItemDragged) {
@@ -233,9 +231,9 @@ export default class EventRow extends Component {
     };
 
     onDragStop(layout, oldItem, newItem, placeholder, e, element) {
-        const updatedEvents = this.state.room.events.map((event) => {
-            if (event.i === newItem.i) {
-                var prevEvent = event;
+        const updatedAppointments = this.state.room.appointments.map((appointment) => {
+            if (appointment.i === newItem.i) {
+                var prevAppointment = appointment;
 
                 var newStartDatePos = newItem.x;
                 var newEndDatePos = newItem.x + newItem.w - 1;
@@ -283,7 +281,7 @@ export default class EventRow extends Component {
                         check which side gets loss and which gets gains
 
                         adjust start and end accordingly
-                        set event start as DateColStart and end as DateColEnd
+                        set appointment start as DateColStart and end as DateColEnd
                         set extToPrev and extToNext
                     } else {
                         if (extToPrev && startPos < dateColStart) {
@@ -307,9 +305,9 @@ export default class EventRow extends Component {
                         
                 */
 
-                if (event.extendsToPreviousMonth && event.extendsToNextMonth) {
-                    // var prevBeginDate = prevEvent.begin_date.getDate();
-                    // var prevEndDate = prevEvent.end_date.getDate();
+                if (appointment.extendsToPreviousMonth && appointment.extendsToNextMonth) {
+                    // var prevBeginDate = prevAppointment.begin_date.getDate();
+                    // var prevEndDate = prevAppointment.end_date.getDate();
 
                     // var newStartDate = this.getPositionBasedOnDate(newStartDatePos);
                     // var newEndDate = this.getPositionBasedOnDate(newEndDatePos);
@@ -321,10 +319,10 @@ export default class EventRow extends Component {
                         
                     // );
                 } else {
-                    if (event.extendsToPreviousMonth && newStartDatePos < dateColumnsStart) {
+                    if (appointment.extendsToPreviousMonth && newStartDatePos < dateColumnsStart) {
                         startLoss = dateColumnsStart - newStartDatePos;
 
-                        var prevBeginDate = prevEvent.begin_date.getDate();
+                        var prevBeginDate = prevAppointment.begin_date.getDate();
 
                         finalExtendsToPreviousMonth = true;
                         finalBeginDate = new LVDate(
@@ -333,8 +331,8 @@ export default class EventRow extends Component {
                             prevBeginDate - startLoss
                         );
                         newStartDatePos = this.getPositionBasedOnDate(finalBeginDate);
-                    } else if (event.extendsToPreviousMonth && newStartDatePos >= dateColumnsStart) {
-                        startGains = daysCountInPrevMonth - event.begin_date.getDate();
+                    } else if (appointment.extendsToPreviousMonth && newStartDatePos >= dateColumnsStart) {
+                        startGains = daysCountInPrevMonth - appointment.begin_date.getDate();
 
                         var date = (newStartDatePos - dateColumnsStart) - startGains + 1;
 
@@ -357,9 +355,9 @@ export default class EventRow extends Component {
                         newStartDatePos = this.getPositionBasedOnDate(finalBeginDate);
                     }
 
-                    if (event.extendsToNextMonth && newEndDatePos > dateColumnsEndAsDate) {
+                    if (appointment.extendsToNextMonth && newEndDatePos > dateColumnsEndAsDate) {
 
-                    } else if (event.extendsToNextMonth && newEndDatePos <= dateColumnsEndAsDate) {
+                    } else if (appointment.extendsToNextMonth && newEndDatePos <= dateColumnsEndAsDate) {
                         
                     } else if (newEndDatePos > dateColumnsEnd) {
                         endLoss = dateColumnsEnd - newEndDatePos;
@@ -406,34 +404,34 @@ export default class EventRow extends Component {
                 // console.log("endLoss");
                 // console.log(endLoss);
 
-                event.x = newStartDatePos;
-                event.w = newEndDatePos - newStartDatePos + 1;
+                appointment.x = newStartDatePos;
+                appointment.w = newEndDatePos - newStartDatePos + 1;
 
-                event.extendsToPreviousMonth = finalExtendsToPreviousMonth;
-                event.begin_date = finalBeginDate;
-                event.extendsToNextMonth = finalExtendsToNextMonth;
-                event.end_date = finalEndDate;
+                appointment.extendsToPreviousMonth = finalExtendsToPreviousMonth;
+                appointment.begin_date = finalBeginDate;
+                appointment.extendsToNextMonth = finalExtendsToNextMonth;
+                appointment.end_date = finalEndDate;
 
-                console.log("startLoss");
-                console.log(startLoss);
-                console.log("endLoss");
-                console.log(endLoss);
+                // console.log("startLoss");
+                // console.log(startLoss);
+                // console.log("endLoss");
+                // console.log(endLoss);
 
-                console.log("event.x");
-                console.log(event.x);
-                console.log("event.w");
-                console.log(event.w);
+                // console.log("appointment.x");
+                // console.log(appointment.x);
+                // console.log("appointment.w");
+                // console.log(appointment.w);
 
-                console.log("event.begin_date");
-                console.log(event.begin_date.getObject());
-                console.log("event.end_date");
-                console.log(event.end_date.getObject());
+                // console.log("appointment.begin_date");
+                // console.log(appointment.begin_date.getObject());
+                // console.log("appointment.end_date");
+                // console.log(appointment.end_date.getObject());
             }
-            return event;
+            return appointment;
         });
 
         this.setState((prevState) => ({
-            room: { ...prevState.room, events: updatedEvents },
+            room: { ...prevState.room, appointments: updatedAppointments },
             gridItemDragged: true,
             manualRefresh: false,
         }));
@@ -448,20 +446,20 @@ export default class EventRow extends Component {
     onMouseDown(e) {
         if (e.target.closest('.react-resizable-handle')) {
             return; // Ignore mousedown on resize handles
-        } else if (e.target.closest('.event')) {
-            const clickedEventElement = e.target.closest('.event');
+        } else if (e.target.closest('.appointment')) {
+            const clickedAppointmentElement = e.target.closest('.appointment');
 
-            if (clickedEventElement) {
+            if (clickedAppointmentElement) {
                 const now = Date.now();
                 const doubleClickThreshold = 300;
 
                 if (now - this.state.lastClickTime < doubleClickThreshold) {
-                    const reactFiberKey = Object.keys(clickedEventElement).find((key) => key.startsWith('__reactFiber$'));
-                    const objEl = clickedEventElement[reactFiberKey];
-                    const eventKey = objEl.key.replace('event-', '');
-                    const event = this.props.data.getEventWithID(this.props.roomID, eventKey);
+                    const reactFiberKey = Object.keys(clickedAppointmentElement).find((key) => key.startsWith('__reactFiber$'));
+                    const objEl = clickedAppointmentElement[reactFiberKey];
+                    const appointmentKey = objEl.key.replace('appointment-', '');
+                    const appointment = this.props.data.getAppointmentWithID(this.props.roomID, appointmentKey);
 
-                    this.handleEventDoubleClick(event);
+                    this.handleAppointmentDoubleClick(appointment);
                 } else {
                     // Handle single-click
                     this.setState({ lastClickTime: now });
@@ -477,7 +475,7 @@ export default class EventRow extends Component {
                 var endDate = this.getDateBasedOnLayoutPosition(x + 1);
 
                 this.setState({
-                    draggingEvent: {
+                    draggingAppointment: {
                         id: null,
                         notes: "",
                         doctor: {
@@ -497,7 +495,7 @@ export default class EventRow extends Component {
                         },
                         end_date: endDate,
                         begin_date: startDate,
-                        i: 'event-temp',
+                        i: 'appointment-temp',
                         x: x,
                         y: 0,
                         w: 1,
@@ -506,7 +504,7 @@ export default class EventRow extends Component {
                         extendsToPreviousMonth: false,
                         extendsToNextMonth: false,
                     },
-                    isCreatingEvent: true,
+                    isCreatingAppointment: true,
                 });
             }
             this.refreshRow();
@@ -514,20 +512,20 @@ export default class EventRow extends Component {
     }
 
     onMouseMove(e) {
-        if (this.state.isCreatingEvent && this.state.draggingEvent) {
+        if (this.state.isCreatingAppointment && this.state.draggingAppointment) {
             const gridRect = this.gridRef.current.getBoundingClientRect();
             const colWidth = this.props.config.width / this.props.config.cols;
             const currentX = Math.floor((e.clientX - gridRect.left) / colWidth);
-            const newWidth = Math.abs(currentX - this.state.draggingEvent.startX) + 1;
-            const newX = Math.min(this.state.draggingEvent.startX, currentX);
+            const newWidth = Math.abs(currentX - this.state.draggingAppointment.startX) + 1;
+            const newX = Math.min(this.state.draggingAppointment.startX, currentX);
 
             if (this.isInDateColumns(newX, newWidth)) {
                 var startDate = this.getDateBasedOnLayoutPosition(newX);
                 var endDate = this.getDateBasedOnLayoutPosition(newX + newWidth);
 
                 this.setState((prevState) => ({
-                    draggingEvent: {
-                        ...prevState.draggingEvent,
+                    draggingAppointment: {
+                        ...prevState.draggingAppointment,
                         end_date: endDate,
                         begin_date: startDate,
                         x: newX,
@@ -540,24 +538,24 @@ export default class EventRow extends Component {
     }
 
     onMouseUp() {
-        if (this.state.isCreatingEvent && this.state.draggingEvent) {
-            var inDateColumns = this.isInDateColumns(this.state.draggingEvent.x, this.state.draggingEvent.w);
-            var overlapping = this.isOverlapping(this.state.draggingEvent, this.state.room.events, 'event-temp');
+        if (this.state.isCreatingAppointment && this.state.draggingAppointment) {
+            var inDateColumns = this.isInDateColumns(this.state.draggingAppointment.x, this.state.draggingAppointment.w);
+            var overlapping = this.isOverlapping(this.state.draggingAppointment, this.state.room.appointments, 'appointment-temp');
 
             if (inDateColumns && !overlapping) {
-                var tempDraggingEvent = this.state.draggingEvent;
-                var convertedEvent = convertEventForSendingToDB(this.state.room, this.state.draggingEvent);
+                var tempDraggingAppointment = this.state.draggingAppointment;
+                var convertedAppointment = convertAppointmentForSendingToDB(this.state.room, this.state.draggingAppointment);
 
-                ApiService.post('/api/event', convertedEvent)
+                ApiService.post('/api/drag-table/appointment', convertedAppointment)
                     .then((result) => {
-                        tempDraggingEvent.id = result;
+                        tempDraggingAppointment.id = result;
 
-                        const newEvent = {
-                            ...tempDraggingEvent,
-                            i: `event-${result}`,
-                            x: Number(tempDraggingEvent.x),
-                            y: Number(tempDraggingEvent.y),
-                            w: Number(tempDraggingEvent.w),
+                        const newAppointment = {
+                            ...tempDraggingAppointment,
+                            i: `appointment-${result}`,
+                            x: Number(tempDraggingAppointment.x),
+                            y: Number(tempDraggingAppointment.y),
+                            w: Number(tempDraggingAppointment.w),
                             h: 1,
                             extendsToPreviousMonth: false,
                             extendsToNextMonth: false,
@@ -565,7 +563,7 @@ export default class EventRow extends Component {
                         this.setState((prevState) => ({
                             room: {
                                 ...prevState.room,
-                                events: [...prevState.room.events, newEvent],
+                                appointments: [...prevState.room.appointments, newAppointment],
                             },
                         }));
                         this.refreshRow();
@@ -575,19 +573,19 @@ export default class EventRow extends Component {
                     });
             }
             this.setState({
-                draggingEvent: null,
-                isCreatingEvent: false,
+                draggingAppointment: null,
+                isCreatingAppointment: false,
             });
         }
     }
 
-    handleEventDoubleClick(event) {
-        this.props.setSelectedEvent(event);
+    handleAppointmentDoubleClick(appointment) {
+        this.props.setSelectedAppointment(appointment);
     }
 
     render() {
         const { data, roomID, config } = this.props;
-        const { room, draggingEvent, refresh } = this.state;
+        const { room, draggingAppointment, refresh } = this.state;
         const lastColumnStart = config.columnWidths.slice(0, config.columnWidths.length - 2).reduce((acc, width) => acc + width, 0);
 
         return (
@@ -598,7 +596,7 @@ export default class EventRow extends Component {
                 onMouseUp={this.onMouseUp}
             >
                 <GridLayout
-                    className={`event-row-${roomID}`}
+                    className={`room-row-${roomID}`}
                     layout={[
                         {
                             i: `room-input-${roomID}`,
@@ -616,20 +614,20 @@ export default class EventRow extends Component {
                             h: 1,
                             static: true,
                         },
-                        ...room.events.map((event) => ({
-                            ...event,
-                            i: String(event.i),
+                        ...room.appointments.map((appointment) => ({
+                            ...appointment,
+                            i: String(appointment.i),
                             h: 1,
-                            x: Math.min(Math.max(event.x, config.columnWidths[0] + config.columnWidths[1]), lastColumnStart - event.w),
+                            x: Math.min(Math.max(appointment.x, config.columnWidths[0] + config.columnWidths[1]), lastColumnStart - appointment.w),
                         })),
-                        ...(draggingEvent
+                        ...(draggingAppointment
                             ? [
                                   {
-                                      ...draggingEvent,
+                                      ...draggingAppointment,
                                       h: 1,
                                       x: Math.min(
-                                          Math.max(draggingEvent.x, config.columnWidths[0] + config.columnWidths[1]),
-                                          lastColumnStart - draggingEvent.w
+                                          Math.max(draggingAppointment.x, config.columnWidths[0] + config.columnWidths[1]),
+                                          lastColumnStart - draggingAppointment.w
                                       ),
                                   },
                               ]
@@ -661,7 +659,7 @@ export default class EventRow extends Component {
                     onResizeStop={this.onResizeStop}
                     isDraggable
                     isResizable
-                    draggableHandle=".event"
+                    draggableHandle=".appointment"
                     resizeHandles={['e', 'w']}
                     compactType={null}
                     // preventCollision={true}
@@ -672,18 +670,18 @@ export default class EventRow extends Component {
                     </div>
 
                     <div key={`name-input-${roomID}`} className="grid-cell">
-                        <input type="text" defaultValue={room.events[0]?.patient.pat_name} style={{ width: '100%' }} />
+                        <input type="text" defaultValue={room.appointments[0]?.patient.pat_name} style={{ width: '100%' }} />
                     </div>
 
-                    {room.events.map((event) => (
-                        <div className="event" key={event.i}>
-                            <div className="event-name no-select">{event.i}</div>
-                            {event.extendsToPreviousMonth && <div className="extends-previous">...</div>}
-                            {event.extendsToNextMonth && <div className="extends-next">...</div>}
+                    {room.appointments.map((appointment) => (
+                        <div className="appointment" key={appointment.i}>
+                            <div className="appointment-name no-select">{appointment.i}</div>
+                            {appointment.extendsToPreviousMonth && <div className="extends-previous">...</div>}
+                            {appointment.extendsToNextMonth && <div className="extends-next">...</div>}
                         </div>
                     ))}
 
-                    {draggingEvent && <div className="event" key={draggingEvent.i}></div>}
+                    {draggingAppointment && <div className="appointment" key={draggingAppointment.i}></div>}
 
                     <div key="sum-value" className="grid-cell">
                         1

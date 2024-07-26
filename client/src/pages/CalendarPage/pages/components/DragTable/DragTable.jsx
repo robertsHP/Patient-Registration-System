@@ -1,26 +1,25 @@
 import React, { useState, useEffect, useContext } from 'react';
 
-import GridLayout from 'react-grid-layout';
-
 import useTableConfigurations from '../../hooks/useTableConfigurations.jsx';
 import usePageRefresh from '../../../../../hooks/usePageRefresh.jsx';
 
 import GridUI from './GridUI.jsx';
 import ColumnRow from './ColumnRow.jsx';
-import EventRow from './EventRow.jsx';
+import RoomRow from './RoomRow.jsx';
 import SumRow from './SumRow.jsx';
-import EventInputForm from './EventInputForm.jsx';
+import AppointmentInputForm from './AppointmentInputForm.jsx';
 
-import { EventTableProvider, EventTableContext } from '../../contexts/EventTableContext.jsx';
+// import { EventTableProvider, EventTableContext } from '../../contexts/EventTableContext.jsx';
 
 import 'react-grid-layout/css/styles.css';
 import 'react-resizable/css/styles.css';
 
-import './EventTable.css';
+import './DragTable.css';
 
 function DragTableContent ({ data }) {
     const config = useTableConfigurations(data.date);
-    const [selectedEvent, setSelectedEvent] = useState(null);
+    const [selectedAppointment, setSelectedAppointment] = useState(null);
+    const [inputFormData, setInputFormData] = useState(null);
 
     const pageRefreshed = usePageRefresh();
 
@@ -39,12 +38,16 @@ function DragTableContent ({ data }) {
                                 className="grid-cell" 
                                 style={{ gridColumn: `span ${config.cols}` }}
                             >
-                                <EventRow
+                                <RoomRow
                                     data={data}
                                     roomID={room.id}
                                     config={config}
-                                    selectedEvent={selectedEvent}
-                                    setSelectedEvent={setSelectedEvent}
+                                    selectedAppointment={selectedAppointment}
+                                    setSelectedAppointment={setSelectedAppointment}
+
+                                    inputFormData={inputFormData}
+                                    setInputFormData={setInputFormData}
+
                                     pageRefreshed={pageRefreshed}
                                 />
                             </div>
@@ -53,10 +56,10 @@ function DragTableContent ({ data }) {
                 )
             }
             <SumRow data={data} config={config} />
-            {selectedEvent && 
-                <EventInputForm 
-                    selectedEvent={selectedEvent} 
-                    setSelectedEvent={setSelectedEvent} 
+            {selectedAppointment && 
+                <AppointmentInputForm 
+                    selectedAppointment={selectedAppointment} 
+                    setSelectedAppointment={setSelectedAppointment} 
                 />
             }
         </div>
@@ -65,10 +68,10 @@ function DragTableContent ({ data }) {
 
 export default function DragTable ({data}) {
     return (
-        <EventTableProvider>
+        // <EventTableProvider>
             <DragTableContent 
                 data={data}
             />
-        </EventTableProvider>
+        // </EventTableProvider>
     );
 }

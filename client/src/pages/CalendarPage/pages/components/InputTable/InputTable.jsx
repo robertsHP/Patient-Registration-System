@@ -4,7 +4,7 @@ import DayTable from './DayTable.jsx';
 
 import { getDaysInMonth, getMonthName, getDayName } from '../../utils/monthUtilities.jsx';
 
-import './GridTableContainer.css'; // Ensure to import the CSS file
+import './InputTable.css';
 
 export default function GridTableContainer({ year, month }) {
     const daysInMonth = getDaysInMonth(year, month);

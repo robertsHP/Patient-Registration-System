@@ -3,8 +3,11 @@ const controller = require('../controllers/calendarPageController');
 
 const router = express.Router();
 
-///api/calendar-page/rooms?floorId=1
-///api/calendar-page/rooms?floorId=1&year=2024&month=6
-router.get('/calendar-page/rooms', controller.getEvents);
+///api/drag-table/get-rooms?floorId=1
+///api/drag-table/get-rooms?floorId=1&year=2024&month=6
+router.get('/drag-table/get-rooms', controller.getRooms);
+router.post('/drag-table/appointment', controller.insertAppointment);
+router.put('/drag-table/appointment/:id', controller.updateAppointment);
+// router.delete('/drag-table/appointment/:id', controller.deleteFromTable);
 
 module.exports = router;

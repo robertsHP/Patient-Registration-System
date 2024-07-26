@@ -1,7 +1,5 @@
 import React, { useState, useContext, useEffect } from 'react';
 
-import { EventTableContext } from '../../contexts/EventTableContext.jsx';
-
 import LVDate from '../../../../../models/LVDate';
 
 import './GridUI.css';
