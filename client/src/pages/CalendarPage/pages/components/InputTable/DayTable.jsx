@@ -52,7 +52,7 @@ const generateLayout = (rows, colCount) => {
 };
 
 export default function DayTable({ monthName, dayName, dayNumber }) {
-    const columns = ["Time", "Name and surname", "Phone number", "Notes", "Doctor", ""]; // Add an empty column for the button
+    const columns = ["Laiks", "Vārds un uzvārds", "Telefona numurs", "Piezīmes", "Kas pieņēma", ""];
     const [rows, setRows] = useState([{}, {}, {}]);
 
     const layout = generateLayout(rows, columns.length);
@@ -97,9 +97,9 @@ export default function DayTable({ monthName, dayName, dayNumber }) {
                         </div>
                     ))
                 )}
-                <div key="add-button" className="grid-item add-button" onClick={handleAddRow}>
+                <button key="add-button" className="grid-button add-button" onClick={handleAddRow}>
                     Add Row
-                </div>
+                </button>
             </GridLayout>
         </div>
     );

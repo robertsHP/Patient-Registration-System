@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 
 import useDataFetch from './hooks/useDataFetch.jsx';
 
-import EventTable from './components/EventTable/EventTable.jsx';
+import DragTable from './components/DragTable/DragTable.jsx';
 
 import LVDate from '../../../models/LVDate.jsx';
 
@@ -13,7 +13,7 @@ export default function BedsPage () {
 
     return (
         <>
-            <EventTable data={data} />
+            <DragTable data={data} />
         </>
     );
 }

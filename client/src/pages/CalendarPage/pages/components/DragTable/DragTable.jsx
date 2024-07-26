@@ -18,7 +18,7 @@ import 'react-resizable/css/styles.css';
 
 import './EventTable.css';
 
-function EventTableContent ({ data }) {
+function DragTableContent ({ data }) {
     const config = useTableConfigurations(data.date);
     const [selectedEvent, setSelectedEvent] = useState(null);
 
@@ -63,10 +63,10 @@ function EventTableContent ({ data }) {
     );
 }
 
-export default function EventTable ({data}) {
+export default function DragTable ({data}) {
     return (
         <EventTableProvider>
-            <EventTableContent 
+            <DragTableContent 
                 data={data}
             />
         </EventTableProvider>
