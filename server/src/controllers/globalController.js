@@ -56,10 +56,7 @@ exports.updateInTable = async (req, res) => {
 exports.deleteFromTable = async (req, res) => {
     const { tableName, id } = req.params;
     try {
-        const result = await globalServices.deleteFromTable(tableName, id);
-        if (result.rows.length === 0) {
-            return res.status(404).send('Row not found');
-        }
+        await globalServices.deleteFromTable(tableName, id);
         res.send('Row deleted');
     } catch (err) {
         console.error(err.message);

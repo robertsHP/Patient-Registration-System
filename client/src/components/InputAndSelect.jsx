@@ -1,78 +1,108 @@
 import React, { useState, useRef } from 'react';
 
+import ConfirmationWindow from './ConfirmationWindow';
+
 import './InputAndSelect.css';
 
-export default function InputAndSelect ({ options, value, onChange, onAddOption, onDeleteOption, placeholder }) {
+export default function InputAndSelect({ 
+    options, nameColumn, value, handleOnChange, handleAddOption, handleDeleteOption, placeholder 
+}) {
     const [isOpen, setIsOpen] = useState(false);
     const [inputValue, setInputValue] = useState('');
     const dropdownRef = useRef(null);
 
-    const handleInputChange = (e) => {
+    const [confirmationWindowData, setConfirmationWindowData] = useState({
+        message: '',
+        onConfirm: () => {},
+        onCancel: () => {}
+    });
+
+    const onInputChange = (e) => {
+        console.log("onInputChange");
+
         setInputValue(e.target.value);
     };
 
-    const handleSelectOption = (option) => {
-        onChange(option);
+    const onSelectOption = (option) => {
+        handleOnChange(option);
         setIsOpen(false);
     };
 
-    const handleAddOption = (e) => {
-        if (e.key === 'Enter' && inputValue.trim() !== '') {
-            onAddOption(inputValue);
+    const onAddOption = () => {
+        if (inputValue.trim() !== '') {
+            handleAddOption(inputValue);
             setInputValue('');
             setIsOpen(false);
         }
     };
 
-    const handleToggleDropdown = () => {
+    const onToggleDropdown = () => {
         setIsOpen(!isOpen);
     };
 
-    const handleDeleteOption = (option, e) => {
+    const onDeleteOption = (option, e) => {
         e.stopPropagation();
-        onDeleteOption(option);
+        handleDeleteOption(option);
     };
 
-    const handleClickOutside = (event) => {
+    const onClickOutside = (event) => {
+        console.log("onClickOutside");
+
         if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
             setIsOpen(false);
         }
     };
 
     React.useEffect(() => {
-        document.addEventListener('mousedown', handleClickOutside);
+        document.addEventListener('mousedown', onClickOutside);
         return () => {
-            document.removeEventListener('mousedown', handleClickOutside);
+            document.removeEventListener('mousedown', onClickOutside);
         };
     }, []);
 
     return (
-        <div className="custom-select" ref={dropdownRef}>
-            <div className="custom-select-input" onClick={handleToggleDropdown}>
-                {value || placeholder}
-            </div>
-            {isOpen && (
-                <div className="custom-select-dropdown">
-                    <input
-                        type="text"
-                        value={inputValue}
-                        onChange={handleInputChange}
-                        onKeyDown={handleAddOption}
-                        placeholder="Type to add or select"
-                        className="custom-select-input-field"
-                    />
-                    <ul className="custom-select-options">
-                        {options.map((option) => (
-                            <li key={option} className="custom-select-option" onClick={() => handleSelectOption(option)}>
-                                {option}
-                                <button className="delete-option-button" onClick={(e) => handleDeleteOption(option, e)}>
-                                    X
-                                </button>
-                            </li>
-                        ))}
-                    </ul>
+        <>
+            <div className="custom-select" ref={dropdownRef}>
+                <div className="custom-select-input" onClick={onToggleDropdown}>
+                    {value || placeholder}
                 </div>
-            )}
-        </div>
+                {isOpen && (
+                    <div className="custom-select-dropdown">
+                        <div className="custom-select-input-container">
+                            <input
+                                type="text"
+                                value={inputValue}
+                                onChange={onInputChange}
+                                placeholder="Type to add or select"
+                                className="custom-select-input-field"
+                            />
+                            <button 
+                                className="add-option-button" 
+                                onClick={onAddOption}
+                            >
+                                Add
+                            </button>
+                        </div>
+                        <ul className="custom-select-options">
+                            {options.map((option) => (
+                                <li 
+                                    key={option.id} 
+                                    className="custom-select-option" 
+                                    onClick={() => onSelectOption(option)}
+                                >
+                                    {option[nameColumn]}
+                                    <button 
+                                        className="delete-option-button" 
+                                        onClick={(e) => onDeleteOption(option, e)}
+                                    >
+                                        X
+                                    </button>
+                                </li>
+                            ))}
+                        </ul>
+                    </div>
+                )}
+            </div>
+        </>
     );
-};
+}

@@ -25,45 +25,75 @@ const sanitizeTableName = (tableName) => {
     }
 };
 
+const tableNameSanitized = (tableName) => {
+    return tableName.includes('LRC_');
+};
+
+const removeRowReferencesInOtherTablesWithID = async (idValue, idColumn, tables) => {
+    for (let table of tables) {
+        if(!tableNameSanitized(table))
+            sanitizeTableName(table);
+
+        const query = `UPDATE ${sanitizeTableName(table)} SET ${idColumn} = NULL WHERE ${idColumn} = $1`;
+        await pool.query(query, [idValue]);
+    }
+};
+
 const selectFromTable = async (tableName) => {
-    const sanitizedTableName = sanitizeTableName(tableName);
-    const query = `SELECT * FROM ${sanitizedTableName}`;
+    if(!tableNameSanitized(tableName))
+        tableName = sanitizeTableName(tableName);
+    
+    const query = `SELECT * FROM ${tableName}`;
     return pool.query(query);
 };
 
 const selectWithIDFromTable = async (tableName, id) => {
-    const sanitizedTableName = sanitizeTableName(tableName);
-    const query = `SELECT * FROM ${sanitizedTableName} WHERE id = $1`;
+    if(!tableNameSanitized(tableName))
+        tableName = sanitizeTableName(tableName);
+
+    const query = `SELECT * FROM ${tableName} WHERE id = $1`;
     const values = [id];
+
     return pool.query(query, values);
 };
 
 const insertIntoTable = async (tableName, data) => {
-    const sanitizedTableName = sanitizeTableName(tableName);
+    if(!tableNameSanitized(tableName))
+        tableName = sanitizeTableName(tableName);
+
     const columns = Object.keys(data).join(', ');
     const values = Object.values(data);
     const valuePlaceholders = values.map((_, index) => `$${index + 1}`).join(', ');
-    const query = `INSERT INTO ${sanitizedTableName} (${columns}) VALUES (${valuePlaceholders}) RETURNING id`;
+    const query = `INSERT INTO ${tableName} (${columns}) VALUES (${valuePlaceholders}) RETURNING id`;
+
     return pool.query(query, values);
 };
 
 const updateInTable = async (tableName, id, data) => {
-    const sanitizedTableName = sanitizeTableName(tableName);
+    if(!tableNameSanitized(tableName))
+        tableName = sanitizeTableName(tableName);
+
     const updates = Object.keys(data).map((key, index) => `${key} = $${index + 2}`).join(', ');
     const values = [parseInt(id), ...Object.values(data)];
-    const query = `UPDATE ${sanitizedTableName} SET ${updates} WHERE id = $1 RETURNING *`;
+    const query = `UPDATE ${tableName} SET ${updates} WHERE id = $1 RETURNING *`;
+
     return pool.query(query, values);
 };
 
 const deleteFromTable = async (tableName, id) => {
-    const sanitizedTableName = sanitizeTableName(tableName);
-    const query = `DELETE FROM ${sanitizedTableName} WHERE id = $1 RETURNING *`;
+    if(!tableNameSanitized(tableName))
+        tableName = sanitizeTableName(tableName);
+
+    const query = `DELETE FROM ${tableName} WHERE id = $1 RETURNING *`;
     const values = [id];
+
     return pool.query(query, values);
 };
 
 module.exports = {
     sanitizeTableName,
+    tableNameSanitized,
+    removeRowReferencesInOtherTablesWithID,
     selectFromTable,
     selectWithIDFromTable,
     insertIntoTable,

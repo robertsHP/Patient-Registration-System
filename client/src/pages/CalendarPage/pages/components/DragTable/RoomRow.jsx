@@ -183,6 +183,7 @@ export default class RoomRow extends Component {
 
                         ApiService.put(`/api/drag-table/appointment/${appointment.id}`, convertedAppointment)
                         .catch((error) => {
+                            console.log("RoomRow error: ");
                             console.log(error);
                         });
                     }
@@ -572,6 +573,7 @@ export default class RoomRow extends Component {
                     this.refreshRow();
                 })
                 .catch((error) => {
+                    console.log("RoomRow error: ");
                     console.log(error);
                 });
             }

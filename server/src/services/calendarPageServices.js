@@ -117,7 +117,7 @@ exports.buildGetAppointmentQuery = (year, month, floorId, limit, offset) => {
     };
 }
 
-exports.convertObjects = async (data) => {
+exports.convertAppointmentObjects = async (data) => {
     // Helper function to update table and set ID
     const updateRecord = async (table, obj, idField) => {
         if (obj == null || obj.id == null) {

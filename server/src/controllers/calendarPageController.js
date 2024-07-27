@@ -30,7 +30,7 @@ exports.insertAppointmentAndOtherData = async (req, res) => {
         if(data.id != undefined || data.id != null) {
             delete data.id;
         }
-        data = await calendarPageServices.convertObjects(data);
+        data = await calendarPageServices.convertAppointmentObjects(data);
 
         const result = await globalServices.insertIntoTable(
             'drag_table_appointment', 
@@ -51,7 +51,7 @@ exports.updateAppointmentAndOtherData = async (req, res) => {
         if(data.id != undefined || data.id != null) {
             delete data.id;
         }
-        data = await calendarPageServices.convertObjects(data);
+        data = await calendarPageServices.convertAppointmentObjects(data);
         
         const result = await globalServices.updateInTable(
             'drag_table_appointment', 
@@ -61,5 +61,43 @@ exports.updateAppointmentAndOtherData = async (req, res) => {
         res.json(result.rows[0]);
     } catch (err) {
         res.status(500).json({ error: 'Internal Server Error (updateAppointment) - ' + err.message });
+    }
+};
+
+exports.deleteAppointment = async (req, res) => {
+    const { tableName, id } = req.params;
+    try {
+        await globalServices.deleteFromTable(tableName, id);
+        res.send('Row deleted');
+    } catch (err) {
+        console.error(err.message);
+        res.status(500).send('Server error: ' + err.message);
+    }
+};
+
+// exports.insertPatient = async (req, res) => {
+
+// };
+
+// exports.updatePatient = async (req, res) => {
+
+// };
+
+exports.deletePatient = async (req, res) => {
+    const { id } = req.params;
+    try {
+        var tableNames = [
+            'drag_table_appointment',
+            'input_table_appointment'
+        ];
+
+        await globalServices.removeRowReferencesInOtherTablesWithID (id, 'id_patient', tableNames);
+        await globalServices.deleteFromTable(
+            globalServices.sanitizeTableName('patient'), id
+        );
+        res.send('Row deleted');
+    } catch (err) {
+        console.error(err.message);
+        res.status(500).send('Server error: ' + err.message);
     }
 };

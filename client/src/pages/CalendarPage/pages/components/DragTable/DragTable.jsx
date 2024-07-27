@@ -19,7 +19,6 @@ import './DragTable.css';
 function DragTableContent ({ data }) {
     const config = useTableConfigurations(data.date);
     const [selectedAppointment, setSelectedAppointment] = useState(null);
-    const [inputFormData, setInputFormData] = useState(null);
 
     const pageRefreshed = usePageRefresh();
 
@@ -44,9 +43,6 @@ function DragTableContent ({ data }) {
                                     config={config}
                                     selectedAppointment={selectedAppointment}
                                     setSelectedAppointment={setSelectedAppointment}
-
-                                    inputFormData={inputFormData}
-                                    setInputFormData={setInputFormData}
 
                                     pageRefreshed={pageRefreshed}
                                 />

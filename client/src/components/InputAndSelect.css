@@ -22,12 +22,27 @@
     margin-top: 5px;
 }
 
-.custom-select-input-field {
-    width: calc(100% - 35px);
+.custom-select-input-container {
+    display: flex;
+    align-items: center;
     padding: 8px;
-    margin: 8px;
+}
+
+.custom-select-input-field {
+    flex-grow: 1;
+    padding: 8px;
     border: 1px solid #ccc;
     border-radius: 4px;
+}
+
+.add-option-button {
+    padding: 8px 12px;
+    margin-left: 8px;
+    border: none;
+    background-color: #007bff;
+    color: white;
+    border-radius: 4px;
+    cursor: pointer;
 }
 
 .custom-select-options {
@@ -57,4 +72,3 @@
     cursor: pointer;
     font-size: 14px;
 }
-  
