@@ -11,12 +11,6 @@ export default function InputAndSelect({
     const [inputValue, setInputValue] = useState('');
     const dropdownRef = useRef(null);
 
-    const [confirmationWindowData, setConfirmationWindowData] = useState({
-        message: '',
-        onConfirm: () => {},
-        onCancel: () => {}
-    });
-
     const onInputChange = (e) => {
         console.log("onInputChange");
 
@@ -80,7 +74,7 @@ export default function InputAndSelect({
                                 className="add-option-button" 
                                 onClick={onAddOption}
                             >
-                                Add
+                                Set
                             </button>
                         </div>
                         <ul className="custom-select-options">

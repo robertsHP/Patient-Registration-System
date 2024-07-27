@@ -30,7 +30,7 @@ exports.insertAppointmentAndOtherData = async (req, res) => {
         if(data.id != undefined || data.id != null) {
             delete data.id;
         }
-        data = await calendarPageServices.convertAppointmentObjects(data);
+        data = await calendarPageServices.alterAndUpdateAppointmentObjects(data);
 
         const result = await globalServices.insertIntoTable(
             'drag_table_appointment', 
@@ -51,7 +51,7 @@ exports.updateAppointmentAndOtherData = async (req, res) => {
         if(data.id != undefined || data.id != null) {
             delete data.id;
         }
-        data = await calendarPageServices.convertAppointmentObjects(data);
+        data = await calendarPageServices.alterAndUpdateAppointmentObjects(data);
         
         const result = await globalServices.updateInTable(
             'drag_table_appointment', 

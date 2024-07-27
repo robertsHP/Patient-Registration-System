@@ -7,15 +7,16 @@ import ApiService from '../../../../../services/ApiService.js';
 
 import './AppointmentInputForm.css';
 
-export default function AppointmentInputForm ({ selectedAppointment, setSelectedAppointment }) {
+export default function AppointmentInputForm({ selectedAppointment, setSelectedAppointment }) {
     const [formData, setFormData] = useState({
         patient: null,
+        patient_phone: '',
         begin_date: '',
         end_date: '',
         notes: '',
-        doc_name: null,
-        hotel_stay_start: '', 
-        hotel_stay_end: '', 
+        doctor: null,
+        hotel_stay_start: '',
+        hotel_stay_end: '',
         appointment_type: null,
     });
     const [doctors, setDoctors] = useState([]);
@@ -55,26 +56,28 @@ export default function AppointmentInputForm ({ selectedAppointment, setSelected
 
     const onAddOption = (value, label) => {
         const addOption = (newValue, label, optionsList, setOptionsList) => {
-            ApiService.post(`/api/input-form/${label}`, newValue)
-            .then((result) => {
-                newValue.id = result;
-                setOptionsList([...optionsList, newValue]);
-                setFormData({ ...formData, label: newValue });
-            })
-            .catch((error) => {
-                console.log(`AppointmentInputForm (${label}) POST error: `);
-                console.log(error);
-            });
+            setFormData({ ...formData, [label]: newValue });
+
+            ApiService.post(`/api/${label}`, newValue)
+                .then((result) => {
+                    newValue.id = result;
+                    setFormData({ ...formData, [label]: newValue });
+                    setOptionsList([...optionsList, newValue]);
+                })
+                .catch((error) => {
+                    console.log(`AppointmentInputForm (${label}) POST error: `);
+                    console.log(error);
+                });
         };
 
-        if (label == 'doctor') {
+        if (label === 'doctor') {
             addOption(
                 { doc_name: value },
                 label,
                 doctors,
                 setDoctors
             );
-        } else if (label == 'patient') {
+        } else if (label === 'patient') {
             addOption(
                 { pat_name: value, phone_num: null },
                 label,
@@ -89,40 +92,44 @@ export default function AppointmentInputForm ({ selectedAppointment, setSelected
             ConfirmationWindow.show(
                 message,
                 () => {
-                    ApiService.delete(`/api/input-form/${label}/${option.id}`, option)
-                    .then((result) => {
-                        console.log(result);
+                    if (formData[label] != null) {
+                        if (formData[label].id === option.id) {
+                            setFormData({ ...formData, [label]: null });
+                        }
+                    }
 
-                        setOptionsList(
-                            optionsList.filter(value => value !== option)
-                        );
-                        if (formData[label].id === option.id) 
-                            setFormData({ ...formData, label: null});
-                    })
-                    .catch((error) => {
-                        console.log(`AppointmentInputForm (${label}) DELETE error: `);
-                        console.log(error);
-                    });
+                    ApiService.delete(`/api/input-form/${label}/${option.id}`, option)
+                        .then((result) => {
+                            console.log(result);
+
+                            setOptionsList(
+                                optionsList.filter(value => value !== option)
+                            );
+                        })
+                        .catch((error) => {
+                            console.log(`AppointmentInputForm (${label}) DELETE error: `);
+                            console.log(error);
+                        });
                 },
-                () => {}
+                () => { }
             );
         };
 
-        if (label == 'doctor') {
+        if (label === 'doctor') {
             deleteOption(
                 `
                     Vai tiešām vēlaties dzēst ārstu? 
                     Visi dati, kas ir saistīti ar šo personu tiks neatgriezeniski dzēsti.
                 `,
-                option, label, doctors
+                option, label, doctors, setDoctors
             );
-        } else if (label == 'patient') {
+        } else if (label === 'patient') {
             deleteOption(
                 `
                     Vai tiešām vēlaties dzēst pacientu? 
                     Visi dati, kas ir saistīti ar šo personu tiks neatgriezeniski dzēsti.
                 `,
-                option, label, patients
+                option, label, patients, setPatients
             );
         }
     };
@@ -145,66 +152,125 @@ export default function AppointmentInputForm ({ selectedAppointment, setSelected
                         </button>
                     </div>
                     <form className="window-form">
-                        <label htmlFor="pat_name">Patient Name:</label>
-                        <InputAndSelect
-                            options={patients}
-                            nameColumn={'pat_name'}
-                            value={
-                                formData.patient != null ? formData.patient.pat_name : ''
-                            }
-                            handleOnChange={(value) => {onChange(value, 'patient');}}
-                            handleAddOption={(value) => onAddOption(value, 'patient')}
-                            handleDeleteOption={(value) => onDeleteOption(value, 'patient')}
-                            placeholder="Select or type a patient name"
-                        />
+                        <div className="form-row">
+                            <div className="form-group">
+                                <label htmlFor="pat_name">Patient Name:</label>
+                                <InputAndSelect
+                                    options={patients}
+                                    nameColumn={'pat_name'}
+                                    value={formData.patient != null ? formData.patient.pat_name : ''}
+                                    handleOnChange={(value) => { onChange(value, 'patient'); }}
+                                    handleAddOption={(value) => onAddOption(value, 'patient')}
+                                    handleDeleteOption={(value) => onDeleteOption(value, 'patient')}
+                                    placeholder="Ievadi pacienta vārdu un uzvārdu"
+                                />
+                            </div>
+                            <div className="form-group">
+                                <label htmlFor="patient_phone">Patient Phone Number:</label>
+                                <input
+                                    type="text"
+                                    id="patient_phone"
+                                    name="patient_phone"
+                                    value={formData.patient_phone}
+                                    onChange={onInputChange}
+                                />
+                            </div>
+                        </div>
 
-                        <label htmlFor="begin_date">Begin Date:</label>
-                        <input
-                            type="datetime-local"
-                            id="begin_date"
-                            name="begin_date"
-                            value={formData.begin_date}
-                            onChange={onInputChange}
-                            required
-                        />
+                        <div className="form-row">
+                            <div className="input-group">
+                                <div className="form-group">
+                                    <label htmlFor="begin_date">Start Date:</label>
+                                    <input
+                                        type="datetime-local"
+                                        id="begin_date"
+                                        name="begin_date"
+                                        value={formData.begin_date}
+                                        onChange={onInputChange}
+                                        required
+                                    />
+                                </div>
+                                <div className="form-group">
+                                    <label htmlFor="end_date">End Date:</label>
+                                    <input
+                                        type="datetime-local"
+                                        id="end_date"
+                                        name="end_date"
+                                        value={formData.end_date}
+                                        onChange={onInputChange}
+                                        required
+                                    />
+                                </div>
+                                <div className="form-group">
+                                    <label htmlFor="hotel_stay_start">Hotel Stay Start:</label>
+                                    <input
+                                        type="datetime-local"
+                                        id="hotel_stay_start"
+                                        name="hotel_stay_start"
+                                        value={formData.hotel_stay_start}
+                                        onChange={onInputChange}
+                                    />
+                                </div>
+                                <div className="form-group">
+                                    <label htmlFor="hotel_stay_end">Hotel Stay End:</label>
+                                    <input
+                                        type="datetime-local"
+                                        id="hotel_stay_end"
+                                        name="hotel_stay_end"
+                                        value={formData.hotel_stay_end}
+                                        onChange={onInputChange}
+                                    />
+                                </div>
+                            </div>
+                        </div>
 
-                        <label htmlFor="end_date">End Date:</label>
-                        <input
-                            type="datetime-local"
-                            id="end_date"
-                            name="end_date"
-                            value={formData.end_date}
-                            onChange={onInputChange}
-                            required
-                        />
+                        <div className="form-row">
+                            <div className="form-group full-width">
+                                <label htmlFor="notes">Notes:</label>
+                                <textarea
+                                    id="notes"
+                                    name="notes"
+                                    value={formData.notes}
+                                    onChange={onInputChange}
+                                    required
+                                />
+                            </div>
+                        </div>
 
-                        <label htmlFor="notes">Notes:</label>
-                        <textarea
-                            id="notes"
-                            name="notes"
-                            value={formData.notes}
-                            onChange={onInputChange}
-                            required
-                        />
+                        <div className="form-row">
+                            <div className="form-group">
+                                <label htmlFor="doc_name">Doctor Name:</label>
+                                <InputAndSelect
+                                    options={doctors}
+                                    nameColumn={'doc_name'}
+                                    value={formData.doctor != null ? formData.doctor.doc_name : ''}
+                                    handleOnChange={(value) => { onChange(value, 'doctor'); }}
+                                    handleAddOption={(value) => onAddOption(value, 'doctor')}
+                                    handleDeleteOption={(value) => onDeleteOption(value, 'doctor')}
+                                    placeholder="Ievadi ārsta vārdu un uzvārdu"
+                                />
+                            </div>
+                            <div className="form-group">
+                                <label htmlFor="appointment_type">Appointment Type:</label>
+                                <InputAndSelect
+                                    options={[] /* Add appointment types if available */}
+                                    nameColumn={'appointment_type'}
+                                    value={formData.appointment_type != null ? formData.appointment_type : ''}
+                                    handleOnChange={(value) => { onChange(value, 'appointment_type'); }}
+                                    handleAddOption={(value) => onAddOption(value, 'appointment_type')}
+                                    handleDeleteOption={(value) => onDeleteOption(value, 'appointment_type')}
+                                    placeholder="Ievadi vizītes veidu"
+                                />
+                            </div>
+                        </div>
 
-                        {/* <label htmlFor="doc_name">Doctor Name:</label>
-                        <InputAndSelect
-                            options={doctors}
-                            value={
-                                formData.doctor != null ? formData.doctor.doc_name : ''
-                            }
-                            onChange={(value) => handleSelectChange(value, 'doc_name')}
-                            onAddOption={(option) => handleAddOption(option, 'doc_name')}
-                            onDeleteOption={(option) => handleDeleteOption(option, 'doc_name')}
-                            placeholder="Select or type a doctor name"
-                        /> */}
-
-                        <button type="button" onClick={onSave}>Save</button>
-                        <button type="button" onClick={onDelete}>Delete</button>
+                        <div className="form-row">
+                            <button type="button" onClick={onSave}>Save</button>
+                            <button type="button" onClick={onDelete}>Delete</button>
+                        </div>
                     </form>
                 </div>
             </div>
         </>
     );
 }
-
