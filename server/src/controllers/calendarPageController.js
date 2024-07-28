@@ -65,9 +65,9 @@ exports.updateAppointmentAndOtherData = async (req, res) => {
 };
 
 exports.deleteAppointment = async (req, res) => {
-    const { tableName, id } = req.params;
+    const { id } = req.params;
     try {
-        await globalServices.deleteFromTable(tableName, id);
+        await globalServices.deleteFromTable('drag_table_appointment', id);
         res.send('Row deleted');
     } catch (err) {
         console.error(err.message);
@@ -86,14 +86,34 @@ exports.deleteAppointment = async (req, res) => {
 exports.deletePatient = async (req, res) => {
     const { id } = req.params;
     try {
-        var tableNames = [
-            'drag_table_appointment',
-            'input_table_appointment'
-        ];
+        await calendarPageServices.deleteRowAndReferences(
+            id, 'id_patient', 'patient'
+        );
+        res.send('Row deleted');
+    } catch (err) {
+        console.error(err.message);
+        res.status(500).send('Server error: ' + err.message);
+    }
+};
 
-        await globalServices.removeRowReferencesInOtherTablesWithID (id, 'id_patient', tableNames);
-        await globalServices.deleteFromTable(
-            globalServices.sanitizeTableName('patient'), id
+exports.deleteDoctor = async (req, res) => {
+    const { id } = req.params;
+    try {
+        await calendarPageServices.deleteRowAndReferences(
+            id, 'id_doctor', 'doctor'
+        );
+        res.send('Row deleted');
+    } catch (err) {
+        console.error(err.message);
+        res.status(500).send('Server error: ' + err.message);
+    }
+};
+
+exports.deleteAppointmentType = async (req, res) => {
+    const { id } = req.params;
+    try {
+        await calendarPageServices.deleteRowAndReferences(
+            id, 'id_appointment_type', 'appointment_type'
         );
         res.send('Row deleted');
     } catch (err) {

@@ -95,14 +95,28 @@
     cursor: pointer;
     border: none;
     border-radius: 5px;
+    margin-right: 10px; /* Add spacing between buttons */
 }
 
-.window-form button:first-of-type {
-    background-color: #4caf50;
-    color: white;
+.window-form .form-row.buttons {
+    justify-content: center; /* Center the buttons */
 }
 
 .window-form button:last-of-type {
-    background-color: #f44336;
+    margin-right: 0; /* Remove right margin from the last button */
+}
+
+.window-form .cancel-button {
+    background-color: #ccc; /* Neutral color for cancel button */
+    color: black;
+}
+
+.window-form .save-button {
+    background-color: #4caf50; /* Green color for save button */
+    color: white;
+}
+
+.window-form .delete-button {
+    background-color: #f44336; /* Red color for delete button */
     color: white;
 }

@@ -15,5 +15,7 @@ router.delete('/drag-table/appointment/:id', controller.deleteAppointment);
 // router.post('/input-form/patient', controller.insertPatient);
 // router.put('/input-form/patient/:id', controller.updatePatient);
 router.delete('/input-form/patient/:id', controller.deletePatient);
+router.delete('/input-form/doctor/:id', controller.deleteDoctor);
+router.delete('/input-form/appointment_type/:id', controller.deleteAppointmentType);
 
 module.exports = router;

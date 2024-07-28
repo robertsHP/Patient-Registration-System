@@ -54,6 +54,7 @@ function DragTableContent ({ data }) {
             <SumRow data={data} config={config} />
             {selectedAppointment && 
                 <AppointmentInputForm 
+                    data={data}
                     selectedAppointment={selectedAppointment} 
                     setSelectedAppointment={setSelectedAppointment} 
                 />

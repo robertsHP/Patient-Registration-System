@@ -84,7 +84,7 @@ const deleteFromTable = async (tableName, id) => {
     if(!tableNameSanitized(tableName))
         tableName = sanitizeTableName(tableName);
 
-    const query = `DELETE FROM ${tableName} WHERE id = $1 RETURNING *`;
+    const query = `DELETE FROM ${tableName} WHERE id = $1`;
     const values = [id];
 
     return pool.query(query, values);

@@ -141,3 +141,15 @@ exports.alterAndUpdateAppointmentObjects = async (data) => {
 
     return data;
 };
+
+exports.deleteRowAndReferences = async (id, colName, tableName) => {
+    var tableNames = [
+        'drag_table_appointment',
+        'input_table_appointment'
+    ];
+
+    await globalServices.removeRowReferencesInOtherTablesWithID (id, colName, tableNames);
+    await globalServices.deleteFromTable(
+        globalServices.sanitizeTableName(tableName), id
+    );
+};

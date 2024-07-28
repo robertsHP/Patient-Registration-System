@@ -12,8 +12,6 @@ export default function InputAndSelect({
     const dropdownRef = useRef(null);
 
     const onInputChange = (e) => {
-        console.log("onInputChange");
-
         setInputValue(e.target.value);
     };
 

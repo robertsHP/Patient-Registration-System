@@ -7,7 +7,7 @@ import ApiService from '../../../../../services/ApiService.js';
 
 import './AppointmentInputForm.css';
 
-export default function AppointmentInputForm({ selectedAppointment, setSelectedAppointment }) {
+export default function AppointmentInputForm({ data, selectedAppointment, setSelectedAppointment }) {
     const [formData, setFormData] = useState({
         patient: null,
         patient_phone: '',
@@ -21,29 +21,28 @@ export default function AppointmentInputForm({ selectedAppointment, setSelectedA
     });
     const [doctors, setDoctors] = useState([]);
     const [patients, setPatients] = useState([]);
+    const [appointmentTypes, setAppointmentTypes] = useState([]);
 
     useEffect(() => {
         // Fetch doctors and patients data when component mounts
-        const fetchDoctorsAndPatients = async () => {
+        const fetchData = async () => {
             try {
-                const [doctorsData, patientsData] = await Promise.all([
+                const [doctorsData, patientsData, typesData] = await Promise.all([
                     ApiService.get('/api/doctor'),
-                    ApiService.get('/api/patient')
+                    ApiService.get('/api/patient'),
+                    ApiService.get('/api/appointment_type')
                 ]);
 
                 setDoctors(doctorsData);
                 setPatients(patientsData);
+                setAppointmentTypes(typesData);
             } catch (error) {
                 console.error('Failed to fetch data:', error);
             }
         };
 
-        fetchDoctorsAndPatients();
+        fetchData();
     }, []);
-
-    const onWindowClose = () => {
-        setSelectedAppointment(null);
-    };
 
     const onInputChange = (e) => {
         const { name, value } = e.target;
@@ -70,20 +69,26 @@ export default function AppointmentInputForm({ selectedAppointment, setSelectedA
                 });
         };
 
+        var finalValue = null;
+        var optionsList = null;
+        var setOptionsList = null;
+
         if (label === 'doctor') {
-            addOption(
-                { doc_name: value },
-                label,
-                doctors,
-                setDoctors
-            );
+            finalValue = { doc_name: value };
+            optionsList = doctors;
+            setOptionsList = setDoctors;
         } else if (label === 'patient') {
-            addOption(
-                { pat_name: value, phone_num: null },
-                label,
-                patients,
-                setPatients
-            );
+            finalValue = { pat_name: value, phone_num: null };
+            optionsList = patients;
+            setOptionsList = setPatients;
+        } else if (label === 'appointment_type') {
+            finalValue = { type_name: value };
+            optionsList = appointmentTypes;
+            setOptionsList = setAppointmentTypes;
+        }
+
+        if (finalValue != null) {
+            addOption(finalValue, label, optionsList, setOptionsList);
         }
     };
 
@@ -92,19 +97,17 @@ export default function AppointmentInputForm({ selectedAppointment, setSelectedA
             ConfirmationWindow.show(
                 message,
                 () => {
-                    if (formData[label] != null) {
-                        if (formData[label].id === option.id) {
-                            setFormData({ ...formData, [label]: null });
-                        }
-                    }
-
                     ApiService.delete(`/api/input-form/${label}/${option.id}`, option)
                         .then((result) => {
-                            console.log(result);
-
                             setOptionsList(
-                                optionsList.filter(value => value !== option)
+                                optionsList.filter(value => value != option)
                             );
+
+                            if (formData[label] != null) {
+                                if (formData[label].id === option.id) {
+                                    setFormData({ ...formData, [label]: null });
+                                }
+                            }
                         })
                         .catch((error) => {
                             console.log(`AppointmentInputForm (${label}) DELETE error: `);
@@ -115,31 +118,115 @@ export default function AppointmentInputForm({ selectedAppointment, setSelectedA
             );
         };
 
+        var messageLabel = null;
+        var optionsList = null;
+        var setOptionsList = null;
+
         if (label === 'doctor') {
-            deleteOption(
-                `
-                    Vai tiešām vēlaties dzēst ārstu? 
-                    Visi dati, kas ir saistīti ar šo personu tiks neatgriezeniski dzēsti.
-                `,
-                option, label, doctors, setDoctors
-            );
+            messageLabel = 'ārstu';
+            optionsList = doctors;
+            setOptionsList = setDoctors;
         } else if (label === 'patient') {
+            messageLabel = 'pacientu';
+            optionsList = patients;
+            setOptionsList = setPatients;
+        } else if (label === 'appointment_type') {
+            messageLabel = 'veidu';
+            optionsList = appointmentTypes;
+            setOptionsList = setAppointmentTypes;
+        }
+
+        if (messageLabel != null) {
             deleteOption(
                 `
-                    Vai tiešām vēlaties dzēst pacientu? 
+                    Vai tiešām vēlaties dzēst ${messageLabel}? 
                     Visi dati, kas ir saistīti ar šo personu tiks neatgriezeniski dzēsti.
                 `,
-                option, label, patients, setPatients
+                option, label, optionsList, setOptionsList
             );
         }
     };
 
-    const onSave = () => {
-        console.log('Save function called');
+
+    const onWindowClose = () => {
+        setSelectedAppointment(null);
+    };
+
+    const onCancel = () => {
+        onWindowClose();
+    };
+
+    const onSave = (e) => {
+        e.preventDefault();
+        // Custom validation logic here
+        const isValid = validateForm();
+        if (isValid) {
+            console.log('Save function called');
+
+            ApiService.put(`/api/drag-table/appointment/${selectedAppointment.id}`, formData)
+            .then((result) => {
+                console.log('Updated appointment');
+                onWindowClose();
+            })
+            .catch((error) => {
+                console.log(`AppointmentInputForm (onSave) DELETE error: `);
+                console.log(error);
+            });
+        }
+    };
+
+    const validateForm = () => {
+        // Custom validation logic here
+        // if (!formData.patient) {
+        //     alert('Patient name is required.');
+        //     return false;
+        // }
+        if (!formData.begin_date) {
+            alert('Start date is required.');
+            return false;
+        }
+        if (!formData.end_date) {
+            alert('End date is required.');
+            return false;
+        }
+        if (!formData.hotel_stay_start) {
+            alert('Hotel start date is required.');
+            return false;
+        }
+        if (!formData.hotel_stay_end) {
+            alert('Hotel end date is required.');
+            return false;
+        }
+        // if (!formData.notes) {
+        //     alert('Notes are required.');
+        //     return false;
+        // }
+        // Add other validation rules as needed
+        return true;
     };
 
     const onDelete = () => {
         console.log('Delete function called');
+
+        ConfirmationWindow.show(
+            `Vai tiešām vēlaties dzēst pierakstu?`,
+            () => {
+                var id = selectedAppointment.id;
+
+                data.removeAppointmentWithID(id);
+                
+                ApiService.delete(`/api/drag-table/appointment/${id}`, formData)
+                .then((result) => {
+                    console.log('Deleted appointment');
+                    onWindowClose();
+                })
+                .catch((error) => {
+                    console.log(`AppointmentInputForm (onDelete) DELETE error: `);
+                    console.log(error);
+                });
+            },
+            () => { }
+        );
     };
 
     return (
@@ -151,7 +238,7 @@ export default function AppointmentInputForm({ selectedAppointment, setSelectedA
                             X
                         </button>
                     </div>
-                    <form className="window-form">
+                    <div className="window-form">
                         <div className="form-row">
                             <div className="form-group">
                                 <label htmlFor="pat_name">Patient Name:</label>
@@ -253,8 +340,8 @@ export default function AppointmentInputForm({ selectedAppointment, setSelectedA
                             <div className="form-group">
                                 <label htmlFor="appointment_type">Appointment Type:</label>
                                 <InputAndSelect
-                                    options={[] /* Add appointment types if available */}
-                                    nameColumn={'appointment_type'}
+                                    options={appointmentTypes}
+                                    nameColumn={'type_name'}
                                     value={formData.appointment_type != null ? formData.appointment_type : ''}
                                     handleOnChange={(value) => { onChange(value, 'appointment_type'); }}
                                     handleAddOption={(value) => onAddOption(value, 'appointment_type')}
@@ -264,11 +351,12 @@ export default function AppointmentInputForm({ selectedAppointment, setSelectedA
                             </div>
                         </div>
 
-                        <div className="form-row">
-                            <button type="button" onClick={onSave}>Save</button>
-                            <button type="button" onClick={onDelete}>Delete</button>
+                        <div className="form-row buttons">
+                            <button type="button" className="cancel-button" onClick={onCancel}>Atcelt</button>
+                            <button type="button" className="save-button" onClick={onSave}>Saglabāt</button>
+                            <button type="button" className="delete-button" onClick={onDelete}>Dzēst</button>
                         </div>
-                    </form>
+                    </div>
                 </div>
             </div>
         </>

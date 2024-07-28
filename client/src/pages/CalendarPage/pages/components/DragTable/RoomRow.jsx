@@ -537,8 +537,15 @@ export default class RoomRow extends Component {
 
     onMouseUp() {
         if (this.state.isCreatingAppointment && this.state.draggingAppointment) {
-            var inDateColumns = this.isInDateColumns(this.state.draggingAppointment.x, this.state.draggingAppointment.w);
-            var overlapping = this.isOverlapping(this.state.draggingAppointment, this.state.room.appointments, 'appointment-temp');
+            var inDateColumns = this.isInDateColumns(
+                this.state.draggingAppointment.x, 
+                this.state.draggingAppointment.w
+            );
+            var overlapping = this.isOverlapping(
+                this.state.draggingAppointment, 
+                this.state.room.appointments, 
+                'appointment-temp'
+            );
 
             if (inDateColumns && !overlapping) {
                 var tempDraggingAppointment = this.state.draggingAppointment;
