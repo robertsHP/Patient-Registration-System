@@ -16,11 +16,11 @@ export default function SaunaPage () {
 
     return (
         <>
-            {/* <InputTable 
+            <InputTable 
                 // data={data}
                 year={date.getFullYear()}
                 month={date.getMonth()} 
-            /> */}
+            />
         </>
     );
 }

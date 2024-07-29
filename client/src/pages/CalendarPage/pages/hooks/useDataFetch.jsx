@@ -37,9 +37,8 @@ export default function useDataFetch(floorID, tempDate) {
     const loadRooms = async (tempDate) => {
         const params = `floorId=${floorID}&year=${tempDate.getFullYear()}&month=${tempDate.getMonth()}`;
         try {
-            const result = await ApiService.get(`/api/drag-table/get-rooms?${params}`);
-            console.log(result);
-    
+            const result = await ApiService.get(`/api/calendar-page/drag-table/get-rooms?${params}`);
+
             const data = result.data[0].rooms;
             const finalData = convertRoomDataToLayout(data);
     

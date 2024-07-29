@@ -18,4 +18,7 @@ router.delete('/input-form/patient/:id', controller.deletePatient);
 router.delete('/input-form/doctor/:id', controller.deleteDoctor);
 router.delete('/input-form/appointment_type/:id', controller.deleteAppointmentType);
 
+router.get('/search/patient/:searchTerm', controller.searchForPatientMatches);
+router.get('/search/appointments/:patientID', controller.searchForAppointmentMatchesWithPatientID);
+
 module.exports = router;

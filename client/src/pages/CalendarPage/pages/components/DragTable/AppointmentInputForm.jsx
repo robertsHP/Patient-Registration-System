@@ -99,23 +99,24 @@ export default function AppointmentInputForm({ data, selectedAppointment, setSel
         const deleteOption = (message, option, label, optionsList, setOptionsList) => {
             ConfirmationWindow.show(
                 message,
-                () => {
-                    ApiService.delete(`/api/input-form/${label}/${option.id}`)
-                        .then((result) => {
-                            setOptionsList(
-                                optionsList.filter(value => value != option)
-                            );
+                async () => {
+                    try {
+                        var url = `/api/calendar-page/input-form/${label}/${option.id}`
+    
+                        await ApiService.delete(url);
+                        setOptionsList(
+                            optionsList.filter(value => value != option)
+                        );
 
-                            if (formData[label] != null) {
-                                if (formData[label].id === option.id) {
-                                    setFormData({ ...formData, [label]: null });
-                                }
+                        if (formData[label] != null) {
+                            if (formData[label].id === option.id) {
+                                setFormData({ ...formData, [label]: null });
                             }
-                        })
-                        .catch((error) => {
-                            console.log(`AppointmentInputForm (${label}) DELETE error: `);
-                            console.log(error);
-                        });
+                        }
+                    } catch (error) {
+                        console.log(`AppointmentInputForm (${label}) DELETE error: `);
+                        console.log(error);
+                    }
                 },
                 () => { }
             );
@@ -160,21 +161,26 @@ export default function AppointmentInputForm({ data, selectedAppointment, setSel
     };
 
     const onSave = (e) => {
+        const updateAppointment = async () => {
+            var url = `/api/calendar-page/drag-table/appointment/${selectedAppointment.id}`;
+
+            try {
+                await ApiService.put(url, formData);
+                console.log('Updated appointment');
+                onWindowClose();
+            } catch (error) {
+                console.log(`AppointmentInputForm (onSave) PUT error: `);
+                console.log(error);
+            }
+        };
+
         e.preventDefault();
         // Custom validation logic here
         const isValid = validateForm();
         if (isValid) {
             console.log('Save function called');
 
-            ApiService.put(`/api/drag-table/appointment/${selectedAppointment.id}`, formData)
-            .then((result) => {
-                console.log('Updated appointment');
-                onWindowClose();
-            })
-            .catch((error) => {
-                console.log(`AppointmentInputForm (onSave) DELETE error: `);
-                console.log(error);
-            });
+            updateAppointment();
         }
     };
 
@@ -219,7 +225,9 @@ export default function AppointmentInputForm({ data, selectedAppointment, setSel
                 data.removeAppointmentWithID(id);
                 
                 try {
-                    await ApiService.delete(`/api/drag-table/appointment/${id}`);
+                    var url = `/api/calendar-page/drag-table/appointment/${id}`
+
+                    await ApiService.delete(url);
                     console.log('Deleted appointment');
                     onWindowClose();
                 } catch (error) {

@@ -166,7 +166,7 @@ export default class RoomRow extends Component {
 
     async updateAppointmentInDB (id, convertedAppointment) {
         try {
-            const params = `api/drag-table/appointment/${id}`;
+            const params = `/api/calendar-page/drag-table/appointment/${id}`;
             await ApiService.put(params, convertedAppointment);
         } catch (error) {
             console.log("RoomRow error: ");
@@ -549,7 +549,9 @@ export default class RoomRow extends Component {
 
     async insertAppointmentInDB (tempDraggingAppointment, convertedAppointment) {
         try {
-            const result = await ApiService.post('/api/drag-table/appointment', convertedAppointment);
+            var url = '/api/calendar-page/drag-table/appointment';
+
+            const result = await ApiService.post(url, convertedAppointment);
             tempDraggingAppointment.id = result;
     
             const newAppointment = {

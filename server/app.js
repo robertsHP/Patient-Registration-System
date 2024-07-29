@@ -31,7 +31,7 @@ app.get('/api', (req, res) => {
 });
 
 // app.use('/api', adminRoutes);
-app.use('/api', calendarPageRoutes);
+app.use('/api/calendar-page', calendarPageRoutes);
 app.use('/api', globalRoutes);
 
 // Error handling middleware

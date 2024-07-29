@@ -2,51 +2,49 @@ import React, { useState } from 'react';
 
 import { FaSearch } from 'react-icons/fa';
 
+import ApiService from '../../../services/ApiService.js';
+
 import './SearchPage.css';
 
 export default function SearchPage() {
-    const [query, setQuery] = useState('');
-    const [names, setNames] = useState([]);
-    const [details, setDetails] = useState([]);
-
-    const searchNames = async (query) => {
-
-        // ApiService.get(`/api/drag-table/get-rooms?${params}`)
-        // .then(result => {
-        //     console.log(result);
-
-        //     const data = result.data[0].rooms;
-        //     const finalData = convertRoomDataToLayout(data);
-
-        //     setRooms(finalData);
-        //     triggerFullDataUpdate();
-        // })
-        // .catch((error) => {
-        //     console.log("useDataFetch error: ");
-        //     console.log(error);
-        // });
-
-        // Replace with your API call
-        return ['Alice', 'Bob', 'Charlie', 'David'];
-    };
-      
-    const fetchDetails = async (name) => {
-        // Replace with your API call
-        return { name, details: `Details about ${name}` };
-    };
+    const [searchText, setSearchText] = useState('');
+    const [patients, setPatients] = useState([]);
+    const [appointments, setAppointments] = useState([]);
 
     const handleSearch = async () => {
-        const result = await searchNames(query);
-        setNames(result);
+        if(searchText.length != 0) {
+            try {
+                var result = [];
+
+                result = await ApiService.get(`/api/calendar-page/search/patient/${searchText}`);
+            
+                setPatients(result);
+            } catch (error) {
+                console.log("useDataFetch error: ");
+                console.log(error);
+            }
+        }
     };
 
-    const handleSelectName = async (name) => {
-        const result = await fetchDetails(name);
-        setDetails((prevDetails) => [...prevDetails, result]);
+    const handlePatientSelect = async (id) => {
+        try {
+            var result = [];
+
+            console.log(id);
+
+            result = await ApiService.get(`/api/calendar-page/search/appointments/${id}`);
+
+            console.log(result);
+
+            setAppointments(result);
+        } catch (error) {
+            console.log("useDataFetch error: ");
+            console.log(error);
+        }
     };
 
     const handleInputChange = (e) => {
-        setQuery(e.target.value);
+        setSearchText(e.target.value);
     };
 
     const handleKeyPress = (e) => {
@@ -61,7 +59,7 @@ export default function SearchPage() {
                 <div className="search-bar">
                     <input
                         type="text"
-                        value={query}
+                        value={searchText}
                         onChange={handleInputChange}
                         onKeyDown={handleKeyPress}
                         placeholder="Search names..."
@@ -75,29 +73,56 @@ export default function SearchPage() {
                     </button>
                 </div>
                 <ul className="results-list">
-                {names.map((name) => (
-                    <li key={name}>
-                        <button
-                            onClick={() => handleSelectName(name)}
-                            className="result-button"
-                        >
-                            {name}
-                        </button>
-                    </li>
-                ))}
+                    {patients.length === 0 ? (
+                        <p>Nav rezultāti</p>
+                    ) : (
+                        <ul>
+                            {patients.map((patient) => (
+                                <li key={`patient-${patient.id}`}>
+                                    <button
+                                        onClick={() => handlePatientSelect(patient.id)}
+                                        className="result-button"
+                                    >
+                                        {`${patient.id}: ${patient.pat_name}, (${patient.phone_num})`}
+                                    </button>
+                                </li>
+                            ))}
+                        </ul>
+                    )}
                 </ul>
             </div>
             <div className="details-section">
-                <ul className="details-list">
-                    {details.map((detail, index) => (
-                        <li key={index}>
-                            <button className="detail-button">
-                                <h3>{detail.name}</h3>
-                                <p>{detail.details}</p>
-                            </button>
-                        </li>
-                    ))}
-                </ul>
+                {appointments.length === 0 ? (
+                    <p>Nav rezultāti</p>
+                ) : (
+                    <ul className="details-list">
+                        {appointments.map((appointment, index) => (
+                            <li key={index}>
+                                <button className="detail-button">
+                                    <h3>{appointment.source_table}</h3>
+                                    <p>ID: {appointment.id}</p>
+                                    <p>Patient ID: {appointment.id_patient}</p>
+                                    <p>Begin Date: {new Date(appointment.begin_date).toLocaleString()}</p>
+                                    {appointment.end_date && (
+                                        <p>End Date: {new Date(appointment.end_date).toLocaleString()}</p>
+                                    )}
+                                    <p>Notes: {appointment.notes}</p>
+                                    <p>Doctor ID: {appointment.id_doctor}</p>
+                                    {appointment.id_room && <p>Room ID: {appointment.id_room}</p>}
+                                    {appointment.hotel_stay_start && (
+                                        <p>Hotel Stay Start: {new Date(appointment.hotel_stay_start).toLocaleString()}</p>
+                                    )}
+                                    {appointment.hotel_stay_end && (
+                                        <p>Hotel Stay End: {new Date(appointment.hotel_stay_end).toLocaleString()}</p>
+                                    )}
+                                    {appointment.id_appointment_type && (
+                                        <p>Appointment Type ID: {appointment.id_appointment_type}</p>
+                                    )}
+                                </button>
+                            </li>
+                        ))}
+                    </ul>
+                )}
             </div>
         </div>
     );
