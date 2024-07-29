@@ -58,19 +58,18 @@ export default function AppointmentInputForm({ data, selectedAppointment, setSel
     };
 
     const onAddOption = (value, label) => {
-        const addOption = (newValue, label, optionsList, setOptionsList) => {
+        const addOption = async (newValue, label, optionsList, setOptionsList) => {
             setFormData({ ...formData, [label]: newValue });
 
-            ApiService.post(`/api/${label}`, newValue)
-                .then((result) => {
-                    newValue.id = result;
-                    setFormData({ ...formData, [label]: newValue });
-                    setOptionsList([...optionsList, newValue]);
-                })
-                .catch((error) => {
-                    console.log(`AppointmentInputForm (${label}) POST error: `);
-                    console.log(error);
-                });
+            try {
+                const result = await ApiService.post(`/api/${label}`, newValue);
+                newValue.id = result;
+                setFormData({ ...formData, [label]: newValue });
+                setOptionsList([...optionsList, newValue]);
+            } catch (error) {
+                console.log(`AppointmentInputForm (${label}) POST error: `);
+                console.log(error);
+            }
         };
 
         var finalValue = null;
@@ -214,20 +213,19 @@ export default function AppointmentInputForm({ data, selectedAppointment, setSel
 
         ConfirmationWindow.show(
             `Vai tiešām vēlaties dzēst pierakstu?`,
-            () => {
+            async () => {
                 var id = selectedAppointment.id;
 
                 data.removeAppointmentWithID(id);
                 
-                ApiService.delete(`/api/drag-table/appointment/${id}`)
-                .then((result) => {
+                try {
+                    await ApiService.delete(`/api/drag-table/appointment/${id}`);
                     console.log('Deleted appointment');
                     onWindowClose();
-                })
-                .catch((error) => {
+                } catch (error) {
                     console.log(`AppointmentInputForm (onDelete) DELETE error: `);
                     console.log(error);
-                });
+                }
             },
             () => { }
         );

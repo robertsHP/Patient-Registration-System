@@ -3,13 +3,6 @@
     width: 100%;
 }
 
-.custom-select-input {
-    padding: 8px;
-    border: 1px solid #ccc;
-    border-radius: 4px;
-    cursor: pointer;
-}
-
 .custom-select-dropdown {
     position: absolute;
     top: 100%;

@@ -34,23 +34,21 @@ export default function useDataFetch(floorID, tempDate) {
         return newRooms;
     };
 
-    const loadRooms = (tempDate) => {
+    const loadRooms = async (tempDate) => {
         const params = `floorId=${floorID}&year=${tempDate.getFullYear()}&month=${tempDate.getMonth()}`;
-        
-        ApiService.get(`/api/drag-table/get-rooms?${params}`)
-        .then(result => {
+        try {
+            const result = await ApiService.get(`/api/drag-table/get-rooms?${params}`);
             console.log(result);
-
+    
             const data = result.data[0].rooms;
             const finalData = convertRoomDataToLayout(data);
-
+    
             setRooms(finalData);
             triggerFullDataUpdate();
-        })
-        .catch((error) => {
+        } catch (error) {
             console.log("useDataFetch error: ");
             console.log(error);
-        });
+        }
     };
 
     const refreshRooms = () => {

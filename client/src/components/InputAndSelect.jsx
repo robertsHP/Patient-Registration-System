@@ -1,7 +1,4 @@
 import React, { useState, useRef } from 'react';
-
-import ConfirmationWindow from './ConfirmationWindow';
-
 import './InputAndSelect.css';
 
 export default function InputAndSelect({ 
@@ -38,8 +35,6 @@ export default function InputAndSelect({
     };
 
     const onClickOutside = (event) => {
-        console.log("onClickOutside");
-
         if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
             setIsOpen(false);
         }
@@ -53,48 +48,50 @@ export default function InputAndSelect({
     }, []);
 
     return (
-        <>
-            <div className="custom-select" ref={dropdownRef}>
-                <div className="custom-select-input" onClick={onToggleDropdown}>
-                    {value || placeholder}
-                </div>
-                {isOpen && (
-                    <div className="custom-select-dropdown">
-                        <div className="custom-select-input-container">
-                            <input
-                                type="text"
-                                value={inputValue}
-                                onChange={onInputChange}
-                                placeholder="Type to add or select"
-                                className="custom-select-input-field"
-                            />
-                            <button 
-                                className="add-option-button" 
-                                onClick={onAddOption}
-                            >
-                                Set
-                            </button>
-                        </div>
-                        <ul className="custom-select-options">
-                            {options.map((option) => (
-                                <li 
-                                    key={option.id} 
-                                    className="custom-select-option" 
-                                    onClick={() => onSelectOption(option)}
-                                >
-                                    {option[nameColumn]}
-                                    <button 
-                                        className="delete-option-button" 
-                                        onClick={(e) => onDeleteOption(option, e)}
-                                    >
-                                        X
-                                    </button>
-                                </li>
-                            ))}
-                        </ul>
+        <div className="custom-select" ref={dropdownRef}>
+            <input
+                type="text"
+                value={value || inputValue}
+                onClick={onToggleDropdown}
+                onChange={onInputChange}
+                placeholder={placeholder}
+            />
+            {isOpen && (
+                <div className="custom-select-dropdown">
+                    <div className="custom-select-input-container">
+                        <input
+                            type="text"
+                            value={inputValue}
+                            onChange={onInputChange}
+                            placeholder="Type to add or select"
+                            className="custom-select-input-field"
+                        />
+                        <button 
+                            className="add-option-button" 
+                            onClick={onAddOption}
+                        >
+                            Set
+                        </button>
                     </div>
-                )}
-            </div>
-        </>
+                    <ul className="custom-select-options">
+                        {options.map((option) => (
+                            <li 
+                                key={option.id} 
+                                className="custom-select-option" 
+                                onClick={() => onSelectOption(option)}
+                            >
+                                {option[nameColumn]}
+                                <button 
+                                    className="delete-option-button" 
+                                    onClick={(e) => onDeleteOption(option, e)}
+                                >
+                                    X
+                                </button>
+                            </li>
+                        ))}
+                    </ul>
+                </div>
+            )}
+        </div>
     );
 }

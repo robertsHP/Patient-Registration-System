@@ -30,6 +30,7 @@ export default class RoomRow extends Component {
         this.pageRefreshed = props.pageRefreshed;
         this.gridRef = createRef();
         this.refreshRow = this.refreshRow.bind(this);
+        this.updateAppointmentInDB = this.updateAppointmentInDB.bind(this);
         this.updateLayout = this.updateLayout.bind(this);
         this.onLayoutChange = this.onLayoutChange.bind(this);
         this.onDrag = this.onDrag.bind(this);
@@ -37,6 +38,7 @@ export default class RoomRow extends Component {
         this.onResizeStop = this.onResizeStop.bind(this);
         this.onMouseDown = this.onMouseDown.bind(this);
         this.onMouseMove = this.onMouseMove.bind(this);
+        this.insertAppointmentInDB = this.insertAppointmentInDB.bind(this);
         this.onMouseUp = this.onMouseUp.bind(this);
         this.handleAppointmentDoubleClick = this.handleAppointmentDoubleClick.bind(this);
     }
@@ -162,6 +164,16 @@ export default class RoomRow extends Component {
         return finalPos;
     }
 
+    async updateAppointmentInDB (id, convertedAppointment) {
+        try {
+            const params = `api/drag-table/appointment/${id}`;
+            await ApiService.put(params, convertedAppointment);
+        } catch (error) {
+            console.log("RoomRow error: ");
+            console.log(error);
+        }
+    }
+
     updateLayout(newLayout) {
         console.log("!TRIGGER CHANGE");
         const room = this.state.room;
@@ -185,11 +197,7 @@ export default class RoomRow extends Component {
                     if (this.pageRefreshed && !this.state.isCreatingAppointment) {
                         var convertedAppointment = convertAppointmentForSendingToDB(room, appointment);
 
-                        ApiService.put(`/api/drag-table/appointment/${appointment.id}`, convertedAppointment)
-                        .catch((error) => {
-                            console.log("RoomRow error: ");
-                            console.log(error);
-                        });
+                        this.updateAppointmentInDB(appointment.id, convertedAppointment);
                     }
                 }
             }
@@ -539,6 +547,36 @@ export default class RoomRow extends Component {
         }
     }
 
+    async insertAppointmentInDB (tempDraggingAppointment, convertedAppointment) {
+        try {
+            const result = await ApiService.post('/api/drag-table/appointment', convertedAppointment);
+            tempDraggingAppointment.id = result;
+    
+            const newAppointment = {
+                ...tempDraggingAppointment,
+                i: `appointment-${result}`,
+                x: Number(tempDraggingAppointment.x),
+                y: Number(tempDraggingAppointment.y),
+                w: Number(tempDraggingAppointment.w),
+                h: 1,
+                extendsToPreviousMonth: false,
+                extendsToNextMonth: false,
+            };
+    
+            this.setState((prevState) => ({
+                room: {
+                    ...prevState.room,
+                    appointments: [...prevState.room.appointments, newAppointment],
+                },
+            }));
+    
+            this.refreshRow();
+        } catch (error) {
+            console.log("RoomRow error: ");
+            console.log(error);
+        }
+    }
+
     onMouseUp() {
         if (this.state.isCreatingAppointment && this.state.draggingAppointment) {
             var inDateColumns = this.isInDateColumns(
@@ -558,35 +596,7 @@ export default class RoomRow extends Component {
                     this.state.draggingAppointment
                 );
 
-                console.log("POST");
-                console.log(convertedAppointment);
-
-                ApiService.post('/api/drag-table/appointment', convertedAppointment)
-                .then((result) => {
-                    tempDraggingAppointment.id = result;
-
-                    const newAppointment = {
-                        ...tempDraggingAppointment,
-                        i: `appointment-${result}`,
-                        x: Number(tempDraggingAppointment.x),
-                        y: Number(tempDraggingAppointment.y),
-                        w: Number(tempDraggingAppointment.w),
-                        h: 1,
-                        extendsToPreviousMonth: false,
-                        extendsToNextMonth: false,
-                    };
-                    this.setState((prevState) => ({
-                        room: {
-                            ...prevState.room,
-                            appointments: [...prevState.room.appointments, newAppointment],
-                        },
-                    }));
-                    this.refreshRow();
-                })
-                .catch((error) => {
-                    console.log("RoomRow error: ");
-                    console.log(error);
-                });
+                this.insertAppointmentInDB(tempDraggingAppointment, convertedAppointment);
             }
             this.setState({
                 draggingAppointment: null,
