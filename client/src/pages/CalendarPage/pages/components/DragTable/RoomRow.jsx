@@ -48,6 +48,10 @@ export default class RoomRow extends Component {
             });
             this.refreshRow();
         }
+        if(this.props.data.singleDataUpdateTrigger !== prevProps.data.singleDataUpdateTrigger) {
+            console.log("------DIIIZ NTUIES");
+        }
+
     }
 
     refreshRow() {

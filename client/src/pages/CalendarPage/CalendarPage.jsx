@@ -3,6 +3,7 @@ import { useNavigate, Route, Routes, Link, Navigate } from 'react-router-dom';
 
 import Header from '../../components/Header.jsx';
 
+import SearchPage from './pages/SearchPage.jsx';
 import BedsPage from './pages/BedsPage.jsx';
 import Beds4Page from './pages/Beds4Page.jsx';
 import SaunaPage from './pages/SaunaPage.jsx';
@@ -11,6 +12,11 @@ import './CalendarPage.css'
 
 export default function CalendarPage ({sidebarPages, parentUrlName}) {
     const subPages = [
+        {
+            title: "Datu meklēšana",
+            urlName: "search",
+            component: SearchPage
+        },
         {
             title: "Gultas",
             urlName: "beds",
@@ -28,6 +34,10 @@ export default function CalendarPage ({sidebarPages, parentUrlName}) {
         }
     ];
     const [currentSubPageNum, setCurrentSubPageNum] = useState(0);
+
+    const setSubPage = (num) => {
+        setCurrentSubPageNum(num);
+    };
 
     return (
         <div className="page-container">

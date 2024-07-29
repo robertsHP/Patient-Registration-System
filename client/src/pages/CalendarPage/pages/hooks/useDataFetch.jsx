@@ -15,6 +15,7 @@ export default function useDataFetch(floorID, tempDate) {
     const triggerFullDataUpdate = () => {
         setFullDataUpdateTrigger(prev => prev + 1);
     };
+
     const [singleDataUpdateTrigger, setSingleDataUpdateTrigger] = useState(0);
     const triggerSingleDataUpdate = () => {
         setSingleDataUpdateTrigger(prev => prev + 1);
@@ -35,19 +36,21 @@ export default function useDataFetch(floorID, tempDate) {
 
     const loadRooms = (tempDate) => {
         const params = `floorId=${floorID}&year=${tempDate.getFullYear()}&month=${tempDate.getMonth()}`;
+        
         ApiService.get(`/api/drag-table/get-rooms?${params}`)
-            .then(result => {
-                console.log(result);
+        .then(result => {
+            console.log(result);
 
-                const data = result.data[0].rooms;
-                const finalData = convertRoomDataToLayout(data);
+            const data = result.data[0].rooms;
+            const finalData = convertRoomDataToLayout(data);
 
-                console.log("GET ROOMS");
-                // console.log(finalData);
-
-                setRooms(finalData);
-                triggerFullDataUpdate();
-            });
+            setRooms(finalData);
+            triggerFullDataUpdate();
+        })
+        .catch((error) => {
+            console.log("useDataFetch error: ");
+            console.log(error);
+        });
     };
 
     const refreshRooms = () => {

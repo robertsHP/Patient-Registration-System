@@ -44,6 +44,10 @@ export default function AppointmentInputForm({ data, selectedAppointment, setSel
         fetchData();
     }, []);
 
+    useEffect(() => {
+        
+    }, [data.fullDataUpdateTrigger]);
+
     const onInputChange = (e) => {
         const { name, value } = e.target;
         setFormData({ ...formData, [name]: value });
@@ -97,7 +101,7 @@ export default function AppointmentInputForm({ data, selectedAppointment, setSel
             ConfirmationWindow.show(
                 message,
                 () => {
-                    ApiService.delete(`/api/input-form/${label}/${option.id}`, option)
+                    ApiService.delete(`/api/input-form/${label}/${option.id}`)
                         .then((result) => {
                             setOptionsList(
                                 optionsList.filter(value => value != option)
@@ -215,7 +219,7 @@ export default function AppointmentInputForm({ data, selectedAppointment, setSel
 
                 data.removeAppointmentWithID(id);
                 
-                ApiService.delete(`/api/drag-table/appointment/${id}`, formData)
+                ApiService.delete(`/api/drag-table/appointment/${id}`)
                 .then((result) => {
                     console.log('Deleted appointment');
                     onWindowClose();
