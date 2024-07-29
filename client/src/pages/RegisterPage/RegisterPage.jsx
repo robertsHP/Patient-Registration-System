@@ -1,13 +1,14 @@
 import React, { useState } from 'react';
 
-import { useNavigate, Routes, Route, Navigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 
 import AuthService from '../../services/AuthService';
 
-import './LoginPage.css';
+import './RegisterPage.css';
 
-export default function LoginPage({ pages }) {
+export default function RegisterPage() {
     const [username, setUsername] = useState('');
+    const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [error, setError] = useState('');
 
@@ -16,12 +17,11 @@ export default function LoginPage({ pages }) {
     const handleSubmit = async (event) => {
         event.preventDefault();
         try {
-            const response = await AuthService.login(username, password);
-            if (response.token) {
-                localStorage.setItem('token', response.token);
-                navigate(`/${pages[0].urlName}`);
+            const response = await AuthService.register(username, email, password);
+            if (response) {
+                navigate('/login');
             } else {
-                setError('Nepareizs lietotājvārds vai parole');
+                setError('Reģistrācija neizdevās');
             }
         } catch (error) {
             setError(error.message);
@@ -29,9 +29,9 @@ export default function LoginPage({ pages }) {
     };
 
     return (
-        <div className="login-page">
-            <div className="login-container">
-                <h4>CLIENT</h4>
+        <div className="register-page">
+            <div className="register-container">
+                <h4>Reģistrēties</h4>
                 <form onSubmit={handleSubmit}>
                     <label htmlFor="username">Lietotājvārds:</label>
                     <input
@@ -39,6 +39,13 @@ export default function LoginPage({ pages }) {
                         id="username"
                         value={username}
                         onChange={(e) => setUsername(e.target.value)}
+                    />
+                    <label htmlFor="email">E-pasts:</label>
+                    <input
+                        type="email"
+                        id="email"
+                        value={email}
+                        onChange={(e) => setEmail(e.target.value)}
                     />
                     <label htmlFor="password">Parole:</label>
                     <input
@@ -50,15 +57,8 @@ export default function LoginPage({ pages }) {
 
                     {error && <div className="error-message" style={{ color: 'red' }}>{error}</div>}
                     <br />
-                    <input className="login-button" type="submit" value="Pieslēgties" />
+                    <input className="register-button" type="submit" value="Reģistrēties" />
                 </form>
-                <Routes>
-                    <Route path="*" element={<Navigate to={``} replace />} />
-                </Routes>
-                <div className="links">
-                    <Link to="/register">Reģistrēties</Link>
-                    <Link to="/forgot-password">Aizmirsi paroli?</Link>
-                </div>
             </div>
         </div>
     );

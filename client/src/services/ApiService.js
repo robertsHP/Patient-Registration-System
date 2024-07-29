@@ -8,9 +8,19 @@ class ApiService {
                 'Content-Type': 'application/json',
             }
         });
+
+        // Add a request interceptor to include token in headers if available
+        this.apiClient.interceptors.request.use((config) => {
+            const token = localStorage.getItem('token');
+            if (token) {
+                config.headers['Authorization'] = `Bearer ${token}`;
+            }
+            return config;
+        }, (error) => {
+            return Promise.reject(error);
+        });
     }
 
-    // Method to handle GET requests
     async get(endpoint, params = {}) {
         try {
             const response = await this.apiClient.get(endpoint, { params });
@@ -20,7 +30,6 @@ class ApiService {
         }
     }
 
-    // Method to handle POST requests
     async post(endpoint, data) {
         try {
             const response = await this.apiClient.post(endpoint, data);
@@ -30,7 +39,6 @@ class ApiService {
         }
     }
 
-    // Method to handle PUT requests
     async put(endpoint, data) {
         try {
             const response = await this.apiClient.put(endpoint, data);
@@ -40,7 +48,6 @@ class ApiService {
         }
     }
 
-    // Method to handle DELETE requests
     async delete(endpoint) {
         try {
             const response = await this.apiClient.delete(endpoint);
@@ -49,6 +56,6 @@ class ApiService {
             throw new Error(`DELETE Error: ${error.response ? error.response.data : error.message}`);
         }
     }
-}
+};
 
 export default new ApiService();

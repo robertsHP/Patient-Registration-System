@@ -1,11 +1,11 @@
-.login-page {
+.register-page {
     display: flex;
     justify-content: center;
     align-items: center;
     height: 100vh;
 }
 
-.login-container {
+.register-container {
     background: #f7f7f7;
     padding: 20px;
     border-radius: 8px;
@@ -14,14 +14,4 @@
 
 .error-message {
     color: red;
-}
-
-.links {
-    margin-top: 10px;
-}
-
-.links a {
-    margin-right: 10px;
-    text-decoration: none;
-    color: blue;
 }
