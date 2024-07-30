@@ -30,7 +30,7 @@ app.get('/api', (req, res) => {
     res.send('Api is running...');
 });
 
-// app.use('/api', adminRoutes);
+app.use('/api/admin', adminRoutes);
 app.use('/api/calendar-page', calendarPageRoutes);
 app.use('/api', globalRoutes);
 

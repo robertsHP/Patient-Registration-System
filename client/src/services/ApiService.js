@@ -8,17 +8,6 @@ class ApiService {
                 'Content-Type': 'application/json',
             }
         });
-
-        // Add a request interceptor to include token in headers if available
-        this.apiClient.interceptors.request.use((config) => {
-            const token = localStorage.getItem('token');
-            if (token) {
-                config.headers['Authorization'] = `Bearer ${token}`;
-            }
-            return config;
-        }, (error) => {
-            return Promise.reject(error);
-        });
     }
 
     async get(endpoint, params = {}) {

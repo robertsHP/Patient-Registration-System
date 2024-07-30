@@ -1,10 +1,12 @@
-// src/components/PrivateRoute.jsx
+
 import React from 'react';
+
 import { Navigate } from 'react-router-dom';
 
 export default function PrivateRoute ({ element: Component, ...rest }) {
     const token = localStorage.getItem('token');
-    const isAuthenticated = token && !isTokenExpired(token); // Assuming you have a function to check token expiry
+    // Assuming you have a function to check token expiry
+    const isAuthenticated = token && !isTokenExpired(token);
   
     return isAuthenticated ? <Component {...rest} /> : <Navigate to="/login" replace />;
 };

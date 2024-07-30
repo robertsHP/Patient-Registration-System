@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 
-import { useNavigate, Routes, Route, Navigate } from 'react-router-dom';
+import { useNavigate, Routes, Route, Navigate, Link } from 'react-router-dom';
 
 import AuthService from '../../services/AuthService';
 
@@ -17,12 +17,15 @@ export default function LoginPage({ pages }) {
         event.preventDefault();
         try {
             const response = await AuthService.login(username, password);
-            if (response.token) {
-                localStorage.setItem('token', response.token);
-                navigate(`/${pages[0].urlName}`);
-            } else {
-                setError('Nepareizs lietotājvārds vai parole');
-            }
+
+            console.log(response);
+
+            // if (response.token) {
+            //     localStorage.setItem('token', response.token);
+            //     navigate(`/${pages[0].urlName}`);
+            // } else {
+            //     setError('Nepareizs lietotājvārds vai parole');
+            // }
         } catch (error) {
             setError(error.message);
         }
