@@ -7,16 +7,16 @@ exports.register = async (req, res) => {
     try {
         let user = await adminServices.findUserByEmail(email);
         if (user) {
-            return res.status(400).json({ msg: 'User already exists' });
+            return res.json('User already exists');
         }
         const salt = await bcrypt.genSalt(10);
         const hashedPassword = await bcrypt.hash(password, salt);
 
         user = await adminServices.createUser(username, email, hashedPassword);
-        res.status(201).json({ msg: 'User registered' });
+        res.json('User registered');
     } catch (err) {
         console.error(err.message);
-        res.status(500).send('Server error');
+        res.json('Server error');
     }
 };
 
@@ -26,30 +26,18 @@ exports.login = async (req, res) => {
     let user = await adminServices.findUserByEmail(email);
 
     if (!user) {
-        return res.status(404).json({ message: 'User not found' });
+        return res.json('Lietotājs ar šādu e-pastu nav atrasts vai neeksistē.');
     }
 
-    const isMatch = await bcrypt.compare(password, user.password);
+    var passedPasswordTrimmed = password.trim();
+    var userHashedPasswordTrimmed = user.password_hash.trim();
+
+    const isMatch = await bcrypt.compare(passedPasswordTrimmed, userHashedPasswordTrimmed);
 
     if (!isMatch) {
-        return res.status(400).json({ message: 'Invalid credentials' });
+        return res.json('Nepareizi ievadīta parole');
     }
 
-    req.session.userId = user.username;
-    res.status(200).json({ message: 'Logged in successfully' });
+    // req.session.userId = user.username;
+    res.json('VEIKSM"IGA AUTTJJHJH');
 };
-
-// exports.forgotPassword = async (req, res) => {
-//     const { email } = req.body;
-//     try {
-//         let user = await findUserByEmail(email);
-//         if (!user) {
-//             return res.status(400).json({ msg: 'User not found' });
-//         }
-//         // Generate reset token (for simplicity, just send a response here)
-//         res.status(200).json({ msg: 'Password reset link sent' });
-//     } catch (err) {
-//         console.error(err.message);
-//         res.status(500).send('Server error');
-//     }
-// };

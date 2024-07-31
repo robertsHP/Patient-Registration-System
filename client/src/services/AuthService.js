@@ -13,11 +13,6 @@ class AuthService {
 
         this.invalidUsernameMessage = 'Nederīgs lietotājvārds';
         this.invalidEmailMessage = 'Nederīgs e-pasts';
-        this.invalidPasswordMessage = `
-            Nederīga parole. 
-            Parolei jābūt vismaz 8 rakstzīmēm, jāsatur vismaz vienu lielo burtu, 
-            vienu mazo burtu un vienu ciparu.
-        `;
     }
 
     validateUsername(username) {
@@ -45,7 +40,11 @@ class AuthService {
         }
 
         if (!this.validatePassword(password)) {
-            return this.invalidPasswordMessage;
+            return `
+                Nederīga parole. 
+                Parolei jābūt vismaz 8 rakstzīmēm, jāsatur vismaz vienu lielo burtu, 
+                vienu mazo burtu un vienu ciparu.
+            `;
         }
 
         try {
@@ -66,7 +65,9 @@ class AuthService {
         }
 
         if (!this.validatePassword(password)) {
-            return this.invalidPasswordMessage;
+            return `
+                Nepareizi ievadīta parole.
+            `;
         }
 
         try {

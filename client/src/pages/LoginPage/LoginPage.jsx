@@ -20,12 +20,11 @@ export default function LoginPage({ pages }) {
                     setError(response);
                 } else {
                     setError('');
-                    navigate(`/${pages[0].urlName}`);
+                    // navigate(`/${pages[0].urlName}`);
                 }
             } else {
                 setError('Nepareizs e-pasts vai parole');
             }
-
         } catch (error) {
             setError(error.message);
         }
