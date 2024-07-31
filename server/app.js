@@ -3,11 +3,14 @@ const session = require('express-session');
 const cors = require('cors');
 const app = express();
 
+const crypto = require('crypto');
+
 // const errorHandler = require('./src/middleware/errorHandler.js'); 
 
 const globalRoutes = require('./src/routes/globalRoutes.js'); 
 const calendarPageRoutes = require('./src/routes/calendarPageRoutes.js');
 const adminRoutes = require('./src/routes/adminRoutes.js');
+const sessionRoutes = require('./src/routes/adminRoutes.js');
 
 require('dotenv').config({ path: '../.env' });
 
@@ -21,21 +24,23 @@ app.use(cors({
     credentials: true
 }));
 
+app.use(express.json());
+
+app.use(session({
+    secret: crypto.randomBytes(64).toString('hex'), // Automatically generate a random secret
+    resave: false,
+    saveUninitialized: true,
+    cookie: { secure: false } // Use true if running over HTTPS
+}));
+
 app.listen(serverPort, () => {
     console.log(`Server running at http://localhost:${serverPort}`);
 });
 
-app.use(express.json());
+app.get('/', (req, res) => { res.send('Server is running...'); });
+app.get('/api', (req, res) => { res.send('Api is running...'); });
 
-// Define your routes
-app.get('/', (req, res) => {
-    res.send('Server is running...');
-});
-
-app.get('/api', (req, res) => {
-    res.send('Api is running...');
-});
-
+app.use('/api/session', sessionRoutes);
 app.use('/api/admin', adminRoutes);
 app.use('/api/calendar-page', calendarPageRoutes);
 app.use('/api', globalRoutes);

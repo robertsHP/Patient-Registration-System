@@ -80,18 +80,6 @@ class AuthService {
             throw new Error(`Login Error: ${error.message}`);
         }
     }
-
-    // async forgotPassword(email) {
-    //     if (this.validateInput(email, /^[^\s@]+@[^\s@]+\.[^\s@]+$/)) {
-    //         return 'Nederīgs e-pasts';
-    //     }
-
-    //     try {
-    //         return await this.post('/api/admin/forgot-password', { email });
-    //     } catch (error) {
-    //         throw new Error(`Forgot Password Error: ${error.message}`);
-    //     }
-    // }
 }
 
 export default new AuthService();

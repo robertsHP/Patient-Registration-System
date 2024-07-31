@@ -8,40 +8,40 @@ import BedsPage from './subPages/BedsPage.jsx';
 import Beds4Page from './subPages/Beds4Page.jsx';
 import SaunaPage from './subPages/SaunaPage.jsx';
 
-import './CalendarPage.css'
+import './CalendarPage.css';
 
-export default function CalendarPage ({sidebarPages, parentUrlName}) {
-    const subPages = [
-        {
-            title: "Datu meklēšana",
-            urlName: "search",
-            component: SearchPage
-        },
-        {
-            title: "Gultas",
-            urlName: "beds",
-            component: BedsPage
-        },
-        {
-            title: "Gultas 4. stāvs",
-            urlName: "beds4",
-            component: Beds4Page
-        },
-        {
-            title: "Pirts",
-            urlName: "sauna",
-            component: SaunaPage
-        }
-    ];
-    const [currentSubPageNum, setCurrentSubPageNum] = useState(0);
+export default function CalendarPage () {
+    // const subPages = [
+    //     {
+    //         title: "Datu meklēšana",
+    //         urlName: "search",
+    //         component: SearchPage
+    //     },
+    //     {
+    //         title: "Gultas",
+    //         urlName: "beds",
+    //         component: BedsPage
+    //     },
+    //     {
+    //         title: "Gultas 4. stāvs",
+    //         urlName: "beds4",
+    //         component: Beds4Page
+    //     },
+    //     {
+    //         title: "Pirts",
+    //         urlName: "sauna",
+    //         component: SaunaPage
+    //     }
+    // ];
+    // const [currentSubPageNum, setCurrentSubPageNum] = useState(0);
 
-    const setSubPage = (num) => {
-        setCurrentSubPageNum(num);
-    };
+    // const setSubPage = (num) => {
+    //     setCurrentSubPageNum(num);
+    // };
 
     return (
         <div className="page-container">
-            <Header 
+            {/* <Header 
                 sidebarPages={sidebarPages} 
                 parentUrlName={parentUrlName} 
                 subPages={subPages}
@@ -59,7 +59,7 @@ export default function CalendarPage ({sidebarPages, parentUrlName}) {
                     ))}
                     <Route path="*" element={<Navigate to={`${subPages[currentSubPageNum].urlName}`} replace />} />
                 </Routes>
-            </main>
+            </main> */}
         </div>
     );
 }

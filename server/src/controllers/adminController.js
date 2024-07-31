@@ -13,7 +13,7 @@ exports.register = async (req, res) => {
         const hashedPassword = await bcrypt.hash(password, salt);
 
         user = await adminServices.createUser(username, email, hashedPassword);
-        res.json('User registered');
+        res.json({});
     } catch (err) {
         console.error(err.message);
         res.json('Server error');
@@ -38,6 +38,6 @@ exports.login = async (req, res) => {
         return res.json('Nepareizi ievadīta parole');
     }
 
-    // req.session.userId = user.username;
-    res.json('VEIKSM"IGA AUTTJJHJH');
+    req.session.userId = user.id;
+    res.json(user.id);
 };

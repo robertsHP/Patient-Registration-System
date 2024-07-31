@@ -1,29 +1,27 @@
 import React, { useState } from 'react';
-import { useNavigate, Routes, Route, Navigate, Link } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
+
 import AuthService from '../../services/AuthService';
+
 import './LoginPage.css';
 
-export default function LoginPage({ pages }) {
+export default function LoginPage() {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [error, setError] = useState('');
 
-    const navigate = useNavigate();
+    // const { login } = useAuth();
 
     const handleSubmit = async (event) => {
         event.preventDefault();
+
         try {
             const response = await AuthService.login(email, password);
 
-            if (response) {
-                if (typeof response === "string") {
-                    setError(response);
-                } else {
-                    setError('');
-                    // navigate(`/${pages[0].urlName}`);
-                }
+            if (response && typeof response === 'string') {
+                setError(response);
             } else {
-                setError('Nepareizs e-pasts vai parole');
+                // login(response.userId); // Assuming response contains userId
             }
         } catch (error) {
             setError(error.message);
@@ -49,14 +47,10 @@ export default function LoginPage({ pages }) {
                         value={password}
                         onChange={(e) => setPassword(e.target.value)}
                     />
-
                     {error && <div className="error-message" style={{ color: 'red' }}>{error}</div>}
                     <br />
                     <input className="login-button" type="submit" value="Pieslēgties" />
                 </form>
-                <Routes>
-                    <Route path="*" element={<Navigate to={``} replace />} />
-                </Routes>
                 <div className="links">
                     <Link to="/register">Reģistrēties</Link>
                     <Link to="/forgot-password">Aizmirsi paroli?</Link>
