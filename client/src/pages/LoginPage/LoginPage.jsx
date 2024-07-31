@@ -1,13 +1,10 @@
 import React, { useState } from 'react';
-
 import { useNavigate, Routes, Route, Navigate, Link } from 'react-router-dom';
-
 import AuthService from '../../services/AuthService';
-
 import './LoginPage.css';
 
 export default function LoginPage({ pages }) {
-    const [username, setUsername] = useState('');
+    const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [error, setError] = useState('');
 
@@ -16,16 +13,19 @@ export default function LoginPage({ pages }) {
     const handleSubmit = async (event) => {
         event.preventDefault();
         try {
-            const response = await AuthService.login(username, password);
+            const response = await AuthService.login(email, password);
 
-            console.log(response);
+            if (response) {
+                if (typeof response === "string") {
+                    setError(response);
+                } else {
+                    setError('');
+                    navigate(`/${pages[0].urlName}`);
+                }
+            } else {
+                setError('Nepareizs e-pasts vai parole');
+            }
 
-            // if (response.token) {
-            //     localStorage.setItem('token', response.token);
-            //     navigate(`/${pages[0].urlName}`);
-            // } else {
-            //     setError('Nepareizs lietotājvārds vai parole');
-            // }
         } catch (error) {
             setError(error.message);
         }
@@ -36,12 +36,12 @@ export default function LoginPage({ pages }) {
             <div className="login-container">
                 <h4>CLIENT</h4>
                 <form onSubmit={handleSubmit}>
-                    <label htmlFor="username">Lietotājvārds:</label>
+                    <label htmlFor="email">E-pasts:</label>
                     <input
-                        type="text"
-                        id="username"
-                        value={username}
-                        onChange={(e) => setUsername(e.target.value)}
+                        type="email"
+                        id="email"
+                        value={email}
+                        onChange={(e) => setEmail(e.target.value)}
                     />
                     <label htmlFor="password">Parole:</label>
                     <input

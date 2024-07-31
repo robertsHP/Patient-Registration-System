@@ -6,17 +6,22 @@ const app = express();
 
 const globalRoutes = require('./src/routes/globalRoutes.js'); 
 const calendarPageRoutes = require('./src/routes/calendarPageRoutes.js');
-// const adminRoutes = require('./src/routes/adminRoutes.js'); 
+const adminRoutes = require('./src/routes/adminRoutes.js');
 
 require('dotenv').config({ path: '../.env' });
 
-const port = process.env.SERVER_PORT;
+const serverPort = process.env.SERVER_PORT;
+const clientPort = process.env.CLIENT_PORT;
 
 // Use CORS with default settings (allows all origins)
-app.use(cors());
+app.use(cors({
+    origin: `http://localhost:${clientPort}`, // Replace with your client domain
+    methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
+    credentials: true
+}));
 
-app.listen(port, () => {
-    console.log(`Server running at http://localhost:${port}`);
+app.listen(serverPort, () => {
+    console.log(`Server running at http://localhost:${serverPort}`);
 });
 
 app.use(express.json());

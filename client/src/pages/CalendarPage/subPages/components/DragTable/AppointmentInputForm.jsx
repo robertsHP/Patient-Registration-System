@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 
-import ConfirmationWindow from '../../../../../components/ConfirmationWindow';
-import InputAndSelect from '../../../../../components/InputAndSelect';
+import ConfirmationWindow from '../../../../../components/ConfirmationWindow.jsx';
+import InputAndSelect from '../../../../../components/InputAndSelect.jsx';
 
 import ApiService from '../../../../../services/ApiService.js';
 

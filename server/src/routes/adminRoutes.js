@@ -11,8 +11,8 @@ router.post('/register', adminController.register);
 // @desc    Login user
 router.post('/login', adminController.login);
 
-// @route   POST api/users/forgot-password
-// @desc    Forgot password
-router.post('/forgot-password', adminController.forgotPassword);
+// // @route   POST api/users/forgot-password
+// // @desc    Forgot password
+// router.post('/forgot-password', adminController.forgotPassword);
 
 module.exports = router;

@@ -12,7 +12,9 @@ exports.getRooms = async (req, res) => {
         return res.status(400).json({ error: '(getRooms) - Floor ID is a required parameter.' });
     }
 
-    const { query, params } = calendarPageServices.buildGetAppointmentQuery(year, month, floorId, limit, offset);
+    const { query, params } = calendarPageServices.buildGetAppointmentQuery(
+        year, month, floorId, limit, offset
+    );
 
     try {
         const dataResult = await pool.query(query, params);

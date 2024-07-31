@@ -19,19 +19,19 @@
     margin-bottom: 10px;
 }
 
-.login-container input[type="text"],
+.login-container input[type="email"],
 .login-container input[type="password"] {
     padding: 10px;
 }
 
-.login-container input[type="text"],
+.login-container input[type="email"],
 .login-container input[type="password"],
 .login-container input[type="submit"] {
     border: 1px solid #ccc;
     border-radius: 3px;
 }
 
-.login-container input[type="text"],
+.login-container input[type="email"],
 .login-container input[type="password"] {
     margin-bottom: 10px;
 }

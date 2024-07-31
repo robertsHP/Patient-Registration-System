@@ -3,10 +3,10 @@ import { useNavigate, Route, Routes, Link, Navigate } from 'react-router-dom';
 
 import Header from '../../components/Header.jsx';
 
-import SearchPage from './pages/SearchPage.jsx';
-import BedsPage from './pages/BedsPage.jsx';
-import Beds4Page from './pages/Beds4Page.jsx';
-import SaunaPage from './pages/SaunaPage.jsx';
+import SearchPage from './subPages/SearchPage.jsx';
+import BedsPage from './subPages/BedsPage.jsx';
+import Beds4Page from './subPages/Beds4Page.jsx';
+import SaunaPage from './subPages/SaunaPage.jsx';
 
 import './CalendarPage.css'
 

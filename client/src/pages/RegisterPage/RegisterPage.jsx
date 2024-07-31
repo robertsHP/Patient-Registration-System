@@ -19,7 +19,12 @@ export default function RegisterPage() {
         try {
             const response = await AuthService.register(username, email, password);
             if (response) {
-                navigate('/login');
+                if (typeof response === "string") {
+                    setError(response);
+                } else {
+                    setError('');
+                    navigate('/login');
+                }
             } else {
                 setError('Reģistrācija neizdevās');
             }

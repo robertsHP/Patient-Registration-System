@@ -2,7 +2,7 @@ CREATE TABLE LRC_ADMIN_user (
     id SERIAL PRIMARY KEY,
     username VARCHAR(50) NOT NULL UNIQUE,
     email VARCHAR(100) NOT NULL UNIQUE,
-    password_hash CHAR(64) NOT NULL,
+    password_hash CHAR(300) NOT NULL,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 

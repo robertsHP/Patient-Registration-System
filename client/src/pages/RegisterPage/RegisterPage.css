@@ -6,12 +6,64 @@
 }
 
 .register-container {
-    background: #f7f7f7;
+    max-width: 400px;
+    max-height: 400px;
+    margin: 0 auto;
     padding: 20px;
-    border-radius: 8px;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    border: 1px solid #ccc;
+    border-radius: 5px;
+}
+
+.register-container label {
+    display: block;
+    margin-bottom: 10px;
+}
+
+.register-container input[type="text"],
+.register-container input[type="email"],
+.register-container input[type="password"] {
+    padding: 10px;
+}
+
+.register-container input[type="text"],
+.register-container input[type="email"],
+.register-container input[type="password"],
+.register-container input[type="submit"] {
+    border: 1px solid #ccc;
+    border-radius: 3px;
+}
+
+.register-container input[type="text"],
+.register-container input[type="email"],
+.register-container input[type="password"] {
+    margin-bottom: 10px;
+}
+
+.register-container input[type="submit"] {
+    background-color: #4CAF50;
+    color: white;
+    padding: 10px 0;
+    cursor: pointer;
+}
+
+.register-container input[type="submit"]:hover {
+    background-color: #45a049;
+}
+
+.register-button {
+    
 }
 
 .error-message {
     color: red;
+}
+
+.links {
+    margin-top: 10px;
+}
+
+.links a {
+    margin-right: 10px;
+    text-decoration: none;
+    color: blue;
 }
