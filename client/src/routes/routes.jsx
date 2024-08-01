@@ -19,30 +19,31 @@ const routes = {
         component: <RegisterPage />
     },
     system: {
+        mainUrl: "/calendar/search",
         pages: {
             calendar: {
                 title: "Kalendārs",
-                url: "calendar",
+                url: "/calendar",
                 component: <CalendarPage />,
                 subPages: {
                     search: {
                         title: "Datu meklēšana",
-                        urlName: "/search",
+                        url: "/calendar/search",
                         component: <SearchPage />
                     },
                     beds: {
                         title: "Gultas",
-                        urlName: "/beds",
+                        url: "/calendar/beds",
                         component: <BedsPage />
                     },
                     beds4: {
                         title: "Gultas 4. stāvs",
-                        urlName: "/beds4",
+                        url: "/calendar/beds4",
                         component: <Beds4Page />
                     },
                     sauna: {
                         title: "Pirts",
-                        urlName: "/sauna",
+                        url: "/calendar/sauna",
                         component: <SaunaPage />
                     }
                 }

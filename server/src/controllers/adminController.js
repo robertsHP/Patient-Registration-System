@@ -41,3 +41,21 @@ exports.login = async (req, res) => {
     req.session.userId = user.id;
     res.json(user.id);
 };
+
+exports.logout = (req, res) => {
+    req.session.destroy((err) => {
+        if (err) {
+            console.error(err.message);
+            return res.json('Server error');
+        }
+        res.json('Logged out successfully');
+    });
+};
+
+exports.checkLogin = (req, res) => {
+    if (req.session && req.session.userId) {
+        res.json({ loggedIn: true, userId: req.session.userId });
+    } else {
+        res.json({ loggedIn: false });
+    }
+};

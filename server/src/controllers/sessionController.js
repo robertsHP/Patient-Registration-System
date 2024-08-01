@@ -1,13 +1,9 @@
 
-
-
-exports.post = async (req, res) => {
-    const { key, value } = req.body;
-    if (key && value !== undefined) {  // Check for undefined to allow falsy values like 0 or false
-        req.session[key] = value;
-        res.status(200).json({ message: 'Session updated', key, value });
+exports.getAll = async (req, res) => {
+    if (req.session) {
+        res.status(200).json(req.session);
     } else {
-        res.status(400).json({ message: 'Key and value are required' });
+        res.status(404).json({ message: 'Session data not found' });
     }
 };
 
@@ -22,6 +18,16 @@ exports.get = async (req, res) => {
         }
     } else {
         res.status(200).json(req.session);
+    }
+};
+
+exports.post = async (req, res) => {
+    const { key, value } = req.body;
+    if (key && value !== undefined) {  // Check for undefined to allow falsy values like 0 or false
+        req.session[key] = value;
+        res.status(200).json({ message: 'Session updated', key, value });
+    } else {
+        res.status(400).json({ message: 'Key and value are required' });
     }
 };
 

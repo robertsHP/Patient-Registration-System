@@ -5,14 +5,18 @@ const adminController = require('../controllers/adminController');
 
 // @route   POST api/users/register
 // @desc    Register user
-router.post('/register', adminController.register);
+router.post('/admin/register', adminController.register);
 
 // @route   POST api/users/login
 // @desc    Login user
-router.post('/login', adminController.login);
+router.post('/admin/login', adminController.login);
 
-// // @route   POST api/users/forgot-password
-// // @desc    Forgot password
-// router.post('/forgot-password', adminController.forgotPassword);
+// @route   POST api/users/logout
+// @desc    Logout user
+router.post('/admin/logout', adminController.logout);
+
+// @route   POST api/users/login
+// @desc    Login user
+router.post('/admin/is-logged-out', adminController.checkLogin);
 
 module.exports = router;

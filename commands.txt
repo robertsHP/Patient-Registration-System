@@ -22,6 +22,11 @@ Ja ir:
     Server error: connect ECONNREFUSED <ip-adrese>
         Tad ieslēdz postgresql serveri
 
+
+
+#$fGH678^&fgfg
+
+
 CURL:
 curl -X POST http://localhost:5000/api/drag-table/appointment \
     -H "Content-Type: application/json" \

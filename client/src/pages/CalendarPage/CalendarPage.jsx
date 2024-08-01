@@ -1,12 +1,9 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useNavigate, Route, Routes, Link, Navigate } from 'react-router-dom';
 
 import Header from '../../components/Header.jsx';
 
-import SearchPage from './subPages/SearchPage.jsx';
-import BedsPage from './subPages/BedsPage.jsx';
-import Beds4Page from './subPages/Beds4Page.jsx';
-import SaunaPage from './subPages/SaunaPage.jsx';
+import routes from '../../routes/routes.jsx';
 
 import './CalendarPage.css';
 
@@ -33,15 +30,21 @@ export default function CalendarPage () {
     //         component: SaunaPage
     //     }
     // ];
-    // const [currentSubPageNum, setCurrentSubPageNum] = useState(0);
+    const [currentSubPageNum, setCurrentSubPageNum] = useState(0);
 
-    // const setSubPage = (num) => {
-    //     setCurrentSubPageNum(num);
-    // };
+    const setSubPage = (num) => {
+        setCurrentSubPageNum(num);
+    };
+
+    useEffect(() => {
+        console.log('WORK');
+    });
+
+    var calendar = routes.system.pages.calendar;
 
     return (
         <div className="page-container">
-            {/* <Header 
+            <Header 
                 sidebarPages={sidebarPages} 
                 parentUrlName={parentUrlName} 
                 subPages={subPages}
@@ -50,16 +53,15 @@ export default function CalendarPage () {
             />
             <main>
                 <Routes>
-                    {subPages.map(({urlName, component: Component}) => (
+                    {Object.entries(calendar.subPages).map(([key, page]) => (
                         <Route 
-                            key={`${urlName}_route`} 
-                            path={`/${urlName}/*`} 
-                            element={<Component />} 
+                            key={`${key}_route`} 
+                            path={calendar.url + page.url} 
+                            element={page.component} 
                         />
                     ))}
-                    <Route path="*" element={<Navigate to={`${subPages[currentSubPageNum].urlName}`} replace />} />
                 </Routes>
-            </main> */}
+            </main>
         </div>
     );
 }

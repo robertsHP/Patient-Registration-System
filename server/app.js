@@ -10,7 +10,7 @@ const crypto = require('crypto');
 const globalRoutes = require('./src/routes/globalRoutes.js'); 
 const calendarPageRoutes = require('./src/routes/calendarPageRoutes.js');
 const adminRoutes = require('./src/routes/adminRoutes.js');
-const sessionRoutes = require('./src/routes/adminRoutes.js');
+const sessionRoutes = require('./src/routes/sessionRoutes.js');
 
 require('dotenv').config({ path: '../.env' });
 
@@ -40,9 +40,9 @@ app.listen(serverPort, () => {
 app.get('/', (req, res) => { res.send('Server is running...'); });
 app.get('/api', (req, res) => { res.send('Api is running...'); });
 
-app.use('/api/session', sessionRoutes);
-app.use('/api/admin', adminRoutes);
-app.use('/api/calendar-page', calendarPageRoutes);
+app.use('/api', sessionRoutes);
+app.use('/api', adminRoutes);
+app.use('/api', calendarPageRoutes);
 app.use('/api', globalRoutes);
 
 // Error handling middleware

@@ -1,15 +1,18 @@
 const express = require('express');
-const controller = require('../controllers/sessionController');
-
 const router = express.Router();
 
-// POST: Log in a user and create a session
-router.post('/set', controller.post);
+const controller = require('../controllers/sessionController');
 
-// GET: Retrieve current session information
-router.get('/get', controller.get);
+// GET: Get all session information
+router.get('/session/get-all', controller.getAll);
 
-// DELETE: Log out the user and destroy the session
-router.delete('/delete', controller.delete);
+// GET: Get session key
+router.get('/session/get', controller.get);
+
+// POST: Set session key
+router.post('/session/update', controller.post);
+
+// DELETE: Delete session key
+router.delete('/session/delete', controller.delete);
 
 module.exports = router;

@@ -80,6 +80,24 @@ class AuthService {
             throw new Error(`Login Error: ${error.message}`);
         }
     }
+
+    async logout () {
+        try {
+            const response = await this.apiClient.post('/api/admin/logout');
+            return response.data;
+        } catch (error) {
+            throw new Error(`Login Error: ${error.message}`);
+        }
+    }
+
+    async ifLoggedOut () {
+        try {
+            const response = await this.apiClient.post('/api/admin/is-logged-out');
+            return response.data;
+        } catch (error) {
+            throw new Error(`Login Error: ${error.message}`);
+        }
+    }
 }
 
 export default new AuthService();

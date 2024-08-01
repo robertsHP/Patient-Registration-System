@@ -10,19 +10,19 @@ class SessionService {
         });
     }
 
-    async updateSession(key, value) {
+    async getSession() {
         try {
-            const response = await this.api.post('/session', { key, value });
-            return response.data;
+            const response = await this.api.get('/api/session/get-all');
+            return response;
         } catch (error) {
-            console.error('Failed to update session:', error);
+            console.error('Failed to get all sessions:', error);
             throw error;
         }
     }
 
-    async getSession(key) {
+    async getSessionKey(key) {
         try {
-            const response = await this.api.get('/session', {
+            const response = await this.api.get('/api/session/get', {
                 params: key ? { key } : {},
             });
             return response.data;
@@ -32,9 +32,19 @@ class SessionService {
         }
     }
 
-    async deleteSession(key) {
+    async updateSessionKey(key, value) {
         try {
-            const response = await this.api.delete('/session', {
+            const response = await this.api.post('/api/session/update', { key, value });
+            return response.data;
+        } catch (error) {
+            console.error('Failed to update session:', error);
+            throw error;
+        }
+    }
+
+    async deleteSessionKey(key) {
+        try {
+            const response = await this.api.delete('/api/session/delete', {
                 data: key ? { key } : {},
             });
             return response.data;
@@ -52,4 +62,5 @@ export default new SessionService();
 // const sessionService = new SessionService('http://localhost:3000/api');
 // sessionService.updateSession('username', 'john_doe').then(response => console.log(response));
 // sessionService.getSession('username').then(response => console.log(response));
+// sessionService.getAllSessions().then(response => console.log(response));
 // sessionService.deleteSession('username').then(response => console.log(response));

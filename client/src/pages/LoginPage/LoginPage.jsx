@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 
+import routes from '../../routes/routes.jsx';
+
 import AuthService from '../../services/AuthService';
 
 import './LoginPage.css';
@@ -10,7 +12,7 @@ export default function LoginPage() {
     const [password, setPassword] = useState('');
     const [error, setError] = useState('');
 
-    // const { login } = useAuth();
+    const navigate = useNavigate();
 
     const handleSubmit = async (event) => {
         event.preventDefault();
@@ -21,7 +23,9 @@ export default function LoginPage() {
             if (response && typeof response === 'string') {
                 setError(response);
             } else {
-                // login(response.userId); // Assuming response contains userId
+                navigate(
+                    routes.system.mainUrl
+                );
             }
         } catch (error) {
             setError(error.message);
@@ -52,10 +56,9 @@ export default function LoginPage() {
                     <input className="login-button" type="submit" value="Pieslēgties" />
                 </form>
                 <div className="links">
-                    <Link to="/register">Reģistrēties</Link>
-                    <Link to="/forgot-password">Aizmirsi paroli?</Link>
+                    <Link to={routes.register.url}>Reģistrēties</Link>
                 </div>
             </div>
         </div>
     );
-}
+};
