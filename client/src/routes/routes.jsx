@@ -8,15 +8,18 @@ import Beds4Page from '../pages/CalendarPage/subPages/Beds4Page.jsx';
 import SaunaPage from '../pages/CalendarPage/subPages/SaunaPage.jsx';
 
 const routes = {
-    login: {
-        title: "Pieslēgšanās",
-        url: "/login",
-        component: <LoginPage />
-    },
-    register: {
-        title: "Reģistrēšanās",
-        url: "/register",
-        component: <RegisterPage />
+    auth: {
+        mainUrl: "/login",
+        login: {
+            title: "Pieslēgšanās",
+            url: "/login",
+            component: <LoginPage />
+        },
+        register: {
+            title: "Reģistrēšanās",
+            url: "/register",
+            component: <RegisterPage />
+        },
     },
     system: {
         mainUrl: "/calendar/search",

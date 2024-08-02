@@ -18,11 +18,11 @@ export default function Header ({sidebarPages, parentUrlName, subPages, currentS
                 <Sidebar sidebarPages={sidebarPages} />
 
                 {/* Subpage buttons */}
-                {subPages.map((page, index) => (
-                    <Link key={`${page.urlName}_link_button`} to={`/${parentUrlName}/${page.urlName}`}>
+                {Object.entries(subPages).map(([key, page]) => (
+                    <Link key={key} to={`/${parentUrlName}/${page.urlName}`}>
                         <button
-                            className={`subpage-button ${index === currentSubPageNum ? 'active-button' : ''}`}
-                            onClick={() => handlePageChange(index)}
+                            className={`subpage-button ${key === currentSubPageNum ? 'active-button' : ''}`}
+                            onClick={() => handlePageChange(key)}
                         >
                             {page.title}
                         </button>

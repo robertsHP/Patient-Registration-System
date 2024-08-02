@@ -17,6 +17,6 @@ router.post('/admin/logout', adminController.logout);
 
 // @route   POST api/users/login
 // @desc    Login user
-router.post('/admin/is-logged-out', adminController.checkLogin);
+router.post('/admin/is-logged-in', adminController.checkLogin);
 
 module.exports = router;

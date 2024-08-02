@@ -8,28 +8,6 @@ import routes from '../../routes/routes.jsx';
 import './CalendarPage.css';
 
 export default function CalendarPage () {
-    // const subPages = [
-    //     {
-    //         title: "Datu meklēšana",
-    //         urlName: "search",
-    //         component: SearchPage
-    //     },
-    //     {
-    //         title: "Gultas",
-    //         urlName: "beds",
-    //         component: BedsPage
-    //     },
-    //     {
-    //         title: "Gultas 4. stāvs",
-    //         urlName: "beds4",
-    //         component: Beds4Page
-    //     },
-    //     {
-    //         title: "Pirts",
-    //         urlName: "sauna",
-    //         component: SaunaPage
-    //     }
-    // ];
     const [currentSubPageNum, setCurrentSubPageNum] = useState(0);
 
     const setSubPage = (num) => {
@@ -45,9 +23,9 @@ export default function CalendarPage () {
     return (
         <div className="page-container">
             <Header 
-                sidebarPages={sidebarPages} 
-                parentUrlName={parentUrlName} 
-                subPages={subPages}
+                sidebarPages={routes.system.pages} 
+                parentUrlName={routes.system.pages.calendar.url} 
+                subPages={routes.system.pages.calendar.subPages}
                 currentSubPageNum={currentSubPageNum}
                 setCurrentSubPageNum={setCurrentSubPageNum}
             />
@@ -56,11 +34,12 @@ export default function CalendarPage () {
                     {Object.entries(calendar.subPages).map(([key, page]) => (
                         <Route 
                             key={`${key}_route`} 
-                            path={calendar.url + page.url} 
+                            path={page.url} 
                             element={page.component} 
                         />
                     ))}
                 </Routes>
+                <Navigate to={routes.system.mainUrl} replace />
             </main>
         </div>
     );

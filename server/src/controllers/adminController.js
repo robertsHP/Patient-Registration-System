@@ -39,7 +39,7 @@ exports.login = async (req, res) => {
     }
 
     req.session.userId = user.id;
-    res.json(user.id);
+    res.json(req.session.userId);
 };
 
 exports.logout = (req, res) => {
@@ -53,7 +53,7 @@ exports.logout = (req, res) => {
 };
 
 exports.checkLogin = (req, res) => {
-    if (req.session && req.session.userId) {
+    if (req.session && typeof req.session.userId != 'undefined') {
         res.json({ loggedIn: true, userId: req.session.userId });
     } else {
         res.json({ loggedIn: false });

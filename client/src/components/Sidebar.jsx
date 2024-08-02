@@ -13,8 +13,8 @@ export default function Sidebar ({sidebarPages}) {
     return (
         <>
             <aside className={`sidebar ${isSidebarOpen ? 'open' : ''}`}>
-                {sidebarPages.map((page) => (
-                    <div className="sidebar-link" key={page.urlName}>
+                {Object.entries(sidebarPages).map(([key, page]) => (
+                    <div className="sidebar-link" key={key}>
                         <Link to={`/${page.urlName}`}>
                             {page.title}
                         </Link>

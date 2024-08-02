@@ -3,6 +3,9 @@ import { useNavigate, Link } from 'react-router-dom';
 
 import routes from '../../routes/routes.jsx';
 
+import useNavigation from '../../hooks/useNavigation.jsx';
+
+import SessionService from '../../services/SessionService';
 import AuthService from '../../services/AuthService';
 
 import './LoginPage.css';
@@ -12,7 +15,7 @@ export default function LoginPage() {
     const [password, setPassword] = useState('');
     const [error, setError] = useState('');
 
-    const navigate = useNavigate();
+    const { redirect } = useNavigation();
 
     const handleSubmit = async (event) => {
         event.preventDefault();
@@ -23,9 +26,10 @@ export default function LoginPage() {
             if (response && typeof response === 'string') {
                 setError(response);
             } else {
-                navigate(
-                    routes.system.mainUrl
-                );
+                redirect();
+
+                // localStorage.userId = result.userId;
+                // navigate(routes.system.mainUrl);
             }
         } catch (error) {
             setError(error.message);
@@ -51,12 +55,16 @@ export default function LoginPage() {
                         value={password}
                         onChange={(e) => setPassword(e.target.value)}
                     />
-                    {error && <div className="error-message" style={{ color: 'red' }}>{error}</div>}
+                    {error && 
+                        <div className="error-message" style={{ color: 'red' }}>
+                            {error}
+                        </div>
+                    }
                     <br />
                     <input className="login-button" type="submit" value="Pieslēgties" />
                 </form>
                 <div className="links">
-                    <Link to={routes.register.url}>Reģistrēties</Link>
+                    <Link to={routes.auth.register.url}>Reģistrēties</Link>
                 </div>
             </div>
         </div>

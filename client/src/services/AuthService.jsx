@@ -1,5 +1,3 @@
-import ApiService from './ApiService';
-
 import axios from 'axios';
 
 class AuthService {
@@ -13,6 +11,10 @@ class AuthService {
 
         this.invalidUsernameMessage = 'Nederīgs lietotājvārds';
         this.invalidEmailMessage = 'Nederīgs e-pasts';
+
+        if(typeof localStorage.userId == 'undefined') {
+            localStorage.setItem('userId', null);
+        }
     }
 
     validateUsername(username) {
@@ -75,6 +77,7 @@ class AuthService {
                 email,
                 password,
             });
+            localStorage.setItem('userId', response.data);
             return response.data;
         } catch (error) {
             throw new Error(`Login Error: ${error.message}`);
@@ -84,19 +87,16 @@ class AuthService {
     async logout () {
         try {
             const response = await this.apiClient.post('/api/admin/logout');
+            localStorage.setItem('userId', null);
+
             return response.data;
         } catch (error) {
             throw new Error(`Login Error: ${error.message}`);
         }
     }
 
-    async ifLoggedOut () {
-        try {
-            const response = await this.apiClient.post('/api/admin/is-logged-out');
-            return response.data;
-        } catch (error) {
-            throw new Error(`Login Error: ${error.message}`);
-        }
+    ifLoggedIn () {
+        return localStorage.getItem('userId') !== 'null';
     }
 }
 

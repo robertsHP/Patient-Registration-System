@@ -1,17 +1,26 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
+import useNavigation from '../hooks/useNavigation.jsx';
+import routes from '../routes/routes.jsx';
+import AuthService from '../services/AuthService.jsx';
+
 import './Header.css'
 
 export default function LogoutButton () {
-    const navigate = useNavigate();
+    const { redirect } = useNavigation();
 
     const logoutOnClick = () => {
-        // Add your logout logic here
-        //!!!!!!!!!!!!!
-        console.log('Logging out...');
+        const logout = async () => {
+            try {
+                await AuthService.logout();
+                redirect();
+            } catch (error) {
+                console.error(error.message);
+            }
+        };
 
-        navigate(`/login`);
+        logout();
     };
 
     return (
