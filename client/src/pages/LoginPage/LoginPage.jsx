@@ -17,6 +17,8 @@ export default function LoginPage() {
 
     const { redirect } = useNavigation();
 
+    const register = routes.auth.pages.register;
+
     const handleSubmit = async (event) => {
         event.preventDefault();
 
@@ -27,9 +29,6 @@ export default function LoginPage() {
                 setError(response);
             } else {
                 redirect();
-
-                // localStorage.userId = result.userId;
-                // navigate(routes.system.mainUrl);
             }
         } catch (error) {
             setError(error.message);
@@ -64,7 +63,7 @@ export default function LoginPage() {
                     <input className="login-button" type="submit" value="Pieslēgties" />
                 </form>
                 <div className="links">
-                    <Link to={routes.auth.register.url}>Reģistrēties</Link>
+                    <Link to={register.url}>Reģistrēties</Link>
                 </div>
             </div>
         </div>

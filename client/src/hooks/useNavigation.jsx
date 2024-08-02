@@ -23,7 +23,7 @@ const useNavigation = () => {
     };
 
     const ifAuthRoutesContainUrl = (url) => {
-        const authUrls = Object.values(routes.auth).map(auth => auth.url);
+        const authUrls = Object.values(routes.auth.pages).map(auth => auth.url);
         return authUrls.some(authUrl => checkUrlContains(url, authUrl));
     };
 
@@ -33,16 +33,29 @@ const useNavigation = () => {
         return systemUrls.some(systemUrl => checkUrlContains(url, systemUrl));
     };
 
+    const getAuthPage = (url) => {
+        const authPages = Object.values(routes.auth.pages);
+        return authPages.find(page => page.url === url);
+    };
+    
+    const getSystemPage = (url) => {
+        const systemPages = Object.values(routes.system.pages);
+        return systemPages.find(page => page.url === url);
+    };
+    
+    const getPageSubPage = (page, url) => {
+        const subPages = page.subPages;
+        return subPages.find(subPage => subPage.url === url);
+    };
+
     const redirect = () => {
         if (AuthService.ifLoggedIn()) {
             if(!ifSystemRoutesContainUrl(currentPath)){
-                navigateTo(routes.system.mainUrl);
-                console.log("SYSTEM");
+                navigateTo(routes.system.url);
             }
         } else {
             if(!ifAuthRoutesContainUrl(currentPath)){
-                navigateTo(routes.auth.mainUrl);
-                console.log("AUTH");
+                navigateTo(routes.auth.url);
             }
         }
     };

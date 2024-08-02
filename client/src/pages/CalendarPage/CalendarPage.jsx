@@ -1,45 +1,43 @@
-import React, { useEffect, useState } from 'react';
-import { useNavigate, Route, Routes, Link, Navigate } from 'react-router-dom';
+
+import React, { useEffect } from 'react';
+import { Route, Routes } from 'react-router-dom';
 
 import Header from '../../components/Header.jsx';
 
+import useNavigation from '../../hooks/useNavigation.jsx';
 import routes from '../../routes/routes.jsx';
+
+import SearchPage from './subPages/SearchPage.jsx';
 
 import './CalendarPage.css';
 
-export default function CalendarPage () {
-    const [currentSubPageNum, setCurrentSubPageNum] = useState(0);
+function Test() {
+    return <div>TEST</div>;
+}
 
-    const setSubPage = (num) => {
-        setCurrentSubPageNum(num);
-    };
+export default function CalendarPage() {
+    const { redirect } = useNavigation();
+    const subPages = routes.system.pages.calendar.subPages;
 
     useEffect(() => {
-        console.log('WORK');
-    });
-
-    var calendar = routes.system.pages.calendar;
+        console.log('Redirect called');
+        redirect();
+    }, [redirect]);
 
     return (
         <div className="page-container">
-            <Header 
-                sidebarPages={routes.system.pages} 
-                parentUrlName={routes.system.pages.calendar.url} 
-                subPages={routes.system.pages.calendar.subPages}
-                currentSubPageNum={currentSubPageNum}
-                setCurrentSubPageNum={setCurrentSubPageNum}
-            />
+            <Header subPages={subPages} />
             <main>
                 <Routes>
-                    {Object.entries(calendar.subPages).map(([key, page]) => (
+                    {Object.entries(subPages).map(([key, { title, url, component: Component }]) => (
                         <Route 
                             key={`${key}_route`} 
-                            path={page.url} 
-                            element={page.component} 
+                            path={url} 
+                            element={<Component />} 
                         />
                     ))}
                 </Routes>
-                <Navigate to={routes.system.mainUrl} replace />
+                <div>TEST</div>
             </main>
         </div>
     );

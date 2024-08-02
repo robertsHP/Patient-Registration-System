@@ -9,45 +9,47 @@ import SaunaPage from '../pages/CalendarPage/subPages/SaunaPage.jsx';
 
 const routes = {
     auth: {
-        mainUrl: "/login",
-        login: {
-            title: "Pieslēgšanās",
-            url: "/login",
-            component: <LoginPage />
-        },
-        register: {
-            title: "Reģistrēšanās",
-            url: "/register",
-            component: <RegisterPage />
-        },
+        url: "/login",
+        pages: {
+            login: {
+                title: "Pieslēgšanās",
+                url: "/login",
+                component: LoginPage
+            },
+            register: {
+                title: "Reģistrēšanās",
+                url: "/register",
+                component: RegisterPage
+            },
+        }
     },
     system: {
-        mainUrl: "/calendar/search",
+        url: "/calendar/search",
         pages: {
             calendar: {
                 title: "Kalendārs",
                 url: "/calendar",
-                component: <CalendarPage />,
+                component: CalendarPage,
                 subPages: {
                     search: {
                         title: "Datu meklēšana",
                         url: "/calendar/search",
-                        component: <SearchPage />
+                        component: SearchPage
                     },
                     beds: {
                         title: "Gultas",
                         url: "/calendar/beds",
-                        component: <BedsPage />
+                        component: BedsPage
                     },
                     beds4: {
                         title: "Gultas 4. stāvs",
                         url: "/calendar/beds4",
-                        component: <Beds4Page />
+                        component: Beds4Page
                     },
                     sauna: {
                         title: "Pirts",
                         url: "/calendar/sauna",
-                        component: <SaunaPage />
+                        component: SaunaPage
                     }
                 }
             }

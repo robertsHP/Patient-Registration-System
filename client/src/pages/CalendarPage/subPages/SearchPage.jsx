@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 
 import { FaSearch } from 'react-icons/fa';
 
@@ -10,6 +10,10 @@ export default function SearchPage() {
     const [searchText, setSearchText] = useState('');
     const [patients, setPatients] = useState([]);
     const [appointments, setAppointments] = useState([]);
+
+    useEffect(() => {
+        console.log("SEARCHPAGE");
+    }, []);
 
     const handleSearch = async () => {
         if(searchText.length != 0) {

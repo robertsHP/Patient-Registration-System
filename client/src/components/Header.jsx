@@ -4,25 +4,30 @@ import { Link } from 'react-router-dom';
 import Sidebar from './Sidebar.jsx';
 import LogoutButton from './LogoutButton.jsx';
 
+import routes from '../routes/routes.jsx';
+import useNavigation from '../hooks/useNavigation.jsx';
+
 import './Header.css'
 
-export default function Header ({sidebarPages, parentUrlName, subPages, currentSubPageNum, setCurrentSubPageNum}) {
-    const handlePageChange = (num) => {
-        setCurrentSubPageNum(num);
+export default function Header ({subPages}) {
+    const { currentPath, navigateTo } = useNavigation();
+
+    const handlePageChange = (url) => {
+        navigateTo(url);
     };
 
     return (
         <header>
             <div className="left">
                 {/* The sidebar component is used here and includes its own toggle button */}
-                <Sidebar sidebarPages={sidebarPages} />
+                <Sidebar sidebarPages={routes.system.pages} />
 
                 {/* Subpage buttons */}
                 {Object.entries(subPages).map(([key, page]) => (
-                    <Link key={key} to={`/${parentUrlName}/${page.urlName}`}>
+                    <Link key={key} to={page.url}>
                         <button
-                            className={`subpage-button ${key === currentSubPageNum ? 'active-button' : ''}`}
-                            onClick={() => handlePageChange(key)}
+                            className={`subpage-button ${page.url === currentPath ? 'active-button' : ''}`}
+                            onClick={() => handlePageChange(page.url)}
                         >
                             {page.title}
                         </button>
