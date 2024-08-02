@@ -10,6 +10,7 @@ const useNavigation = () => {
     const [currentPath, setCurrentPath] = useState(location.pathname);
 
     useEffect(() => {
+        console.log(location.pathname);
         setCurrentPath(location.pathname);
     }, [location]);
 
@@ -51,11 +52,11 @@ const useNavigation = () => {
     const redirect = () => {
         if (AuthService.ifLoggedIn()) {
             if(!ifSystemRoutesContainUrl(currentPath)){
-                navigateTo(routes.system.url);
+                navigateTo(routes.system.redirectUrl);
             }
         } else {
             if(!ifAuthRoutesContainUrl(currentPath)){
-                navigateTo(routes.auth.url);
+                navigateTo(routes.auth.redirectUrl);
             }
         }
     };

@@ -9,7 +9,7 @@ import useNavigation from '../hooks/useNavigation.jsx';
 
 import './Header.css'
 
-export default function Header ({subPages}) {
+export default function Header ({mainPageUrl, subPages}) {
     const { currentPath, navigateTo } = useNavigation();
 
     const handlePageChange = (url) => {
@@ -24,10 +24,10 @@ export default function Header ({subPages}) {
 
                 {/* Subpage buttons */}
                 {Object.entries(subPages).map(([key, page]) => (
-                    <Link key={key} to={page.url}>
+                    <Link key={key} to={mainPageUrl+page.url}>
                         <button
-                            className={`subpage-button ${page.url === currentPath ? 'active-button' : ''}`}
-                            onClick={() => handlePageChange(page.url)}
+                            className={`subpage-button ${mainPageUrl+page.url === currentPath ? 'active-button' : ''}`}
+                            onClick={() => handlePageChange(mainPageUrl+page.url)}
                         >
                             {page.title}
                         </button>

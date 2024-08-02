@@ -32,11 +32,11 @@ export default function App() {
             <Routes>
                 <Route path={login.url} element={<login.component/>} />
                 <Route path={register.url} element={<register.component/>} />
-                {Object.entries(routes.system.pages).map(([key, { title, url, component: Component }]) => (
+                {Object.entries(routes.system.pages).map(([key, page]) => (
                     <Route 
                         key={`${key}_route`} 
-                        path={url+'/*'} 
-                        element={<Component />} 
+                        path={page.url+'/*'} 
+                        element={<page.component />} 
                     />
                 ))}
             </Routes>

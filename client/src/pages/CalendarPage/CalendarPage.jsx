@@ -1,23 +1,15 @@
-
 import React, { useEffect } from 'react';
-import { Route, Routes } from 'react-router-dom';
+import { Routes, Route, Outlet } from 'react-router-dom';
 
 import Header from '../../components/Header.jsx';
-
 import useNavigation from '../../hooks/useNavigation.jsx';
 import routes from '../../routes/routes.jsx';
 
-import SearchPage from './subPages/SearchPage.jsx';
-
 import './CalendarPage.css';
-
-function Test() {
-    return <div>TEST</div>;
-}
 
 export default function CalendarPage() {
     const { redirect } = useNavigation();
-    const subPages = routes.system.pages.calendar.subPages;
+    const calendar = routes.system.pages.calendar;
 
     useEffect(() => {
         console.log('Redirect called');
@@ -26,10 +18,13 @@ export default function CalendarPage() {
 
     return (
         <div className="page-container">
-            <Header subPages={subPages} />
+            <Header
+                mainPageUrl={calendar.url} 
+                subPages={calendar.subPages} 
+            />
             <main>
                 <Routes>
-                    {Object.entries(subPages).map(([key, { title, url, component: Component }]) => (
+                    {Object.entries(calendar.subPages).map(([key, { title, url, component: Component }]) => (
                         <Route 
                             key={`${key}_route`} 
                             path={url} 
@@ -37,7 +32,7 @@ export default function CalendarPage() {
                         />
                     ))}
                 </Routes>
-                <div>TEST</div>
+                <Outlet />
             </main>
         </div>
     );

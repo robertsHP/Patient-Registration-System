@@ -9,7 +9,7 @@ import SaunaPage from '../pages/CalendarPage/subPages/SaunaPage.jsx';
 
 const routes = {
     auth: {
-        url: "/login",
+        redirectUrl: "/login",
         pages: {
             login: {
                 title: "Pieslēgšanās",
@@ -24,7 +24,7 @@ const routes = {
         }
     },
     system: {
-        url: "/calendar/search",
+        redirectUrl: "/calendar/search",
         pages: {
             calendar: {
                 title: "Kalendārs",
@@ -33,22 +33,22 @@ const routes = {
                 subPages: {
                     search: {
                         title: "Datu meklēšana",
-                        url: "/calendar/search",
+                        url: "/search",
                         component: SearchPage
                     },
                     beds: {
                         title: "Gultas",
-                        url: "/calendar/beds",
+                        url: "/beds",
                         component: BedsPage
                     },
                     beds4: {
                         title: "Gultas 4. stāvs",
-                        url: "/calendar/beds4",
+                        url: "/beds4",
                         component: Beds4Page
                     },
                     sauna: {
                         title: "Pirts",
-                        url: "/calendar/sauna",
+                        url: "/sauna",
                         component: SaunaPage
                     }
                 }
