@@ -3,11 +3,10 @@ import React, { useEffect, useState, useContext } from 'react';
 import ApiService from '../../../../services/ApiService';
 
 import {
-    convertAppointmentForLayoutSupport,
-    convertAppointmentForSendingToDB
-} from '../utils/conversionUtilities'
+    convertAppointmentForLayoutSupport
+} from '../utils/dragTableConversionUtilities'
 
-export default function useDataFetch(floorID, tempDate) {
+export default function useDragTableDataFetch(floorID, tempDate) {
     const [date, setDate] = useState(tempDate);
     const [rooms, setRooms] = useState(null);
 
@@ -63,6 +62,11 @@ export default function useDataFetch(floorID, tempDate) {
         triggerSingleDataUpdate();
     };
 
+    const removeRoomWithID = (id) => {
+        setRooms(prevRooms => prevRooms.filter(room => room.id !== id));
+        triggerSingleDataUpdate();
+    };
+
     const getAppointmentWithID = (roomID, appointmentID) => {
         const room = getRoomWithID(roomID);
         if (!room) {
@@ -96,7 +100,6 @@ export default function useDataFetch(floorID, tempDate) {
     };
 
     useEffect(() => {
-        console.log("LOAD ROOMS");
         loadRooms(date);
     }, [date]);
 
@@ -108,7 +111,7 @@ export default function useDataFetch(floorID, tempDate) {
         rooms, setRooms,
         loadRooms, refreshRooms,
 
-        getRoomWithID, setRoomWithID,
+        getRoomWithID, setRoomWithID, removeRoomWithID,
         getAppointmentWithID, setAppointmentWithID, removeAppointmentWithID
     };
 }

@@ -50,15 +50,21 @@ const useNavigation = () => {
     };
 
     const redirect = () => {
+        var redirected = false;
+
         if (AuthService.ifLoggedIn()) {
             if(!ifSystemRoutesContainUrl(currentPath)){
                 navigateTo(routes.system.redirectUrl);
+                redirected = true;
             }
         } else {
             if(!ifAuthRoutesContainUrl(currentPath)){
                 navigateTo(routes.auth.redirectUrl);
+                redirected = true;
             }
         }
+
+        return redirected;
     };
 
     return { navigateTo, currentPath, redirect };

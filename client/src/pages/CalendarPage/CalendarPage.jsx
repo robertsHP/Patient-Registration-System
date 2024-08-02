@@ -9,12 +9,12 @@ import './CalendarPage.css';
 
 export default function CalendarPage() {
     const { redirect } = useNavigation();
-    const calendar = routes.system.pages.calendar;
 
     useEffect(() => {
-        console.log('Redirect called');
         redirect();
-    }, [redirect]);
+    }, []);
+
+    const calendar = routes.system.pages.calendar;
 
     return (
         <div className="page-container">
@@ -24,11 +24,11 @@ export default function CalendarPage() {
             />
             <main>
                 <Routes>
-                    {Object.entries(calendar.subPages).map(([key, { title, url, component: Component }]) => (
+                    {Object.entries(calendar.subPages).map(([key, page]) => (
                         <Route 
                             key={`${key}_route`} 
-                            path={url} 
-                            element={<Component />} 
+                            path={page.url} 
+                            element={<page.component />} 
                         />
                     ))}
                 </Routes>

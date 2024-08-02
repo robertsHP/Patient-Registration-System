@@ -1,7 +1,7 @@
 import React, { Component, createRef } from 'react';
 import GridLayout from 'react-grid-layout';
 
-import { convertAppointmentForSendingToDB } from '../../utils/conversionUtilities.jsx';
+import { convertAppointmentForSendingToDB } from '../../utils/dragTableConversionUtilities.jsx';
 import { getDaysInMonth } from '../../utils/monthUtilities.jsx';
 
 import ApiService from '../../../../../services/ApiService.js';
@@ -51,7 +51,7 @@ export default class RoomRow extends Component {
             this.refreshRow();
         }
         if(this.props.data.singleDataUpdateTrigger !== prevProps.data.singleDataUpdateTrigger) {
-            console.log("------DIIIZ NTUIES");
+
         }
 
     }
@@ -315,6 +315,7 @@ export default class RoomRow extends Component {
                         
                 */
 
+                //Ja ir ievilkts iepriekšējā un nākošajā mēnesī
                 if (appointment.extendsToPreviousMonth && appointment.extendsToNextMonth) {
                     // var prevBeginDate = prevAppointment.begin_date.getDate();
                     // var prevEndDate = prevAppointment.end_date.getDate();

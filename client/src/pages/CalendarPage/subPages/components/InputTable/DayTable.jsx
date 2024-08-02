@@ -90,7 +90,9 @@ export default function DayTable({ monthName, dayName, dayNumber }) {
                     columns.map((col, colIndex) => (
                         <div key={`cell-${rowIndex}-${colIndex}`} className="grid-item">
                             {colIndex === columns.length - 1 ? (
-                                <button className="grid-button" onClick={() => handleDeleteRow(rowIndex)}>X</button>
+                                <button className="grid-button" onClick={() => handleDeleteRow(rowIndex)}>
+                                    X
+                                </button>
                             ) : (
                                 <input type="text" className="grid-input" onChange={() => {}} />
                             )}
