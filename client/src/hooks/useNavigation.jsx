@@ -18,13 +18,32 @@ const useNavigation = () => {
         setCurrentPath(path);
     };
 
+    const checkUrlContains = (url, checkUrl) => {
+        return url.includes(checkUrl);
+    };
+
+    const ifAuthRoutesContainUrl = (url) => {
+        const authUrls = Object.values(routes.auth).map(auth => auth.url);
+        return authUrls.some(authUrl => checkUrlContains(url, authUrl));
+    };
+
+    const ifSystemRoutesContainUrl = (url) => {
+        const systemUrls = Object.values(routes.system.pages).flatMap(
+            systemPage => Object.values(systemPage.subPages).map(subPage => subPage.url));
+        return systemUrls.some(systemUrl => checkUrlContains(url, systemUrl));
+    };
+
     const redirect = () => {
         if (AuthService.ifLoggedIn()) {
-            navigateTo(routes.system.mainUrl);
-            console.log("SYSTEM");
+            if(!ifSystemRoutesContainUrl(currentPath)){
+                navigateTo(routes.system.mainUrl);
+                console.log("SYSTEM");
+            }
         } else {
-            navigateTo(routes.auth.mainUrl);
-            console.log("AUTH");
+            if(!ifAuthRoutesContainUrl(currentPath)){
+                navigateTo(routes.auth.mainUrl);
+                console.log("AUTH");
+            }
         }
     };
 
