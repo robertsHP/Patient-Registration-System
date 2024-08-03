@@ -5,10 +5,15 @@
   "main": "index.js",
   "dependencies": {
     "dotenv": "^16.4.5",
-    "node-cmd": "^5.0.0",
-    "react": "^18.3.1",
-    "react-dom": "^18.3.1",
-    "react-grid-layout": "^1.4.4",
-    "react-resizable": "^3.0.5"
+    "node-cmd": "^5.0.0"
+  },
+  "workspaces": [
+    "admin",
+    "client",
+    "server"
+  ],
+  "scripts": {
+    "install-all": "npm install && npm install --prefix admin && npm install --prefix client && npm install --prefix server",
+    "update-all": "npm update && npm update --prefix admin && npm update --prefix client && npm update --prefix server"
   }
 }

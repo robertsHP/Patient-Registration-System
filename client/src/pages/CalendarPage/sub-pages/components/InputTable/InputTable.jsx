@@ -1,8 +1,11 @@
 import React, { useEffect, useState } from 'react';
+
 import GridUI from './GridUI.jsx';
 import DayTable from './DayTable.jsx';
 import LVDate from '../../../../../models/LVDate.jsx';
+
 import { getDaysInMonth, getMonthName, getDayName } from '../../utils/monthUtilities.jsx';
+
 import './InputTable.css';
 
 export default function InputTable({ data }) {
