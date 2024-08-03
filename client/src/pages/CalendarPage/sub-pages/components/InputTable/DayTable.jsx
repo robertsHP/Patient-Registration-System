@@ -1,11 +1,11 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import GridLayout from 'react-grid-layout';
+
 import 'react-grid-layout/css/styles.css';
 import 'react-resizable/css/styles.css';
 
 const generateLayout = (rows, colCount) => {
     const layout = [];
-    // Header row for month and day names
     layout.push({
         i: 'month-day-header',
         x: 0,
@@ -14,7 +14,6 @@ const generateLayout = (rows, colCount) => {
         h: 1,
         static: true,
     });
-    // Column headers
     for (let i = 0; i < colCount; i++) {
         layout.push({
             i: `header-${i}`,
@@ -25,7 +24,6 @@ const generateLayout = (rows, colCount) => {
             static: true,
         });
     }
-    // Cells
     rows.forEach((row, rowIndex) => {
         for (let col = 0; col < colCount; col++) {
             layout.push({
@@ -38,7 +36,6 @@ const generateLayout = (rows, colCount) => {
             });
         }
     });
-    // Add button row
     layout.push({
         i: 'add-button',
         x: 0,
@@ -51,9 +48,11 @@ const generateLayout = (rows, colCount) => {
     return layout;
 };
 
-export default function DayTable({ monthName, dayName, dayNumber }) {
+export default function DayTable({ monthName, dayName, dateNumber, appointments }) {
     const columns = ["Laiks", "Vārds un uzvārds", "Telefona numurs", "Piezīmes", "Kas pieņēma", ""];
-    const [rows, setRows] = useState([{}, {}, {}]);
+    
+    const initialRows = appointments.length ? appointments : [{}, {}, {}];
+    const [rows, setRows] = useState(initialRows);
 
     const layout = generateLayout(rows, columns.length);
 
@@ -71,28 +70,58 @@ export default function DayTable({ monthName, dayName, dayNumber }) {
                 className="layout"
                 layout={layout}
                 cols={columns.length}
-                rowHeight={30} // Adjust the height as needed
-                width={columns.length * 150} // Adjust the width as needed
+                rowHeight={30}
+                width={columns.length * 150}
                 isResizable={false}
                 isDraggable={false}
-                margin={[0, 0]} // No margin between grid items
-                containerPadding={[0, 0]} // No padding in the container
+                margin={[0, 0]}
+                containerPadding={[0, 0]}
             >
                 <div key="month-day-header" className="grid-item month-day-header">
-                    {`${monthName} ${dayNumber} - ${dayName}`}
+                    {`${monthName} ${dateNumber} - ${dayName}`}
                 </div>
                 {columns.map((col, index) => (
                     <div key={`header-${index}`} className="grid-item header">
                         {col}
                     </div>
                 ))}
-                {rows.map((_, rowIndex) =>
+                {rows.map((row, rowIndex) =>
                     columns.map((col, colIndex) => (
                         <div key={`cell-${rowIndex}-${colIndex}`} className="grid-item">
                             {colIndex === columns.length - 1 ? (
                                 <button className="grid-button" onClick={() => handleDeleteRow(rowIndex)}>
                                     X
                                 </button>
+                            ) : colIndex === 0 ? (
+                                row.begin_date ? (
+                                    new Date(row.begin_date).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+                                ) : (
+                                    <input type="text" className="grid-input" onChange={() => {}} />
+                                )
+                            ) : colIndex === 1 ? (
+                                row.patient_data ? (
+                                    row.patient_data.pat_name
+                                ) : (
+                                    <input type="text" className="grid-input" onChange={() => {}} />
+                                )
+                            ) : colIndex === 2 ? (
+                                row.patient_data ? (
+                                    row.patient_data.phone_num
+                                ) : (
+                                    <input type="text" className="grid-input" onChange={() => {}} />
+                                )
+                            ) : colIndex === 3 ? (
+                                row.notes ? (
+                                    row.notes
+                                ) : (
+                                    <input type="text" className="grid-input" onChange={() => {}} />
+                                )
+                            ) : colIndex === 4 ? (
+                                row.doctor_data ? (
+                                    row.doctor_data.doc_name
+                                ) : (
+                                    <input type="text" className="grid-input" onChange={() => {}} />
+                                )
                             ) : (
                                 <input type="text" className="grid-input" onChange={() => {}} />
                             )}

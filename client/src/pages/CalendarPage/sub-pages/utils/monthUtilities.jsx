@@ -12,6 +12,10 @@ export const getDaysInMonth = (year, month) => {
     return new Date(year, month + 1, 0).getDate();
 }
 
-export const getDayName = (year, month, day) => {
-    return new Date(year, month, day).toLocaleString('default', { weekday: 'long' });
-};
+export const getDayName = (date) => {
+    const dayNames = [
+        "Pirmdiena", "Otrdiena", "Trešdiena", "Ceturtdiena",
+        "Piektdiena", "Sestdiena", "Svētdiena"
+    ];
+    return dayNames[date.getDay()];
+}

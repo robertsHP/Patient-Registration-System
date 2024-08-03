@@ -3,10 +3,10 @@ import LoginPage from '../pages/LoginPage/LoginPage.jsx';
 import RegisterPage from '../pages/RegisterPage/RegisterPage.jsx';
 
 import CalendarPage from '../pages/CalendarPage/CalendarPage.jsx';
-    import SearchPage from '../pages/CalendarPage/subPages/SearchPage.jsx';
-    import BedsPage from '../pages/CalendarPage/subPages/BedsPage.jsx';
-    import Beds4Page from '../pages/CalendarPage/subPages/Beds4Page.jsx';
-    import SaunaPage from '../pages/CalendarPage/subPages/SaunaPage.jsx';
+    import SearchPage from '../pages/CalendarPage/sub-pages/SearchPage.jsx';
+    import BedsPage from '../pages/CalendarPage/sub-pages/BedsPage.jsx';
+    import Beds4Page from '../pages/CalendarPage/sub-pages/Beds4Page.jsx';
+    import SaunaPage from '../pages/CalendarPage/sub-pages/SaunaPage.jsx';
 
 const routes = {
     auth: {

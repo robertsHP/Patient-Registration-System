@@ -27,7 +27,7 @@ export default function useInputTableDataFetch(tempDate) {
                 `/api/calendar-page/input-table/get-appointments?${params}`
             );
 
-            const data = result.data[0].events;
+            const data = result.data;
     
             setAppointments(data);
             triggerFullDataUpdate();

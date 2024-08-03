@@ -1,15 +1,20 @@
 
-module.exports = (err, req, res, next) => {
-    console.error(`Error message: ${err.message}`);
-    console.error(`Stack trace: ${err.stack}`);
-    res.status(err.status || 500).json({
-        success: false,
-        message: err.message || 'Internal Server Error'
-    });
-};
 
-module.exports = (req, res, next) => {
-    const error = new Error('Not Found');
-    error.status = 404;
-    next(error);
-};
+// export function errorHandler (
+//     err,
+//     req,
+//     res,
+//     next
+// ) {
+//     const statusCode = res.statusCode !== 200 ? res.statusCode : 500;
+//     res.status(statusCode);
+
+//     const responseBody = {
+//         message: err.message,
+//         stack: process.env.NODE_ENV === 'production' ? null : err.stack
+//     };
+
+//     console.error("Error: " + err.message);
+//     res.json(responseBody);
+// };
+

@@ -12,7 +12,7 @@ exports.getRooms = async (req, res) => {
         return res.status(400).json({ error: '(getRooms) - Floor ID is a required parameter.' });
     }
 
-    const { query, params } = calendarPageServices.buildGetAppointmentQuery(
+    const { query, params } = calendarPageServices.buildGetRoomsQuery(
         year, month, floorId, limit, offset
     );
 
@@ -185,3 +185,22 @@ exports.searchForAppointmentMatchesWithPatientID = async (req, res) => {
         res.status(500).json({ error: 'An error occurred while fetching appointment matches' });
     }
 };
+
+exports.getAppointments = async (req, res) => {
+    const { year = null, month = null, page = 1, limit = 10 } = req.query;
+    const offset = (page - 1) * limit;
+
+    const { query, params } = calendarPageServices.buildGetAppointmentsQuery(
+        year, month, limit, offset
+    );
+
+    try {
+        const dataResult = await pool.query(query, params);
+        const data = dataResult.rows;
+
+        res.json({ data });
+    } catch (err) {
+        res.status(500).json({ error: 'Internal Server Error (getAppointments) - ' + err.message });
+    }
+};
+
