@@ -3,10 +3,10 @@ const controller = require('../controllers/globalController');
 
 const router = express.Router();
 
-router.get('/table/:tableName', controller.selectFromTable);
-router.get('/table/:tableName/:id', controller.selectWithIDFromTable);
-router.post('/table/:tableName', controller.insertIntoTable);
-router.put('/table/:tableName/:id', controller.updateInTable);
-router.delete('/table/:tableName/:id', controller.deleteFromTable);
+router.get('/global/:tableName', controller.selectFromTable);
+router.get('/global/:tableName/:id', controller.selectWithIDFromTable);
+router.post('/global/:tableName', controller.insertIntoTable);
+router.put('/global/:tableName/:id', controller.updateInTable);
+router.delete('/global/:tableName/:id', controller.deleteFromTable);
 
 module.exports = router;

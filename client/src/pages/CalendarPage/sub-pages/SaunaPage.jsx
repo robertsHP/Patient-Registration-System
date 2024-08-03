@@ -11,16 +11,10 @@ export default function SaunaPage () {
     const params = useParams();
 
     // if (params.year && params.month) {
-    //     return null;
+    //     //ielikt šodienas datumu
     // }
 
-    const data = useInputTableDataFetch(new LVDate(2024, 6, 1));
-
-    useEffect(() => {
-        if (data) {
-            console.log(data.appointments);
-        }
-    }, [data]);
+    const data = useInputTableDataFetch(new LVDate(2024, 8, 1));
 
     return (
         <>

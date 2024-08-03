@@ -9,39 +9,44 @@ import { getDaysInMonth, getMonthName, getDayName } from '../../utils/monthUtili
 import './InputTable.css';
 
 export default function InputTable({ data }) {
-    if (data.appointments == null) {
-        return null;
-    }
-
     const [tables, setTables] = useState([]);
+    const [appointmentsByDay, setAppointmentsByDay] = useState([]);
 
     useEffect(() => {
-        const daysInMonth = getDaysInMonth(data.date.getFullYear(), data.date.getMonth());
-        const monthName = getMonthName(data.date.getMonth());
+        if (data.appointments != null) {
+            const daysInMonth = getDaysInMonth(data.date.getFullYear(), data.date.getMonth());
+            const monthName = getMonthName(data.date.getMonth());
 
-        const generatedTables = Array.from({ length: daysInMonth }, (_, index) => {
-            const dateNumber = index + 1;
-            const date = new LVDate(data.date.getFullYear(), data.date.getMonth(), dateNumber);
-            const dayName = getDayName(date);
+            const tempAppointmentsByDay = [];
 
-            const appointmentsForDay = data.appointments.filter(appointment => {
-                const appointmentDate = new Date(appointment.begin_date);
-                return appointmentDate.getDate() === dateNumber &&
-                       appointmentDate.getMonth() === data.date.getMonth();
+            const generatedTables = Array.from({ length: daysInMonth }, (_, index) => {
+                const dateNumber = index + 1;
+                const date = new LVDate(data.date.getFullYear(), data.date.getMonth(), dateNumber);
+                const dayName = getDayName(date);
+
+                const appointmentsForDay = data.appointments.filter(appointment => {
+                    appointment.begin_date = new LVDate(appointment.begin_date).getObject();
+                    return appointment.begin_date.getDate() === dateNumber;
+                });
+
+                // Collect the appointments for the day in the temporary object
+                tempAppointmentsByDay[index] = appointmentsForDay;
+
+                return (
+                    <DayTable
+                        key={dateNumber}
+                        monthName={monthName}
+                        dayName={dayName}
+                        dateNumber={dateNumber}
+                        appointments={appointmentsForDay}
+                    />
+                );
             });
 
-            return (
-                <DayTable
-                    key={dateNumber}
-                    monthName={monthName}
-                    dayName={dayName}
-                    dateNumber={dateNumber}
-                    appointments={appointmentsForDay}
-                />
-            );
-        });
-
-        setTables(generatedTables);
+            // Set the state once after the loop
+            setAppointmentsByDay(tempAppointmentsByDay);
+            setTables(generatedTables);
+        }
     }, [data.fullDataUpdateTrigger]);
 
     return (

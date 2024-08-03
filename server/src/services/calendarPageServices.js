@@ -191,11 +191,11 @@ exports.buildGetAppointmentsQuery = (year, month, limit, offset) => {
                 'id', p.id,
                 'pat_name', p.pat_name,
                 'phone_num', p.phone_num
-            ) AS patient_data,
+            ) AS patient,
             jsonb_build_object(
                 'id', d.id,
                 'doc_name', d.doc_name
-            ) AS doctor_data
+            ) AS doctor
         FROM 
             ${inputAppointmentTableName} AS a
             LEFT JOIN ${patientTableName} AS p ON a.id_patient = p.id

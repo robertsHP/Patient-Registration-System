@@ -1,6 +1,7 @@
 .custom-select {
     position: relative;
     width: 100%;
+    z-index: 1200;
 }
 
 .custom-select-dropdown {

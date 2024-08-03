@@ -28,9 +28,9 @@ export default function AppointmentInputForm({ data, selectedAppointment, setSel
         const fetchData = async () => {
             try {
                 const [doctorsData, patientsData, typesData] = await Promise.all([
-                    ApiService.get('/api/doctor'),
-                    ApiService.get('/api/patient'),
-                    ApiService.get('/api/appointment_type')
+                    ApiService.get('/api/global/doctor'),
+                    ApiService.get('/api/global/patient'),
+                    ApiService.get('/api/global/appointment_type')
                 ]);
 
                 setDoctors(doctorsData);
@@ -43,10 +43,6 @@ export default function AppointmentInputForm({ data, selectedAppointment, setSel
 
         fetchData();
     }, []);
-
-    useEffect(() => {
-        
-    }, [data.fullDataUpdateTrigger]);
 
     const onInputChange = (e) => {
         const { name, value } = e.target;
