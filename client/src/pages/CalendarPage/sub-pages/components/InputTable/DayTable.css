@@ -14,6 +14,7 @@
     padding: 5px;
     box-sizing: border-box;
     max-width: 100%; /* Adjust based on the container */
+    z-index: 1;
 }
 
 .header {
@@ -37,16 +38,9 @@
     cursor: pointer;
     box-sizing: border-box;
     max-width: 100%; /* Adjust based on the container */
+    z-index: 1;
 }
 
 .grid-item.date-column {
     width: 200px; /* Set the desired width for the date column */
-}
-
-.grid-item.notes-column textarea {
-    width: 100%;
-    height: 100%;
-    resize: vertical; /* Allow resizing only vertically */
-    box-sizing: border-box;
-    padding: 3px; /* Adjust padding as needed */
 }

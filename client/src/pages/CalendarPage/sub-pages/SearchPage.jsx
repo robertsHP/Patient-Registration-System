@@ -11,10 +11,6 @@ export default function SearchPage() {
     const [patients, setPatients] = useState([]);
     const [appointments, setAppointments] = useState([]);
 
-    useEffect(() => {
-        console.log("SEARCHPAGE");
-    }, []);
-
     const handleSearch = async () => {
         if(searchText.length != 0) {
             try {

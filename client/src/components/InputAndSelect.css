@@ -1,7 +1,7 @@
 .custom-select {
     position: relative;
     width: 100%;
-    z-index: 1200;
+    z-index: 2;
 }
 
 .custom-select-dropdown {
@@ -12,7 +12,6 @@
     background: #fff;
     border: 1px solid #ccc;
     border-radius: 4px;
-    z-index: 1000;
     margin-top: 5px;
 }
 

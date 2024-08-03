@@ -194,7 +194,8 @@ export default function DayTable({ monthName, dayName, dateNumber, appointments 
                                     onChange={(e) => handleChange(rowIndex, 'patient', { ...row.patient, phone_num: e.target.value })} 
                                 />
                             ) : colIndex === 3 ? (
-                                <textarea 
+                                <input 
+                                    type="text"
                                     className="grid-input" 
                                     value={row.notes ? row.notes : ''}
                                     onChange={(e) => handleChange(rowIndex, 'notes', e.target.value)} 

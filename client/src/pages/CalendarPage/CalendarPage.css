@@ -7,5 +7,5 @@
 main {
     margin-top: 60px; /* Offset by header height, adjust as needed */
     padding: 20px; /* Optional padding for content spacing */
-    z-index: 1; /* Lower than header */
+    z-index: 0; /* Lower than header */
 }
