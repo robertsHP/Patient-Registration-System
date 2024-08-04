@@ -37,8 +37,8 @@ const generateLayout = (rows, colCount) => {
                 x: col,
                 y: rowIndex + 2,
                 w: 1,
-                h: 1, // Set the initial height of the notes column to 1
-                static: col === 3 ? false : true, // Allow resizing only for the notes column
+                h: 1,
+                static: col === 3 ? false : true,
             });
         }
     });
@@ -115,6 +115,41 @@ export default function DayTable({ monthName, dayName, dateNumber, appointments 
         // Perform the save operation here (e.g., send the data to the server)
     };
 
+    const onChangePatient = (rowIndex, patient) => {
+        const newRows = rows.map((row, index) => 
+            index === rowIndex ? { ...row, patient, patient_phone: patient.phone_num, hasChanged: true } : row
+        );
+        setRows(newRows);
+    };
+
+    const onAddOption = async (value, label) => {
+        const newValue = { name: value };
+        try {
+            const result = await ApiService.post(`/api/${label}`, newValue);
+            newValue.id = result;
+            if (label === 'doctor') {
+                setDoctors([...doctors, newValue]);
+            } else if (label === 'patient') {
+                setPatients([...patients, newValue]);
+            }
+        } catch (error) {
+            console.log(`DayTable (${label}) POST error: `, error);
+        }
+    };
+
+    const onDeleteOption = async (option, label) => {
+        try {
+            await ApiService.delete(`/api/${label}/${option.id}`);
+            if (label === 'doctor') {
+                setDoctors(doctors.filter(doc => doc.id !== option.id));
+            } else if (label === 'patient') {
+                setPatients(patients.filter(pat => pat.id !== option.id));
+            }
+        } catch (error) {
+            console.log(`DayTable (${label}) DELETE error: `, error);
+        }
+    };
+
     return (
         <div className="grid-container">
             <GridLayout
@@ -129,7 +164,6 @@ export default function DayTable({ monthName, dayName, dateNumber, appointments 
                 containerPadding={[0, 0]}
                 onResizeStop={(layout, oldItem, newItem) => {
                     if (newItem.i.startsWith('cell') && newItem.i.split('-')[2] === '3') {
-                        // Update the layout to extend the contents below when resizing
                         setLayout(layout);
                     }
                 }}
@@ -180,12 +214,11 @@ export default function DayTable({ monthName, dayName, dateNumber, appointments 
                                     options={patients}
                                     nameColumn={'pat_name'}
                                     value={row.patient != null ? row.patient.pat_name : ''}
-                                    handleOnChange={(value) => { onChange(value, 'patient'); }}
+                                    handleOnChange={(patient) => { onChangePatient(rowIndex, patient); }}
                                     handleAddOption={(value) => onAddOption(value, 'patient')}
                                     handleDeleteOption={(value) => onDeleteOption(value, 'patient')}
                                     placeholder=""
                                 />
-
                             ) : colIndex === 2 ? (
                                 <input 
                                     type="text" 
@@ -201,11 +234,14 @@ export default function DayTable({ monthName, dayName, dateNumber, appointments 
                                     onChange={(e) => handleChange(rowIndex, 'notes', e.target.value)} 
                                 />
                             ) : colIndex === 4 ? (
-                                <input 
-                                    type="text" 
-                                    className="grid-input" 
-                                    value={row.doctor ? row.doctor.doc_name : ''}
-                                    onChange={(e) => handleChange(rowIndex, 'doctor', { ...row.doctor, doc_name: e.target.value })} 
+                                <InputAndSelect
+                                    options={doctors}
+                                    nameColumn={'doc_name'}
+                                    value={row.doctor != null ? row.doctor.doc_name : ''}
+                                    handleOnChange={(value) => handleChange(rowIndex, 'doctor', value)}
+                                    handleAddOption={(value) => onAddOption(value, 'doctor')}
+                                    handleDeleteOption={(value) => onDeleteOption(value, 'doctor')}
+                                    placeholder=""
                                 />
                             ) : (
                                 <input type="text" className="grid-input" onChange={() => {}} />

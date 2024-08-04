@@ -9,16 +9,16 @@ import './AppointmentInputForm.css';
 
 export default function AppointmentInputForm({ data, selectedAppointment, setSelectedAppointment }) {
     const [formData, setFormData] = useState({
-        patient: null,
-        patient_phone: '',
-        begin_date: '',
-        end_date: '',
-        notes: '',
-        doctor: null,
-        hotel_stay_start: '',
-        hotel_stay_end: '',
-        appointment_type: null,
+        patient: selectedAppointment.patient,
+        begin_date: selectedAppointment.begin_date,
+        end_date: selectedAppointment.end_date,
+        notes: selectedAppointment.notes,
+        doctor: selectedAppointment.doctor,
+        hotel_stay_start: selectedAppointment.hotel_stay_start,
+        hotel_stay_end: selectedAppointment.hotel_stay_end,
+        appointment_type: selectedAppointment.appointment_type
     });
+    
     const [doctors, setDoctors] = useState([]);
     const [patients, setPatients] = useState([]);
     const [appointmentTypes, setAppointmentTypes] = useState([]);
@@ -50,103 +50,47 @@ export default function AppointmentInputForm({ data, selectedAppointment, setSel
     };
 
     const onChange = (value, label) => {
-        setFormData({ ...formData, [label]: value });
+        if (label === 'patient') {
+            setFormData({ 
+                ...formData, 
+                patient: value,
+            });
+        } else {
+            setFormData({ ...formData, [label]: value });
+        }
     };
 
-    const onAddOption = (value, label) => {
-        const addOption = async (newValue, label, optionsList, setOptionsList) => {
-            setFormData({ ...formData, [label]: newValue });
-
-            try {
-                const result = await ApiService.post(`/api/${label}`, newValue);
-                newValue.id = result;
-                setFormData({ ...formData, [label]: newValue });
-                setOptionsList([...optionsList, newValue]);
-            } catch (error) {
-                console.log(`AppointmentInputForm (${label}) POST error: `);
-                console.log(error);
+    const onAddOption = async (value, label) => {
+        const newValue = { name: value };
+        try {
+            const result = await ApiService.post(`/api/${label}`, newValue);
+            newValue.id = result;
+            if (label === 'doctor') {
+                setDoctors([...doctors, newValue]);
+            } else if (label === 'patient') {
+                setPatients([...patients, newValue]);
+            } else if (label === 'appointment_type') {
+                setAppointmentTypes([...appointmentTypes, newValue]);
             }
-        };
-
-        var finalValue = null;
-        var optionsList = null;
-        var setOptionsList = null;
-
-        if (label === 'doctor') {
-            finalValue = { doc_name: value };
-            optionsList = doctors;
-            setOptionsList = setDoctors;
-        } else if (label === 'patient') {
-            finalValue = { pat_name: value, phone_num: null };
-            optionsList = patients;
-            setOptionsList = setPatients;
-        } else if (label === 'appointment_type') {
-            finalValue = { type_name: value };
-            optionsList = appointmentTypes;
-            setOptionsList = setAppointmentTypes;
-        }
-
-        if (finalValue != null) {
-            addOption(finalValue, label, optionsList, setOptionsList);
+        } catch (error) {
+            console.log(`AppointmentInputForm (${label}) POST error: `, error);
         }
     };
 
-    const onDeleteOption = (option, label) => {
-        const deleteOption = (message, option, label, optionsList, setOptionsList) => {
-            ConfirmationWindow.show(
-                message,
-                async () => {
-                    try {
-                        var url = `/api/calendar-page/input-form/${label}/${option.id}`
-    
-                        await ApiService.delete(url);
-                        setOptionsList(
-                            optionsList.filter(value => value != option)
-                        );
-
-                        if (formData[label] != null) {
-                            if (formData[label].id === option.id) {
-                                setFormData({ ...formData, [label]: null });
-                            }
-                        }
-                    } catch (error) {
-                        console.log(`AppointmentInputForm (${label}) DELETE error: `);
-                        console.log(error);
-                    }
-                },
-                () => { }
-            );
-        };
-
-        var messageLabel = null;
-        var optionsList = null;
-        var setOptionsList = null;
-
-        if (label === 'doctor') {
-            messageLabel = 'ārstu';
-            optionsList = doctors;
-            setOptionsList = setDoctors;
-        } else if (label === 'patient') {
-            messageLabel = 'pacientu';
-            optionsList = patients;
-            setOptionsList = setPatients;
-        } else if (label === 'appointment_type') {
-            messageLabel = 'veidu';
-            optionsList = appointmentTypes;
-            setOptionsList = setAppointmentTypes;
-        }
-
-        if (messageLabel != null) {
-            deleteOption(
-                `
-                    Vai tiešām vēlaties dzēst ${messageLabel}? 
-                    Visi dati, kas ir saistīti ar šo personu tiks neatgriezeniski dzēsti.
-                `,
-                option, label, optionsList, setOptionsList
-            );
+    const onDeleteOption = async (option, label) => {
+        try {
+            await ApiService.delete(`/api/${label}/${option.id}`);
+            if (label === 'doctor') {
+                setDoctors(doctors.filter(doc => doc.id !== option.id));
+            } else if (label === 'patient') {
+                setPatients(patients.filter(pat => pat.id !== option.id));
+            } else if (label === 'appointment_type') {
+                setAppointmentTypes(appointmentTypes.filter(type => type.id !== option.id));
+            }
+        } catch (error) {
+            console.log(`AppointmentInputForm (${label}) DELETE error: `, error);
         }
     };
-
 
     const onWindowClose = () => {
         setSelectedAppointment(null);
@@ -252,7 +196,7 @@ export default function AppointmentInputForm({ data, selectedAppointment, setSel
                                     options={patients}
                                     nameColumn={'pat_name'}
                                     value={formData.patient != null ? formData.patient.pat_name : ''}
-                                    handleOnChange={(value) => { onChange(value, 'patient'); }}
+                                    handleOnChange={(patient) => { onChange(patient, 'patient'); }}
                                     handleAddOption={(value) => onAddOption(value, 'patient')}
                                     handleDeleteOption={(value) => onDeleteOption(value, 'patient')}
                                     placeholder="Ievadi pacienta vārdu un uzvārdu"
@@ -264,7 +208,7 @@ export default function AppointmentInputForm({ data, selectedAppointment, setSel
                                     type="text"
                                     id="patient_phone"
                                     name="patient_phone"
-                                    value={formData.patient_phone}
+                                    value={formData.patient ? formData.patient.phone_num : ''}
                                     onChange={onInputChange}
                                 />
                             </div>
@@ -278,7 +222,7 @@ export default function AppointmentInputForm({ data, selectedAppointment, setSel
                                         type="datetime-local"
                                         id="begin_date"
                                         name="begin_date"
-                                        value={formData.begin_date}
+                                        value={formData.begin_date.getDateStringForHTMLTag()}
                                         onChange={onInputChange}
                                         required
                                     />
@@ -289,7 +233,7 @@ export default function AppointmentInputForm({ data, selectedAppointment, setSel
                                         type="datetime-local"
                                         id="end_date"
                                         name="end_date"
-                                        value={formData.end_date}
+                                        value={formData.end_date.getDateStringForHTMLTag()}
                                         onChange={onInputChange}
                                         required
                                     />
@@ -300,7 +244,7 @@ export default function AppointmentInputForm({ data, selectedAppointment, setSel
                                         type="datetime-local"
                                         id="hotel_stay_start"
                                         name="hotel_stay_start"
-                                        value={formData.hotel_stay_start}
+                                        value={formData.hotel_stay_start.getDateStringForHTMLTag()}
                                         onChange={onInputChange}
                                     />
                                 </div>
@@ -310,7 +254,7 @@ export default function AppointmentInputForm({ data, selectedAppointment, setSel
                                         type="datetime-local"
                                         id="hotel_stay_end"
                                         name="hotel_stay_end"
-                                        value={formData.hotel_stay_end}
+                                        value={formData.hotel_stay_end.getDateStringForHTMLTag()}
                                         onChange={onInputChange}
                                     />
                                 </div>
@@ -348,7 +292,12 @@ export default function AppointmentInputForm({ data, selectedAppointment, setSel
                                 <InputAndSelect
                                     options={appointmentTypes}
                                     nameColumn={'type_name'}
-                                    value={formData.appointment_type != null ? formData.appointment_type : ''}
+                                    value={
+                                        formData.appointment_type != null ? 
+                                            formData.appointment_type.type_name 
+                                            : 
+                                            ''
+                                    }
                                     handleOnChange={(value) => { onChange(value, 'appointment_type'); }}
                                     handleAddOption={(value) => onAddOption(value, 'appointment_type')}
                                     handleDeleteOption={(value) => onDeleteOption(value, 'appointment_type')}

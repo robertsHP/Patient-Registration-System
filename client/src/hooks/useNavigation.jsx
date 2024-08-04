@@ -10,7 +10,6 @@ const useNavigation = () => {
     const [currentPath, setCurrentPath] = useState(location.pathname);
 
     useEffect(() => {
-        console.log(location.pathname);
         setCurrentPath(location.pathname);
     }, [location]);
 

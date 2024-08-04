@@ -14,10 +14,15 @@ export function convertAppointmentForLayoutSupport (appointment, date) {
     var beginDate = new LVDate(appointment.begin_date);
     var endDate = new LVDate(appointment.end_date);
 
+    var hotel_stay_start = new LVDate(appointment.hotel_stay_start);
+    var hotel_stay_end = new LVDate(appointment.hotel_stay_end);
+
     return {
         ...appointment,
         begin_date: beginDate,
         end_date: endDate,
+        hotel_stay_start: hotel_stay_start,
+        hotel_stay_end: hotel_stay_end,
         i: `appointment-${appointment.id}`,
         x: getDayIndex(appointment.begin_date, date) + 8,
         y: 0,
@@ -29,6 +34,9 @@ export function convertAppointmentForLayoutSupport (appointment, date) {
 }
 
 export function convertAppointmentForSendingToDB (room, appointment) {
+    var hotel_stay_start = hotel_stay_start != null ? appointment.hotel_stay_start.toDateString() : null;
+    var hotel_stay_end = hotel_stay_end != null ? appointment.hotel_stay_end.toDateString() : null;
+
     return {
         id_room: room.id,
         patient: appointment.patient,
@@ -36,8 +44,8 @@ export function convertAppointmentForSendingToDB (room, appointment) {
         end_date: appointment.end_date.toDateString(),
         notes: appointment.notes,
         doctor: appointment.doctor,
-        hotel_stay_start: appointment.hotel_stay_start,
-        hotel_stay_end: appointment.hotel_stay_end,
+        hotel_stay_start: hotel_stay_start,
+        hotel_stay_end: hotel_stay_end,
         appointment_type: appointment.appointment_type
     };
 }
