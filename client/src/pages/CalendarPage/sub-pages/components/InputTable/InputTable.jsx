@@ -22,7 +22,7 @@ export default function InputTable({ data }) {
                 const dayName = getDayName(date);
 
                 const appointmentsForDay = data.appointments.filter(appointment => {
-                    appointment.begin_date = new LVDate(appointment.begin_date).getObject();
+                    appointment.begin_date = new LVDate(appointment.begin_date);
                     return appointment.begin_date.getDate() === dateNumber;
                 });
 
@@ -31,7 +31,7 @@ export default function InputTable({ data }) {
                         key={dateNumber}
                         monthName={monthName}
                         dayName={dayName}
-                        dateNumber={dateNumber}
+                        date={date}
                         appointments={appointmentsForDay}
                     />
                 );

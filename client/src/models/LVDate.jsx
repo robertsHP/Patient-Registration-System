@@ -156,6 +156,8 @@ export default class LVDate {
     }
 
     getDay() {
+        //(this.#date.getDay() - 1 + 7) % 7
+
         return this.#date === null ? null : this.#date.getDay();
     }
 

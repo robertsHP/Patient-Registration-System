@@ -66,5 +66,24 @@ exports.buildGetAppointmentsQuery = (year, month, limit, offset) => {
     };
 };
 
+exports.alterAndUpdateAppointmentObjects = async (data) => {
+    // Helper function to update table and set ID
+    const updateRecord = async (table, obj, idField) => {
+        if (obj == null || obj.id == null) {
+            data[idField] = null;
+            delete data[table];
+        } else {
+            const result = await globalServices.updateInTable(table, obj.id, obj);
+            data[idField] = result.rows[0].id;
+            delete data[table];
+        }
+    };
 
+    // Update patient record
+    await updateRecord('patient', data.patient, 'id_patient');
 
+    // Update doctor record
+    await updateRecord('doctor', data.doctor, 'id_doctor');
+
+    return data;
+};

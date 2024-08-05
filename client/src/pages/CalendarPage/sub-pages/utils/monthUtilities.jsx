@@ -17,5 +17,6 @@ export const getDayName = (date) => {
         "Pirmdiena", "Otrdiena", "Trešdiena", "Ceturtdiena",
         "Piektdiena", "Sestdiena", "Svētdiena"
     ];
+    
     return dayNames[date.getDay()];
 }

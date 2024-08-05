@@ -21,53 +21,53 @@ exports.getAppointments = async (req, res) => {
     }
 };
 
-// exports.insertAppointmentAndOtherData = async (req, res) => {
-//     var data = req.body; // Assuming JSON body with keys matching table columns
-//     try {
-//         if(data.id != undefined || data.id != null) {
-//             delete data.id;
-//         }
-//         data = await inputTableServices.alterAndUpdateAppointmentObjects(data);
+exports.insertAppointmentAndOtherData = async (req, res) => {
+    var data = req.body; // Assuming JSON body with keys matching table columns
+    try {
+        if(data.id != undefined || data.id != null) {
+            delete data.id;
+        }
+        data = await inputTableServices.alterAndUpdateAppointmentObjects(data);
 
-//         const result = await globalServices.insertIntoTable(
-//             'input_table_appointment', 
-//             data
-//         );
+        const result = await globalServices.insertIntoTable(
+            'input_table_appointment', 
+            data
+        );
 
-//         res.json(result.rows[0].id);
-//     } catch (err) {
-//         res.status(500).json({ error: 'Internal Server Error (insertAppointment) - ' + err.message });
-//     }
-// };
+        res.json(result.rows[0].id);
+    } catch (err) {
+        res.status(500).json({ error: 'Internal Server Error (insertAppointment) - ' + err.message });
+    }
+};
 
-// exports.updateAppointmentAndOtherData = async (req, res) => {
-//     const { id } = req.params;
-//     var data = req.body; // Assuming JSON body with keys matching table columns
+exports.updateAppointmentAndOtherData = async (req, res) => {
+    const { id } = req.params;
+    var data = req.body; // Assuming JSON body with keys matching table columns
     
-//     try {
-//         if(data.id != undefined || data.id != null) {
-//             delete data.id;
-//         }
-//         data = await inputTableServices.alterAndUpdateAppointmentObjects(data);
+    try {
+        if(data.id != undefined || data.id != null) {
+            delete data.id;
+        }
+        data = await inputTableServices.alterAndUpdateAppointmentObjects(data);
         
-//         const result = await globalServices.updateInTable(
-//             'input_table_appointment', 
-//             id, 
-//             data
-//         );
-//         res.json(result.rows[0]);
-//     } catch (err) {
-//         res.status(500).json({ error: 'Internal Server Error (updateAppointment) - ' + err.message });
-//     }
-// };
+        const result = await globalServices.updateInTable(
+            'input_table_appointment', 
+            id, 
+            data
+        );
+        res.json(result.rows[0]);
+    } catch (err) {
+        res.status(500).json({ error: 'Internal Server Error (updateAppointment) - ' + err.message });
+    }
+};
 
-// exports.deleteAppointment = async (req, res) => {
-//     const { id } = req.params;
-//     try {
-//         await globalServices.deleteFromTable('input_table_appointment', id);
-//         res.send('Row deleted');
-//     } catch (err) {
-//         console.error(err.message);
-//         res.status(500).send('Server error: ' + err.message);
-//     }
-// };
+exports.deleteAppointment = async (req, res) => {
+    const { id } = req.params;
+    try {
+        await globalServices.deleteFromTable('input_table_appointment', id);
+        res.send('Row deleted');
+    } catch (err) {
+        console.error(err.message);
+        res.status(500).send('Server error: ' + err.message);
+    }
+};

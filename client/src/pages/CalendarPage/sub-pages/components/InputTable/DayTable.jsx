@@ -7,7 +7,7 @@ import ApiService from '../../../../../services/ApiService.js';
 
 import './DayTable.css';
 
-export default function DayTable({ monthName, dayName, dateNumber, appointments }) {
+export default function DayTable({ monthName, dayName, date, appointments }) {
     const columns = ["Laiks", "Vārds un uzvārds", "Telefona numurs", "Piezīmes", "Kas pieņēma", ""];
 
     const [doctors, setDoctors] = useState([]);
@@ -40,29 +40,81 @@ export default function DayTable({ monthName, dayName, dateNumber, appointments 
         );
     }, [appointments]);
 
+    const prepareRowForSendingToDB = (row) => {
+        return {
+            id: row.id,
+            begin_date: row.begin_date.toDateString(),
+            doctor: row.doctor,
+            notes: row.notes,
+            patient: row.patient
+        };
+    }
+
     const handleAddRow = () => {
         const newRows = [...rows, {}];
         setRows(newRows);
     };
 
-    const handleDeleteRow = (rowIndex) => {
+    const handleDeleteRow = async (rowIndex) => {
+        const deletedRow = rows.find((_, index) => index === rowIndex);
         const newRows = rows.filter((_, index) => index !== rowIndex);
+        
         setRows(newRows);
+
+        try {
+            const finalRow = prepareRowForSendingToDB(deletedRow);
+            const params = `/api/calendar-page/input-table/appointment/${finalRow.id}`;
+
+            await ApiService.delete(params, finalRow);
+        } catch (error) {
+            console.log("DayTable error: ");
+            console.log(error);
+        }
     };
 
     const handleChange = (rowIndex, field, value) => {
-        const newRows = rows.map((row, index) => 
-            index === rowIndex ? { ...row, [field]: value, hasChanged: true } : row
-        );
-        setRows(newRows);
+        if (field == "begin_date") {
+            // const splitDtr = tr.split(":");
+            // const intArray = splitStr.map((item) => parseInt(item));
+
+            // value = new LVDate(
+            //     date.getFullYear(),
+            //     date.getMonth(),
+            //     date.getDate(),
+                
+            // );
+        }
+
+        console.log(value);
+
+        // const newRows = rows.map((row, index) => 
+        //     index === rowIndex ? { ...row, [field]: value, hasChanged: true } : row
+        // );
+        // setRows(newRows);
     };
 
-    const handleSave = (rowIndex) => {
-        const newRows = rows.map((row, index) => 
-            index === rowIndex ? { ...row, hasChanged: false } : row
-        );
+    const handleSave = async (rowIndex) => {
+        let changedRow = null;
+    
+        const newRows = rows.map((row, index) => {
+            if (index === rowIndex) {
+                changedRow = { ...row, hasChanged: false };
+                return changedRow;
+            }
+            return row;
+        });
+
         setRows(newRows);
-        // Perform the save operation here (e.g., send the data to the server)
+    
+        try {
+            const finalRow = prepareRowForSendingToDB(changedRow);
+            const params = `/api/calendar-page/input-table/appointment/${finalRow.id}`;
+
+            await ApiService.put(params, finalRow);
+        } catch (error) {
+            console.log("DayTable error: ");
+            console.log(error);
+        }
     };
 
     const onChangePatient = (rowIndex, patient) => {
@@ -106,7 +158,7 @@ export default function DayTable({ monthName, dayName, dateNumber, appointments 
     return (
         <div className="day-table">
             <div className="day-table__table-head">
-                {`${monthName} ${dateNumber} - ${dayName}`}
+                {`${monthName} ${date.getDate()} - ${dayName}`}
             </div>
             <table className="day-table__table">
                 <thead>
