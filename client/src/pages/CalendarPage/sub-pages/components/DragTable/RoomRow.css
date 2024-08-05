@@ -1,5 +1,5 @@
 
-.appointment-name {
+.room-row__appointment-name {
     user-select: none; /* Disable text selection */
     -webkit-user-select: none; /* Safari */
     -moz-user-select: none; /* Firefox */
@@ -10,7 +10,7 @@
     padding: 5px;
 }
 
-.extends-previous {
+.room-row__appointment-extend-previous {
     position: absolute;
     left: -10px;
     top: 0;
@@ -19,7 +19,7 @@
     background: rgba(255, 0, 0, 0.5);
 }
 
-.extends-next {
+.room-row__appointment-extend-next {
     position: absolute;
     right: -10px;
     top: 0;

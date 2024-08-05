@@ -1,10 +1,11 @@
-.custom-select {
+
+.input-selector__dropdown {
     position: relative;
     width: 100%;
     z-index: 2;
 }
 
-.custom-select-dropdown {
+.input-selector__dropdown-container {
     position: absolute;
     top: 100%;
     left: 0;
@@ -15,20 +16,20 @@
     margin-top: 5px;
 }
 
-.custom-select-input-container {
+.input-selector__input-container {
     display: flex;
     align-items: center;
     padding: 8px;
 }
 
-.custom-select-input-field {
+.input-selector__input-field {
     flex-grow: 1;
     padding: 8px;
     border: 1px solid #ccc;
     border-radius: 4px;
 }
 
-.add-option-button {
+.input-selector__add-button {
     padding: 8px 12px;
     margin-left: 8px;
     border: none;
@@ -38,7 +39,7 @@
     cursor: pointer;
 }
 
-.custom-select-options {
+.input-selector__options {
     list-style: none;
     margin: 0;
     padding: 0;
@@ -46,7 +47,7 @@
     overflow-y: auto;
 }
 
-.custom-select-option {
+.input-selector__option {
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -54,11 +55,11 @@
     cursor: pointer;
 }
 
-.custom-select-option:hover {
+.input-selector__option:hover {
     background-color: #f1f1f1;
 }
 
-.delete-option-button {
+.input-selector__delete-option {
     background: none;
     border: none;
     color: #f44336;

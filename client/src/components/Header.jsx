@@ -17,8 +17,8 @@ export default function Header ({mainPageUrl, subPages}) {
     };
 
     return (
-        <header>
-            <div className="left">
+        <div className="header">
+            <div className="header__left">
                 {/* The sidebar component is used here and includes its own toggle button */}
                 <Sidebar sidebarPages={routes.system.pages} />
 
@@ -26,7 +26,13 @@ export default function Header ({mainPageUrl, subPages}) {
                 {Object.entries(subPages).map(([key, page]) => (
                     <Link key={key} to={mainPageUrl+page.url}>
                         <button
-                            className={`subpage-button ${mainPageUrl+page.url === currentPath ? 'active-button' : ''}`}
+                            className={
+                                `header__subpage-button ${mainPageUrl+page.url === currentPath ? 
+                                    'header__active-button' 
+                                    : 
+                                    ''
+                                }`
+                            }
                             onClick={() => handlePageChange(mainPageUrl+page.url)}
                         >
                             {page.title}
@@ -34,9 +40,9 @@ export default function Header ({mainPageUrl, subPages}) {
                     </Link>
                 ))}
             </div>
-            <div className="right">
+            <div className="header__right">
                 <LogoutButton />
             </div>
-        </header>
+        </div>
     );
 }

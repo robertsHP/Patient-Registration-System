@@ -27,15 +27,15 @@ export default function GridUI({ data }) {
     };
 
     return (
-        <div className="container">
+        <div className="grid-ui">
             <button 
-                className={`sidebar-button ${leftButtonClicked ? 'active-button' : ''}`} 
+                className={`grid-ui__left-button ${leftButtonClicked ? 'active-button' : ''}`} 
                 onClick={handleLeftButtonClick}
             >
                 &#8592; {/* Left Arrow */}
             </button>
             <button 
-                className={`sidebar-button ${rightButtonClicked ? 'active-button' : ''}`} 
+                className={`grid-ui__right-button ${rightButtonClicked ? 'active-button' : ''}`} 
                 onClick={handleRightButtonClick}
             >
                 &#8594; {/* Right Arrow */}

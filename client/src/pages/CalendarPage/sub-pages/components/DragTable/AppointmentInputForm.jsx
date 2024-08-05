@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 
 import ConfirmationWindow from '../../../../../components/ConfirmationWindow.jsx';
-import InputAndSelect from '../../../../../components/InputAndSelect.jsx';
+import InputSelector from '../../../../../components/InputSelector.jsx';
 
 import ApiService from '../../../../../services/ApiService.js';
 
@@ -192,7 +192,7 @@ export default function AppointmentInputForm({ data, selectedAppointment, setSel
                         <div className="form-row">
                             <div className="form-group">
                                 <label htmlFor="pat_name">Patient Name:</label>
-                                <InputAndSelect
+                                <InputSelector
                                     options={patients}
                                     nameColumn={'pat_name'}
                                     value={formData.patient != null ? formData.patient.pat_name : ''}
@@ -277,7 +277,7 @@ export default function AppointmentInputForm({ data, selectedAppointment, setSel
                         <div className="form-row">
                             <div className="form-group">
                                 <label htmlFor="doc_name">Doctor Name:</label>
-                                <InputAndSelect
+                                <InputSelector
                                     options={doctors}
                                     nameColumn={'doc_name'}
                                     value={formData.doctor != null ? formData.doctor.doc_name : ''}
@@ -289,7 +289,7 @@ export default function AppointmentInputForm({ data, selectedAppointment, setSel
                             </div>
                             <div className="form-group">
                                 <label htmlFor="appointment_type">Appointment Type:</label>
-                                <InputAndSelect
+                                <InputSelector
                                     options={appointmentTypes}
                                     nameColumn={'type_name'}
                                     value={

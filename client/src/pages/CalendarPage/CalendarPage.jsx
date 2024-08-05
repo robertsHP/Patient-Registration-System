@@ -17,7 +17,7 @@ export default function CalendarPage() {
     const calendar = routes.system.pages.calendar;
 
     return (
-        <div className="page-container">
+        <div className="calendar-page">
             <Header
                 mainPageUrl={calendar.url} 
                 subPages={calendar.subPages} 

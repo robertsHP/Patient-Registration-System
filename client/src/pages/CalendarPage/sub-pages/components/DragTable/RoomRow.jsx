@@ -647,7 +647,10 @@ export default class RoomRow extends Component {
                             ...appointment,
                             i: String(appointment.i),
                             h: 1,
-                            x: Math.min(Math.max(appointment.x, config.columnWidths[0] + config.columnWidths[1]), lastColumnStart - appointment.w),
+                            x: Math.min(
+                                Math.max(appointment.x, config.columnWidths[0] + config.columnWidths[1]), 
+                                lastColumnStart - appointment.w
+                            ),
                         })),
                         ...(draggingAppointment
                             ? [
@@ -655,8 +658,11 @@ export default class RoomRow extends Component {
                                       ...draggingAppointment,
                                       h: 1,
                                       x: Math.min(
-                                          Math.max(draggingAppointment.x, config.columnWidths[0] + config.columnWidths[1]),
-                                          lastColumnStart - draggingAppointment.w
+                                            Math.max(
+                                                draggingAppointment.x, 
+                                                config.columnWidths[0] + config.columnWidths[1]
+                                            ),
+                                            lastColumnStart - draggingAppointment.w
                                       ),
                                   },
                               ]
@@ -694,23 +700,35 @@ export default class RoomRow extends Component {
                     // preventCollision={true}
                     // isBounded={true}
                 >
-                    <div key={`room-input-${roomID}`} className="grid-cell">
+                    <div key={`room-input-${roomID}`}>
                         <input type="text" defaultValue={room.room_num} style={{ width: '100%' }} />
                     </div>
 
-                    <div key={`name-input-${roomID}`} className="grid-cell">
+                    <div key={`name-input-${roomID}`}>
                         <input type="text" defaultValue={room.appointments[0]?.patient.pat_name} style={{ width: '100%' }} />
                     </div>
 
                     {room.appointments.map((appointment) => (
                         <div className="appointment" key={appointment.i}>
-                            <div className="appointment-name no-select">{appointment.i}</div>
-                            {appointment.extendsToPreviousMonth && <div className="extends-previous">...</div>}
-                            {appointment.extendsToNextMonth && <div className="extends-next">...</div>}
+                            <div className="room-row__appointment-name no-select">{appointment.i}</div>
+
+                            {appointment.extendsToPreviousMonth && 
+                                <div className="room-row__appointment-extend-previous">
+                                    ...
+                                </div>
+                            }
+                            {appointment.extendsToNextMonth && 
+                                <div className="room-row__appointment-extend-next">
+                                    ...
+                                </div>
+                            }
                         </div>
                     ))}
 
-                    {draggingAppointment && <div className="appointment" key={draggingAppointment.i}></div>}
+                    {draggingAppointment && 
+                        <div className="appointment" key={draggingAppointment.i}>
+                        </div>
+                    }
 
                     <div key="sum-value" className="grid-cell">
                         1

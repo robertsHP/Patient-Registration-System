@@ -7,10 +7,10 @@ import './ConfirmationWindow.css';
 
 function ConfirmationWindowContent ({ message, onConfirm, onCancel }) {
     return ReactDOM.createPortal(
-        <div className="modal-overlay">
-            <div className="modal-content">
+        <div className="confirmation-window">
+            <div className="confirmation-window__content">
                 <p>{message}</p>
-                <div className="modal-buttons">
+                <div className="confirmation-window__buttons">
                     <button onClick={onConfirm}>Jā</button>
                     <button onClick={onCancel}>Nē</button>
                 </div>

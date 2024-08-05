@@ -55,24 +55,24 @@ export default function SearchPage() {
 
     return (
         <div className="search-page">
-            <div className="search-section">
-                <div className="search-bar">
+            <div className="search-page__section">
+                <div className="search-page__search-bar">
                     <input
                         type="text"
                         value={searchText}
                         onChange={handleInputChange}
                         onKeyDown={handleKeyPress}
                         placeholder="Search names..."
-                        className="search-input"
+                        className="search-page__search-input"
                     />
                     <button
                         onClick={handleSearch}
-                        className="search-button"
+                        className="search-page__search-button"
                     >
                         <FaSearch />
                     </button>
                 </div>
-                <ul className="results-list">
+                <ul className="search-page__results-list">
                     {patients.length === 0 ? (
                         <p>Nav rezultāti</p>
                     ) : (
@@ -81,7 +81,7 @@ export default function SearchPage() {
                                 <li key={`patient-${patient.id}`}>
                                     <button
                                         onClick={() => handlePatientSelect(patient.id)}
-                                        className="result-button"
+                                        className="search-page__result-button"
                                     >
                                         {`${patient.id}: ${patient.pat_name}, (${patient.phone_num})`}
                                     </button>
@@ -91,14 +91,14 @@ export default function SearchPage() {
                     )}
                 </ul>
             </div>
-            <div className="details-section">
+            <div className="search-page__details-section">
                 {appointments.length === 0 ? (
                     <p>Nav rezultāti</p>
                 ) : (
-                    <ul className="details-list">
+                    <ul className="search-page__details-list">
                         {appointments.map((appointment, index) => (
                             <li key={index}>
-                                <button className="detail-button">
+                                <button className="search-page__detail-button">
                                     <h3>{appointment.source_table}</h3>
                                     <p>ID: {appointment.id}</p>
                                     <p>Patient ID: {appointment.id_patient}</p>

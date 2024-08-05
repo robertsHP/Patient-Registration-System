@@ -1,10 +1,10 @@
-.container {
+.grid-ui {
     display: flex;
     justify-content: space-between;
     padding: 10px;
 }
 
-.sidebar-button {
+.grid-ui__month-button {
     padding: 10px 20px;
     font-size: 18px;
     cursor: pointer;
@@ -13,10 +13,7 @@
     transition: background-color 0.3s ease;
 }
 
-.sidebar-button.active-button {
-    background-color: #d0d0d0;
-}
-
-.sidebar-button:hover {
+.grid-ui__month-button:hover {
     background-color: #e0e0e0;
 }
+

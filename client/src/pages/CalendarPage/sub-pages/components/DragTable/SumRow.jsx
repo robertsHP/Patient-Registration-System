@@ -104,12 +104,12 @@ export default function SumRow({ data, config }) {
             <div key="room-gap"></div>
             <div key="name-gap"></div>
             {config.dateLayout.map((item, index) => (
-                <div key={item.i} className="grid-cell">
+                <div key={item.i}>
                     {dateSums[index]}
                 </div>
             ))}
-            <div key="sum-gap" className="grid-cell">{totalSum}</div>
-            <div key="hotel-gap" className="grid-cell header"></div>
+            <div key="sum-gap">{totalSum}</div>
+            <div key="hotel-gap"></div>
         </GridLayout>
     );
 }

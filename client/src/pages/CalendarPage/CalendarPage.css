@@ -1,5 +1,5 @@
 
-.page-container {
+.calendar-page {
     position: relative; /* Container to scope absolute positioning */
     height: 100vh; /* Full viewport height */
 }

@@ -13,7 +13,7 @@
     transform: translateX(0);
 }
 
-.sidebar-link {
+.sidebar__link {
     padding: 10px;
     margin: 10px;
     background-color: white;
@@ -21,11 +21,11 @@
     border: 1px solid rgb(202, 202, 202);
 }
 
-.sidebar-button {
+.sidebar__button {
     margin-left: 0; /* Adjust this value to match the width of your sidebar */
     transition: margin 0.3s ease-in-out;
 }
 
-.sidebar.open + .sidebar-button {
+.sidebar.open + .sidebar__button {
     margin-left: 200px;
 }

@@ -5,8 +5,6 @@ import useInputTableDataFetch from './hooks/useInputTableDataFetch.jsx';
 import InputTable from './components/InputTable/InputTable.jsx';
 import LVDate from '../../../models/LVDate.jsx';
 
-import './Page.css';
-
 export default function SaunaPage () {
     const params = useParams();
 

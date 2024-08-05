@@ -35,7 +35,7 @@ export default function RegisterPage() {
 
     return (
         <div className="register-page">
-            <div className="register-container">
+            <div className="register-page__container">
                 <h4>Reģistrēties</h4>
                 <form onSubmit={handleSubmit}>
                     <label htmlFor="username">Lietotājvārds:</label>
@@ -60,9 +60,9 @@ export default function RegisterPage() {
                         onChange={(e) => setPassword(e.target.value)}
                     />
 
-                    {error && <div className="error-message" style={{ color: 'red' }}>{error}</div>}
+                    {error && <div className="register-page__error-message" style={{ color: 'red' }}>{error}</div>}
                     <br />
-                    <input className="register-button" type="submit" value="Reģistrēties" />
+                    <input className="register-page__button" type="submit" value="Reģistrēties" />
                 </form>
             </div>
         </div>

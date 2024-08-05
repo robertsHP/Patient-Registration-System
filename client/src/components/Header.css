@@ -1,5 +1,5 @@
 
-header {
+.header {
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -14,17 +14,17 @@ header {
     z-index: 100; /* Ensure header is above other content */
 }
 
-header.left {
+.header__left {
     display: flex;
     align-items: center;
 }
 
-header.right {
+.header__right {
     display: flex;
     align-items: center;
 }
 
-.subpage-button {
+.header__subpage-button {
     margin-left: 10px; /* Space between sidebar button and subpage buttons */
     background-color: #444;
     color: white;
@@ -33,18 +33,17 @@ header.right {
     cursor: pointer;
 }
 
-.subpage-button:hover {
+.header__subpage-button:hover {
     background-color: #666;
 }
 
-.subpage-button.active-button {
+.header__subpage-button.active-button {
     background-color: #f0f0f0;
     border: 2px solid blue;
     color: blue;
 }
 
-
-.active-button {
+.header__active-button {
     background-color: #222;
     font-weight: bold;
 }

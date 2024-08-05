@@ -1,46 +1,11 @@
-.grid-container {
-    width: 100%; /* Ensure the grid container takes full width */
-}
 
-.grid-input {
-    width: 100%; /* Ensures the input takes up the full width of its container */
-    max-width: 100%; /* Adjust based on the container */
-    padding: 3px; /* Adjust padding as needed */
-    box-sizing: border-box; /* Ensures padding is included in the width calculation */
-}
-
-.grid-item {
-    border: 1px solid #ccc; /* Example styling */
-    padding: 5px;
-    box-sizing: border-box;
-    max-width: 100%; /* Adjust based on the container */
-    z-index: 1;
-}
-
-.header {
+.day-table-header {
     font-weight: bold;
     background-color: #f0f0f0; /* Example styling */
-    text-align: center;
+    text-align: center; /* Center the text */
 }
 
-.month-day-header {
-    text-align: center;
-    font-size: 16px;
-    font-weight: bold;
-    background-color: #e0e0e0; /* Example styling */
-}
-
-.grid-button {
-    width: 100%;
-    height: 100%;
-    background-color: #ffcccc; /* Example styling */
-    border: none;
-    cursor: pointer;
-    box-sizing: border-box;
-    max-width: 100%; /* Adjust based on the container */
-    z-index: 1;
-}
-
-.grid-item.date-column {
-    width: 200px; /* Set the desired width for the date column */
+.day-table-input {
+    width: 100%; /* Ensure the input takes full width */
+    box-sizing: border-box; /* Include padding and border in the element's total width and height */
 }

@@ -14,14 +14,14 @@ export default function Sidebar ({sidebarPages}) {
         <>
             <aside className={`sidebar ${isSidebarOpen ? 'open' : ''}`}>
                 {Object.entries(sidebarPages).map(([key, page]) => (
-                    <div className="sidebar-link" key={key}>
+                    <div className="sidebar__link" key={key}>
                         <Link to={page.urlName}>
                             {page.title}
                         </Link>
                     </div>
                 ))}
             </aside>
-            <button className="sidebar-button" onClick={sidebarOnClick}>
+            <button className="sidebar__button" onClick={sidebarOnClick}>
                 ...
             </button>
         </>

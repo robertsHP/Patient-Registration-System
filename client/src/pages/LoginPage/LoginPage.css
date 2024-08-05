@@ -5,7 +5,7 @@
     height: 100vh;
 }
 
-.login-container {
+.login-page__container {
     max-width: 400px;
     max-height: 400px;
     margin: 0 auto;
@@ -14,52 +14,52 @@
     border-radius: 5px;
 }
 
-.login-container label {
+.login-page__container label {
     display: block;
     margin-bottom: 10px;
 }
 
-.login-container input[type="email"],
-.login-container input[type="password"] {
+.login-page__container input[type="email"],
+.login-page__container input[type="password"] {
     padding: 10px;
 }
 
-.login-container input[type="email"],
-.login-container input[type="password"],
-.login-container input[type="submit"] {
+.login-page__container input[type="email"],
+.login-page__container input[type="password"],
+.login-page__container input[type="submit"] {
     border: 1px solid #ccc;
     border-radius: 3px;
 }
 
-.login-container input[type="email"],
-.login-container input[type="password"] {
+.login-page__container input[type="email"],
+.login-page__container input[type="password"] {
     margin-bottom: 10px;
 }
 
-.login-container input[type="submit"] {
+.login-page__container input[type="submit"] {
     background-color: #4CAF50;
     color: white;
     padding: 10px 0;
     cursor: pointer;
 }
 
-.login-container input[type="submit"]:hover {
+.login-page__container input[type="submit"]:hover {
     background-color: #45a049;
 }
 
-.login-button {
+.login-page__button {
     
 }
 
-.error-message {
+.login-page__error-message {
     color: red;
 }
 
-.links {
+.login-page__links {
     margin-top: 10px;
 }
 
-.links a {
+.login-page__links a {
     margin-right: 10px;
     text-decoration: none;
     color: blue;

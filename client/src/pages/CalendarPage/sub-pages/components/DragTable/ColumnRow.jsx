@@ -21,8 +21,8 @@ export default function ColumnRow({ config }) {
                         h: 1, 
                         static: true 
                     },
-                    { i
-                        : 'name-column', 
+                    {
+                        i: 'name-column', 
                         x: config.columnWidths[0], 
                         y: 0, 
                         w: config.columnWidths[1], 
@@ -61,16 +61,19 @@ export default function ColumnRow({ config }) {
                 isDraggable={false}
                 isResizable={false}
             >
-                <div key="room-column" className="grid-cell header">Telpa</div>
-                <div key="name-column" className="grid-cell header">Vārds</div>
+                <div key="room-column">Telpa</div>
+                <div key="name-column">Vārds</div>
+
                 {config.dateLayout.map((date) => (
-                    <div key={date.i} className="grid-cell">
+                    <div key={date.i}>
                         {date.num}
                     </div>
                 ))}
-                <div key="sum-column" className="grid-cell header"></div>
-                <div key="hotel-column" className="grid-cell header">Viesnīca</div>
+
+                <div key="sum-column"></div>
+                <div key="hotel-column">Viesnīca</div>
             </GridLayout>
         </>
     );
 }
+

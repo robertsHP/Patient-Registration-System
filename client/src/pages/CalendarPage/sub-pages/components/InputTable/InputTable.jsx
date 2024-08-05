@@ -50,14 +50,16 @@ export default function InputTable({ data }) {
     }, [data.fullDataUpdateTrigger]);
 
     return (
-        <div className="parent-grid-container">
+        <div className="table-container">
             <GridUI data={data} />
             <br />
             {tables.map((table, index) => (
-                <div key={`table-${index}`} className="grid-item day-table">
+                <div key={`table-${index}`} className="day-table">
                     {table}
                 </div>
             ))}
         </div>
     );
 }
+
+

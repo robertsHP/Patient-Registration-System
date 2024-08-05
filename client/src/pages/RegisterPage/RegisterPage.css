@@ -5,7 +5,7 @@
     height: 100vh;
 }
 
-.register-container {
+.register-page__container {
     max-width: 400px;
     max-height: 400px;
     margin: 0 auto;
@@ -14,55 +14,55 @@
     border-radius: 5px;
 }
 
-.register-container label {
+.register-page__container label {
     display: block;
     margin-bottom: 10px;
 }
 
-.register-container input[type="text"],
-.register-container input[type="email"],
-.register-container input[type="password"] {
+.register-page__container input[type="text"],
+.register-page__container input[type="email"],
+.register-page__container input[type="password"] {
     padding: 10px;
 }
 
-.register-container input[type="text"],
-.register-container input[type="email"],
-.register-container input[type="password"],
-.register-container input[type="submit"] {
+.register-page__container input[type="text"],
+.register-page__container input[type="email"],
+.register-page__container input[type="password"],
+.register-page__container input[type="submit"] {
     border: 1px solid #ccc;
     border-radius: 3px;
 }
 
-.register-container input[type="text"],
-.register-container input[type="email"],
-.register-container input[type="password"] {
+.register-page__container input[type="text"],
+.register-page__container input[type="email"],
+.register-page__container input[type="password"] {
     margin-bottom: 10px;
 }
 
-.register-container input[type="submit"] {
+.register-page__container input[type="submit"] {
     background-color: #4CAF50;
     color: white;
     padding: 10px 0;
     cursor: pointer;
 }
 
-.register-container input[type="submit"]:hover {
+.register-page__container input[type="submit"]:hover {
     background-color: #45a049;
 }
 
-.register-button {
+.register-page__button {
     
 }
 
-.error-message {
+.register-page__error-message {
     color: red;
 }
 
-.links {
+.register-page__links {
     margin-top: 10px;
 }
 
-.links a {
+.register-page__links a {
     margin-right: 10px;
     text-decoration: none;
     color: blue;

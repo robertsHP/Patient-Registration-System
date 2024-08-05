@@ -37,7 +37,7 @@ export default function LoginPage() {
 
     return (
         <div className="login-page">
-            <div className="login-container">
+            <div className="login-page__container">
                 <h4>CLIENT</h4>
                 <form onSubmit={handleSubmit}>
                     <label htmlFor="email">E-pasts:</label>
@@ -55,14 +55,14 @@ export default function LoginPage() {
                         onChange={(e) => setPassword(e.target.value)}
                     />
                     {error && 
-                        <div className="error-message" style={{ color: 'red' }}>
+                        <div className="login-page__error-message" style={{ color: 'red' }}>
                             {error}
                         </div>
                     }
                     <br />
-                    <input className="login-button" type="submit" value="Pieslēgties" />
+                    <input className="login-page__button" type="submit" value="Pieslēgties" />
                 </form>
-                <div className="links">
+                <div className="login-page__links">
                     <Link to={register.url}>Reģistrēties</Link>
                 </div>
             </div>

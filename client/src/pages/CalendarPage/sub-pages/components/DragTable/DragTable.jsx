@@ -16,14 +16,14 @@ import 'react-resizable/css/styles.css';
 
 import './DragTable.css';
 
-function DragTableContent ({ data }) {
+export default function DragTable ({ data }) {
     const config = useTableConfigurations(data.date);
     const [selectedAppointment, setSelectedAppointment] = useState(null);
 
     const pageRefreshed = usePageRefresh();
 
     return (
-        <div className="grid-container">
+        <div className="drag-table">
             <GridUI 
                 data={data} 
             />
@@ -34,7 +34,6 @@ function DragTableContent ({ data }) {
                         room && (
                             <div 
                                 key={`room-${room.id}`} 
-                                className="grid-cell" 
                                 style={{ gridColumn: `span ${config.cols}` }}
                             >
                                 <RoomRow
@@ -60,15 +59,5 @@ function DragTableContent ({ data }) {
                 />
             }
         </div>
-    );
-}
-
-export default function DragTable ({data}) {
-    return (
-        // <EventTableProvider>
-            <DragTableContent 
-                data={data}
-            />
-        // </EventTableProvider>
     );
 }
