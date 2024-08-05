@@ -4,7 +4,7 @@ import GridUI from './GridUI.jsx';
 import DayTable from './DayTable.jsx';
 import LVDate from '../../../../../models/LVDate.jsx';
 
-import { getDaysInMonth, getMonthName, getDayName } from '../../utils/monthUtilities.jsx';
+import { getDaysOfMonth, getMonthName, getDayName } from '../../utils/monthUtilities.jsx';
 
 import './InputTable.css';
 
@@ -13,7 +13,7 @@ export default function InputTable({ data }) {
 
     useEffect(() => {
         if (data.appointments != null) {
-            const daysInMonth = getDaysInMonth(data.date.getFullYear(), data.date.getMonth());
+            const daysInMonth = getDaysOfMonth(data.date.getFullYear(), data.date.getMonth()).length;
             const monthName = getMonthName(data.date.getMonth());
 
             const generatedTables = Array.from({ length: daysInMonth }, (_, index) => {

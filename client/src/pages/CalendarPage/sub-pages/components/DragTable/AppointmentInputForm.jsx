@@ -165,7 +165,7 @@ export default function AppointmentInputForm({ data, selectedAppointment, setSel
                 data.removeAppointmentWithID(id);
                 
                 try {
-                    var url = `/api/calendar-page/drag-table/appointment/${id}`
+                    var url = `/api/calendar-page/drag-table/appointment/${id}`;
 
                     await ApiService.delete(url);
                     console.log('Deleted appointment');

@@ -3,6 +3,8 @@ import React, { useEffect, useState } from 'react';
 import ConfirmationWindow from '../../../../../components/ConfirmationWindow.jsx';
 import InputSelector from '../../../../../components/InputSelector.jsx';
 
+import LVDate from '../../../../../models/LVDate.jsx';
+
 import ApiService from '../../../../../services/ApiService.js';
 
 import './DayTable.css';
@@ -13,6 +15,16 @@ export default function DayTable({ monthName, dayName, date, appointments }) {
     const [doctors, setDoctors] = useState([]);
     const [patients, setPatients] = useState([]);
     const [rows, setRows] = useState([]);
+
+    const getDefaultRow = () => {
+        return {
+            id: null,
+            begin_date: null,
+            doctor: null,
+            patient: null,
+            notes: "",
+        };
+    }
 
     useEffect(() => {
         // Fetch doctors and patients data when component mounts
@@ -36,14 +48,17 @@ export default function DayTable({ monthName, dayName, date, appointments }) {
         setRows(appointments.length ? 
             appointments.map(appt => ({ ...appt, hasChanged: false })) 
             : 
-            [{}, {}, {}]
+            [getDefaultRow(), getDefaultRow(), getDefaultRow()]
         );
     }, [appointments]);
 
     const prepareRowForSendingToDB = (row) => {
         return {
             id: row.id,
-            begin_date: row.begin_date.toDateString(),
+            begin_date: row.begin_date != null ? 
+                row.begin_date.toDateString() 
+                : 
+                new LVDate(date.getFullYear(), date.getMonth(), date.getDate()).toDateString(),
             doctor: row.doctor,
             notes: row.notes,
             patient: row.patient
@@ -74,23 +89,24 @@ export default function DayTable({ monthName, dayName, date, appointments }) {
 
     const handleChange = (rowIndex, field, value) => {
         if (field == "begin_date") {
-            // const splitDtr = tr.split(":");
-            // const intArray = splitStr.map((item) => parseInt(item));
+            if(typeof value === 'string') {
+                const splitStr = value.split(":");
+                const intArray = splitStr.map((item) => parseInt(item));
 
-            // value = new LVDate(
-            //     date.getFullYear(),
-            //     date.getMonth(),
-            //     date.getDate(),
-                
-            // );
+                value = new LVDate(
+                    date.getFullYear(),
+                    date.getMonth(),
+                    date.getDate(),
+                    intArray[0],
+                    intArray[1]
+                );
+            }
         }
 
-        console.log(value);
-
-        // const newRows = rows.map((row, index) => 
-        //     index === rowIndex ? { ...row, [field]: value, hasChanged: true } : row
-        // );
-        // setRows(newRows);
+        const newRows = rows.map((row, index) => 
+            index === rowIndex ? { ...row, [field]: value, hasChanged: true } : row
+        );
+        setRows(newRows);
     };
 
     const handleSave = async (rowIndex) => {
@@ -105,12 +121,21 @@ export default function DayTable({ monthName, dayName, date, appointments }) {
         });
 
         setRows(newRows);
-    
+
+        console.log(changedRow);
+
         try {
             const finalRow = prepareRowForSendingToDB(changedRow);
-            const params = `/api/calendar-page/input-table/appointment/${finalRow.id}`;
 
-            await ApiService.put(params, finalRow);
+            if (changedRow.id == null) {
+                const params = '/api/calendar-page/input-table/appointment';
+                const result = await ApiService.post(params, finalRow);
+
+                changedRow.id = result;
+            } else {
+                const params = `/api/calendar-page/input-table/appointment/${finalRow.id}`;
+                await ApiService.put(params, finalRow);
+            }
         } catch (error) {
             console.log("DayTable error: ");
             console.log(error);

@@ -2,7 +2,7 @@ import React, { Component, createRef } from 'react';
 import GridLayout from 'react-grid-layout';
 
 import { convertAppointmentForSendingToDB } from '../../utils/dragTableConversionUtilities.jsx';
-import { getDaysInMonth } from '../../utils/monthUtilities.jsx';
+import { getDaysOfMonth } from '../../utils/monthUtilities.jsx';
 
 import ApiService from '../../../../../services/ApiService.js';
 import LVDate from '../../../../../models/LVDate.jsx';
@@ -111,10 +111,10 @@ export default class RoomRow extends Component {
         var finalDate = null;
 
         if (pos < this.props.config.getDateColumnsStart()) {
-            const daysCountInPrevMonth = getDaysInMonth(
+            const daysCountInPrevMonth = getDaysOfMonth(
                 this.props.data.date.getFullYear(),
                 this.props.data.date.getMonth() - 1
-            );
+            ).length;
             const dateNum = daysCountInPrevMonth - (this.props.config.getDateColumnsStart() - pos);
 
             finalDate = new LVDate(
@@ -263,10 +263,10 @@ export default class RoomRow extends Component {
 
                 console.log("----------------------------------------------------");
 
-                const daysCountInPrevMonth = getDaysInMonth(
+                const daysCountInPrevMonth = getDaysOfMonth(
                     this.props.data.date.getFullYear(),
                     this.props.data.date.getMonth() - 1
-                );
+                ).length;
 
                 const dateColumnsStart = this.props.config.getDateColumnsStart();
                 const dateColumnsEnd = this.props.config.getDateColumnsEnd();
@@ -279,10 +279,10 @@ export default class RoomRow extends Component {
                 const dateColumnsEndAsDate = new LVDate(
                     this.props.data.date.getFullYear(), 
                     this.props.data.date.getMonth(),
-                    getDaysInMonth(
+                    getDaysOfMonth(
                         this.props.data.date.getFullYear(), 
                         this.props.data.date.getMonth()
-                    )
+                    ).length
                 );
 
 

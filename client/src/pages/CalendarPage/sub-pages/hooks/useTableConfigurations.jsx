@@ -1,21 +1,9 @@
 import { useMemo } from 'react';
 
+import { getDaysOfMonth } from '../utils/monthUtilities.jsx';
 import LVDate from '../../../../models/LVDate.jsx';
 
 export default function useTableConfigurations (date) {
-    const getDaysOfMonth = (year, month) => {
-        const days = [];
-        var date = new LVDate(year, month, 1);
-        var dayIndex = 1;
-
-        while (date.getMonth() == month) {
-            days.push(date);
-            dayIndex++;
-            date.setDate(dayIndex);
-        }
-        return days;
-    };
-
     const daysOfMonth = getDaysOfMonth(date.getFullYear(), date.getMonth());
     const columnWidths = [4, 4, ...daysOfMonth.map(() => 1), 3, 4];
 

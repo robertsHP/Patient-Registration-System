@@ -53,6 +53,22 @@ module.exports = {
                 NODE_COMMAND: 'npm test',
                 SERVER_PORT: process.env.SERVER_PORT
             },
-        }
+        },
+        // {
+        //     name: 'new_server',
+        //     script: 'index.php',
+        //     cwd: './new_server',
+        //     interpreter: 'php',
+        //     env: {
+        //         SERVER_PORT: process.env.SERVER_PORT
+        //     },
+        //     env_production: {
+        //         SERVER_PORT: process.env.SERVER_PORT
+        //     },
+        //     env_test: {
+        //         SERVER_PORT: process.env.SERVER_PORT
+        //     },
+        // }
     ]
 }
+

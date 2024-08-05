@@ -27,7 +27,7 @@ exports.insertAppointmentAndOtherData = async (req, res) => {
         if(data.id != undefined || data.id != null) {
             delete data.id;
         }
-        data = await inputTableServices.alterAndUpdateAppointmentObjects(data);
+        data = await inputTableServices.alterAppointmentObjects(data);
 
         const result = await globalServices.insertIntoTable(
             'input_table_appointment', 
@@ -35,6 +35,8 @@ exports.insertAppointmentAndOtherData = async (req, res) => {
         );
 
         res.json(result.rows[0].id);
+
+        // res.json(data);
     } catch (err) {
         res.status(500).json({ error: 'Internal Server Error (insertAppointment) - ' + err.message });
     }
@@ -48,7 +50,7 @@ exports.updateAppointmentAndOtherData = async (req, res) => {
         if(data.id != undefined || data.id != null) {
             delete data.id;
         }
-        data = await inputTableServices.alterAndUpdateAppointmentObjects(data);
+        data = await inputTableServices.alterAppointmentObjects(data);
         
         const result = await globalServices.updateInTable(
             'input_table_appointment', 
