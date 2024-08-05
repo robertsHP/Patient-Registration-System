@@ -2,31 +2,32 @@
 .input-selector__dropdown {
     position: relative;
     width: 100%;
-    z-index: 2;
 }
 
 .input-selector__dropdown-container {
     position: absolute;
     top: 100%;
-    left: 0;
-    right: 0;
+    width: 100%;
+    min-width: 400px; /* Predefined minimum width */
     background: #fff;
     border: 1px solid #ccc;
     border-radius: 4px;
     margin-top: 5px;
 }
 
+.input-selector__input {
+    width: 100%;
+}
+
+.input-selector__input-field {
+    width: calc(100% - 60px); /* Adjust width to accommodate the add button */
+    box-sizing: border-box; /* Ensure padding and border are included in width calculation */
+}
+
 .input-selector__input-container {
     display: flex;
     align-items: center;
     padding: 8px;
-}
-
-.input-selector__input-field {
-    flex-grow: 1;
-    padding: 8px;
-    border: 1px solid #ccc;
-    border-radius: 4px;
 }
 
 .input-selector__add-button {
@@ -43,7 +44,7 @@
     list-style: none;
     margin: 0;
     padding: 0;
-    max-height: 150px;
+    max-height: 700px;
     overflow-y: auto;
 }
 

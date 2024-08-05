@@ -1,11 +1,31 @@
 
-.day-table-header {
+.day-table__table-head {
     font-weight: bold;
     background-color: #f0f0f0; /* Example styling */
     text-align: center; /* Center the text */
 }
 
-.day-table-input {
+.day-table__table {
+    
+}
+
+.day-table__input {
     width: 100%; /* Ensure the input takes full width */
     box-sizing: border-box; /* Include padding and border in the element's total width and height */
+}
+
+.day-table__button {
+
+}
+
+.day-table__save-button {
+    
+}
+
+.day-table__delete-button {
+    
+}
+
+.day-table__add-button {
+    
 }

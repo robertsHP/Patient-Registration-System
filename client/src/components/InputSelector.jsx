@@ -50,17 +50,19 @@ export default function InputSelector({
 
     return (
         <div className="input-selector">
-            <input
-                type="text"
-                value={value || inputValue}
-                onClick={onToggleDropdown}
-                onChange={onInputChange}
-                placeholder={placeholder}
-                className={className}
-            />
+            <div className="input-selector__input">
+                <input
+                    type="text"
+                    value={value || inputValue}
+                    onClick={onToggleDropdown}
+                    onChange={onInputChange}
+                    placeholder={placeholder}
+                    className={className}
+                />
+            </div>
             <div className="input-selector__dropdown" ref={dropdownRef}>
                 {isOpen && (
-                    <div className="input-select__dropdown-container">
+                    <div className="input-selector__dropdown-container">
                         <div className="input-selector__input-container">
                             <input
                                 type="text"
