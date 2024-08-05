@@ -1,31 +1,27 @@
 const express = require('express');
-const controller = require('../controllers/calendarPageController');
+
+const dragTableController = require('../controllers/calendar-page/dragTableController');
+const searchController = require('../controllers/calendar-page/searchController');
+const inputTableController = require('../controllers/calendar-page/inputTableController');
 
 const router = express.Router();
 
 ///api/calendar-page/drag-table/get-rooms?floorId=1
 ///api/calendar-page/drag-table/get-rooms?floorId=1&year=2024&month=6
-router.get('/calendar-page/drag-table/get-rooms', controller.getRooms);
+router.get('/calendar-page/drag-table/get-rooms', dragTableController.getRooms);
 
 //DRAG TABLE APPOINTMENT MANAGEMENT
-router.post('/calendar-page/drag-table/appointment', controller.insertAppointmentAndOtherData);
-router.put('/calendar-page/drag-table/appointment/:id', controller.updateAppointmentAndOtherData);
-router.delete('/calendar-page/drag-table/appointment/:id', controller.deleteAppointment);
+router.post('/calendar-page/drag-table/appointment', dragTableController.insertAppointmentAndOtherData);
+router.put('/calendar-page/drag-table/appointment/:id', dragTableController.updateAppointmentAndOtherData);
+router.delete('/calendar-page/drag-table/appointment/:id', dragTableController.deleteAppointment);
 
-// router.post('/calendar-page/input-form/patient', controller.insertPatient);
-// router.put('/calendar-page/input-form/patient/:id', controller.updatePatient);
-router.delete('/calendar-page/input-form/patient/:id', controller.deletePatient);
-router.delete('/calendar-page/input-form/doctor/:id', controller.deleteDoctor);
-router.delete('/calendar-page/input-form/appointment_type/:id', controller.deleteAppointmentType);
-
-router.get('/calendar-page/search/patient/:searchTerm', controller.searchForPatientMatches);
+router.get('/calendar-page/search/patient/:searchTerm', searchController.searchForPatientMatches);
 router.get('/calendar-page/search/appointments/:patientID', 
-    controller.searchForAppointmentMatchesWithPatientID);
-
+    searchController.searchForAppointmentMatchesWithPatientID);
 
 ///api/calendar-page/input-table/get-appointments
 ///api/calendar-page/input-table/get-appointments?year=2024&month=6
-router.get('/calendar-page/input-table/get-appointments', controller.getAppointments);
+router.get('/calendar-page/input-table/get-appointments', inputTableController.getAppointments);
 
 module.exports = router;
 

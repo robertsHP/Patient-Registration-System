@@ -10,14 +10,11 @@ import './InputTable.css';
 
 export default function InputTable({ data }) {
     const [tables, setTables] = useState([]);
-    const [appointmentsByDay, setAppointmentsByDay] = useState([]);
 
     useEffect(() => {
         if (data.appointments != null) {
             const daysInMonth = getDaysInMonth(data.date.getFullYear(), data.date.getMonth());
             const monthName = getMonthName(data.date.getMonth());
-
-            const tempAppointmentsByDay = [];
 
             const generatedTables = Array.from({ length: daysInMonth }, (_, index) => {
                 const dateNumber = index + 1;
@@ -29,9 +26,6 @@ export default function InputTable({ data }) {
                     return appointment.begin_date.getDate() === dateNumber;
                 });
 
-                // Collect the appointments for the day in the temporary object
-                tempAppointmentsByDay[index] = appointmentsForDay;
-
                 return (
                     <DayTable
                         key={dateNumber}
@@ -42,9 +36,7 @@ export default function InputTable({ data }) {
                     />
                 );
             });
-
-            // Set the state once after the loop
-            setAppointmentsByDay(tempAppointmentsByDay);
+            
             setTables(generatedTables);
         }
     }, [data.fullDataUpdateTrigger]);

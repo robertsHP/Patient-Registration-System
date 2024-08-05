@@ -12,11 +12,7 @@ export default function DayTable({ monthName, dayName, dateNumber, appointments 
 
     const [doctors, setDoctors] = useState([]);
     const [patients, setPatients] = useState([]);
-    const [rows, setRows] = useState(appointments.length ? 
-        appointments.map(appt => ({ ...appt, hasChanged: false })) 
-        : 
-        [{}, {}, {}]
-    );
+    const [rows, setRows] = useState([]);
 
     useEffect(() => {
         // Fetch doctors and patients data when component mounts
@@ -33,10 +29,17 @@ export default function DayTable({ monthName, dayName, dateNumber, appointments 
                 console.error('Failed to fetch data:', error);
             }
         };
-
         fetchData();
     }, []);
-    
+
+    useEffect(() => {
+        setRows(appointments.length ? 
+            appointments.map(appt => ({ ...appt, hasChanged: false })) 
+            : 
+            [{}, {}, {}]
+        );
+    }, [appointments]);
+
     const handleAddRow = () => {
         const newRows = [...rows, {}];
         setRows(newRows);
@@ -64,7 +67,10 @@ export default function DayTable({ monthName, dayName, dateNumber, appointments 
 
     const onChangePatient = (rowIndex, patient) => {
         const newRows = rows.map((row, index) => 
-            index === rowIndex ? { ...row, patient, patient_phone: patient.phone_num, hasChanged: true } : row
+            index === rowIndex ? 
+                { ...row, patient, patient_phone: patient.phone_num, hasChanged: true } 
+                : 
+                row
         );
         setRows(newRows);
     };
@@ -126,7 +132,7 @@ export default function DayTable({ monthName, dayName, dateNumber, appointments 
                                     options={patients}
                                     nameColumn={'pat_name'}
                                     value={row.patient != null ? row.patient.pat_name : ''}
-                                    handleOnChange={(patient) => { onChangePatient(rowIndex, patient); }}
+                                    handleOnChange={(patient) => onChangePatient(rowIndex, patient)}
                                     handleAddOption={(value) => onAddOption(value, 'patient')}
                                     handleDeleteOption={(value) => onDeleteOption(value, 'patient')}
                                     className="day-table__input"
