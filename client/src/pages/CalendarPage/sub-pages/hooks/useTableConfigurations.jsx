@@ -5,11 +5,11 @@ import LVDate from '../../../../models/LVDate.jsx';
 
 export default function useTableConfigurations (date) {
     const daysOfMonth = getDaysOfMonth(date.getFullYear(), date.getMonth());
-    const columnWidths = [4, 4, ...daysOfMonth.map(() => 1), 3, 4];
+    const columnWidths = [4, ...daysOfMonth.map(() => 1), 3];
 
     const dateLayout = daysOfMonth.map((day, index) => ({
         i: `day-${index + 1}`, 
-        x: index + 8, // Adjusting for fixed columns
+        x: index + 4, // Adjusting for fixed columns
         y: 0,
         w: 1,
         h: 1,
@@ -32,13 +32,13 @@ export default function useTableConfigurations (date) {
     //     .reduce((acc, width) => acc + width, 0);
 
     const getDateColumnsStart = () => {
-        return columnWidths.slice(0, 2).reduce((acc, width) => acc + width, 0);
+        return columnWidths.slice(0, 1).reduce((acc, width) => acc + width, 0);
     };
 
     const getDateColumnsEnd = () => {
         const dateColumnsStart = getDateColumnsStart();
 
-        return dateColumnsStart + columnWidths.slice(2, columnWidths.length - 2)
+        return dateColumnsStart + columnWidths.slice(1, columnWidths.length - 1)
             .reduce((acc, width) => acc + width, 0);
     };
 

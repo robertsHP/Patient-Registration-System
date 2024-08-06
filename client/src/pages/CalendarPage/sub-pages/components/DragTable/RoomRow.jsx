@@ -1,7 +1,16 @@
 import React, { Component, createRef } from 'react';
 import GridLayout from 'react-grid-layout';
 
-import { convertAppointmentForSendingToDB } from '../../utils/dragTableConversionUtilities.jsx';
+import { 
+    convertAppointmentForSendingToDB,
+    isValidAppointmentPosition,
+    isOverlapping,
+    isInDateColumns,
+    getDateBasedOnLayoutPosition,
+    getPositionBasedOnDate,
+
+} from '../../utils/dragTableUtilities.jsx';
+
 import { getDaysOfMonth } from '../../utils/monthUtilities.jsx';
 
 import ApiService from '../../../../../services/ApiService.js';
@@ -44,6 +53,8 @@ export default class RoomRow extends Component {
     }
 
     componentDidUpdate(prevProps) {
+        console.log("componentDidUpdate");
+
         if (this.props.data.fullDataUpdateTrigger !== prevProps.data.fullDataUpdateTrigger) {
             this.setState({
                 room: this.props.data.getRoomWithID(this.props.roomID),
@@ -53,118 +64,20 @@ export default class RoomRow extends Component {
         if(this.props.data.singleDataUpdateTrigger !== prevProps.data.singleDataUpdateTrigger) {
 
         }
-
     }
 
     refreshRow() {
+        console.log("refreshRow");
+
         this.setState((prevState) => ({
             manualRefresh: true,
             refresh: prevState.refresh + 1,
         }));
     }
 
-    isValidAppointmentPosition(layoutItem) {
-        const dateColumnsStart = this.props.config.getDateColumnsStart();
-        const dateColumnsEnd = this.props.config.getDateColumnsEnd();
-
-        // Ensure the appointment is within date columns
-        return (
-            layoutItem.x >= dateColumnsStart &&
-            (layoutItem.x + layoutItem.w) <= dateColumnsEnd
-        );
-    }
-
-    isOverlapping(newLayout, appointments, currentAppointmentId) {
-        const overlapping = (appointment1, appointment2) => {
-            // Check if y-coordinates are the same
-            if (appointment1.y !== appointment2.y) {
-                return false;
-            }
-
-            // Check if both the starts and ends overlap
-            const start1 = appointment1.x;
-            const end1 = appointment1.x + appointment1.w;
-            const start2 = appointment2.x;
-            const end2 = appointment2.x + appointment2.w;
-
-            // Check for overlap: either appointment2 starts within appointment1 or appointment1 starts within appointment2
-            const startsOverlap = (start1 >= start2 && start1 <= end2) || (start2 >= start1 && start2 <= end1);
-            // Check for overlap: either appointment2 ends within appointment1 or appointment1 ends within appointment2
-            const endsOverlap = (end1 >= start2 && end1 <= end2) || (end2 >= start1 && end2 <= end1);
-
-            return startsOverlap && endsOverlap;
-        };
-
-        return appointments.some(
-            (appointment) => appointment.i !== currentAppointmentId && overlapping(appointment, newLayout)
-        );
-    }
-
-    isInDateColumns(x, w) {
-        const dateColumnsStart = this.props.config.getDateColumnsStart();
-        const dateColumnsEnd = this.props.config.getDateColumnsEnd();
-
-        return x >= dateColumnsStart && (x + w) <= dateColumnsEnd;
-    }
-
-    getDateBasedOnLayoutPosition(pos) {
-        var finalDate = null;
-
-        if (pos < this.props.config.getDateColumnsStart()) {
-            const daysCountInPrevMonth = getDaysOfMonth(
-                this.props.data.date.getFullYear(),
-                this.props.data.date.getMonth() - 1
-            ).length;
-            const dateNum = daysCountInPrevMonth - (this.props.config.getDateColumnsStart() - pos);
-
-            finalDate = new LVDate(
-                this.props.data.date.getFullYear(),
-                this.props.data.date.getMonth() - 1,
-                dateNum
-            );
-        } else if (pos > this.props.config.getDateColumnsEnd()) {
-            const dateNum = this.props.config.getDateColumnsEnd() - pos;
-
-            finalDate = new LVDate(
-                this.props.data.date.getFullYear(),
-                this.props.data.date.getMonth() + 1,
-                dateNum
-            );
-        } else {
-            this.props.config.dateLayout.forEach((date) => {
-                if (pos === date.x) {
-                    finalDate = new LVDate(
-                        this.props.data.date.getFullYear(),
-                        this.props.data.date.getMonth(),
-                        date.num
-                    );
-                }
-            });
-        }
-        return finalDate;
-    }
-
-    getPositionBasedOnDate (tempDate) {
-        var finalPos = null;
-
-        if (tempDate.getMonth() == this.props.data.date.getMonth()) {
-            this.props.config.dateLayout.forEach((date) => {
-                if (tempDate.getDate() == date.num) {
-                    finalPos = date.x;
-                }
-            });
-        } else {
-            if (tempDate.getMonth() < this.props.data.date.getMonth()) {
-                finalPos = this.props.config.getDateColumnsStart();
-            } else {
-                finalPos = this.props.config.getDateColumnsEnd();
-            }
-        }
-
-        return finalPos;
-    }
-
     async updateAppointmentInDB (id, convertedAppointment) {
+        console.log("updateAppointmentInDB");
+
         try {
             const params = `/api/calendar-page/drag-table/appointment/${id}`;
             await ApiService.put(params, convertedAppointment);
@@ -175,21 +88,34 @@ export default class RoomRow extends Component {
     }
 
     updateLayout(newLayout) {
-        console.log("!TRIGGER CHANGE");
+        console.log("updateLayout");
         const room = this.state.room;
+
         room.appointments.forEach((appointment) => {
             const newAppointmentLayout = newLayout.find((l) => l.i === String(appointment.i));
 
             if (newAppointmentLayout) {
-                const validPosition = this.isValidAppointmentPosition(newAppointmentLayout);
-                const notOverlapping = !this.isOverlapping(newAppointmentLayout, room.appointments, appointment.i);
+                const validPosition = isValidAppointmentPosition(newAppointmentLayout, this.props.config);
+                const notOverlapping = !isOverlapping(
+                    newAppointmentLayout, 
+                    room.appointments, 
+                    appointment.i
+                );
 
                 if (validPosition && notOverlapping) {
                     var startDatePos = newAppointmentLayout.x;
                     var endDatePos = newAppointmentLayout.x + newAppointmentLayout.w - 1;
 
-                    appointment.begin_date = this.getDateBasedOnLayoutPosition(startDatePos);
-                    appointment.end_date = this.getDateBasedOnLayoutPosition(endDatePos);
+                    appointment.begin_date = getDateBasedOnLayoutPosition(
+                        startDatePos, 
+                        this.props.data.date, 
+                        this.props.config
+                    );
+                    appointment.end_date = getDateBasedOnLayoutPosition(
+                        endDatePos, 
+                        this.props.data.date, 
+                        this.props.config
+                    );
 
                     appointment.x = newAppointmentLayout.x;
                     appointment.w = newAppointmentLayout.w;
@@ -207,7 +133,7 @@ export default class RoomRow extends Component {
     }
 
     onLayoutChange(newLayout) {
-        console.log("ON LAYOUT CHANGE");
+        console.log("onLayoutChange");
 
         // console.log("gridItemDragged");
         // console.log(this.state.gridItemDragged);
@@ -229,6 +155,7 @@ export default class RoomRow extends Component {
     }
 
     onDrag (layout, oldItem, newItem, placeholder, e, element) {
+        console.log("onDrag");
         // const newLayout = layout.map((item) => {
         //     if (item.i === newItem.i) {
         //         return { ...item, w: newItem.w, h: newItem.h };
@@ -236,11 +163,10 @@ export default class RoomRow extends Component {
         //     return item;
         // });
         // setLayout(newLayout);
-
-
     };
 
     onDragStop(layout, oldItem, newItem, placeholder, e, element) {
+        console.log("onDragStop");
         const updatedAppointments = this.state.room.appointments.map((appointment) => {
             if (appointment.i === newItem.i) {
                 var prevAppointment = appointment;
@@ -248,8 +174,16 @@ export default class RoomRow extends Component {
                 var newStartDatePos = newItem.x;
                 var newEndDatePos = newItem.x + newItem.w - 1;
 
-                var newStartDate = this.getDateBasedOnLayoutPosition(newStartDatePos);
-                var newEndDate = this.getDateBasedOnLayoutPosition(newEndDatePos);
+                var newStartDate = getDateBasedOnLayoutPosition(
+                    newStartDatePos,
+                    this.props.data.date, 
+                    this.props.config
+                );
+                var newEndDate = getDateBasedOnLayoutPosition(
+                    newEndDatePos,
+                    this.props.data.date, 
+                    this.props.config
+                );
 
                 var finalBeginDate = null;
                 var finalExtendsToPreviousMonth = false;
@@ -320,8 +254,16 @@ export default class RoomRow extends Component {
                     // var prevBeginDate = prevAppointment.begin_date.getDate();
                     // var prevEndDate = prevAppointment.end_date.getDate();
 
-                    // var newStartDate = this.getPositionBasedOnDate(newStartDatePos);
-                    // var newEndDate = this.getPositionBasedOnDate(newEndDatePos);
+                    var newStartDate = getPositionBasedOnDate(
+                        newStartDatePos,
+                        this.props.data.date,
+                        this.props.config
+                    );
+                    var newEndDate = getPositionBasedOnDate(
+                        newEndDatePos,
+                        this.props.data.date,
+                        this.props.config
+                    );
 
                     // finalExtendsToPreviousMonth = true;
                     // finalBeginDate = new LVDate(
@@ -341,7 +283,11 @@ export default class RoomRow extends Component {
                             this.props.data.date.getMonth() - 1,
                             prevBeginDate - startLoss
                         );
-                        newStartDatePos = this.getPositionBasedOnDate(finalBeginDate);
+                        newStartDatePos = getPositionBasedOnDate(
+                            finalBeginDate,
+                            this.props.data.date,
+                            this.props.config
+                        );
                     } else if (appointment.extendsToPreviousMonth && newStartDatePos >= dateColumnsStart) {
                         startGains = daysCountInPrevMonth - appointment.begin_date.getDate();
 
@@ -353,7 +299,11 @@ export default class RoomRow extends Component {
                             this.props.data.date.getMonth(),
                             date
                         );
-                        newStartDatePos = this.getPositionBasedOnDate(finalBeginDate);
+                        newStartDatePos = getPositionBasedOnDate(
+                            finalBeginDate,
+                            this.props.data.date,
+                            this.props.config
+                        );
                     } else if (newStartDatePos < dateColumnsStart) {
                         startLoss = dateColumnsStart - newStartDatePos;
     
@@ -363,7 +313,11 @@ export default class RoomRow extends Component {
                             this.props.data.date.getMonth() - 1,
                             daysCountInPrevMonth - startLoss
                         );
-                        newStartDatePos = this.getPositionBasedOnDate(finalBeginDate);
+                        newStartDatePos = getPositionBasedOnDate(
+                            finalBeginDate,
+                            this.props.data.date,
+                            this.props.config
+                        );
                     }
 
                     if (appointment.extendsToNextMonth && newEndDatePos > dateColumnsEndAsDate) {
@@ -387,11 +341,19 @@ export default class RoomRow extends Component {
                         } else if (startGains > 0) {
                             newStartDatePos += startGains;
                         }
-                        finalEndDate = this.getDateBasedOnLayoutPosition(newEndDatePos);
+                        finalEndDate = getDateBasedOnLayoutPosition(
+                            newEndDatePos,
+                            this.props.data.date, 
+                            this.props.config
+                        );
                     }
     
                     if (finalBeginDate == null) {
-                        finalBeginDate = this.getDateBasedOnLayoutPosition(newStartDatePos);
+                        finalBeginDate = getDateBasedOnLayoutPosition(
+                            newStartDatePos,
+                            this.props.data.date, 
+                            this.props.config
+                        );
     
                         if (endLoss > 0) {
                             newStartDatePos += endLoss;
@@ -450,11 +412,15 @@ export default class RoomRow extends Component {
     }
 
     onResizeStop(layout, oldItem, newItem, placeholder, e, element) {
+        console.log("onResizeStop");
+
         this.updateLayout(layout);
         this.setState({ gridItemResized: true, manualRefresh: false });
     }
 
     onMouseDown(e) {
+        console.log("onMouseDown");
+
         if (e.target.closest('.react-resizable-handle')) {
             return; // Ignore mousedown on resize handles
         } else if (e.target.closest('.appointment')) {
@@ -465,7 +431,9 @@ export default class RoomRow extends Component {
                 const doubleClickThreshold = 300;
 
                 if (now - this.state.lastClickTime < doubleClickThreshold) {
-                    const reactFiberKey = Object.keys(clickedAppointmentElement).find((key) => key.startsWith('__reactFiber$'));
+                    const reactFiberKey = Object.keys(clickedAppointmentElement).find(
+                        (key) => key.startsWith('__reactFiber$')
+                    );
                     const objEl = clickedAppointmentElement[reactFiberKey];
                     const appointmentKey = objEl.key.replace('appointment-', '');
                     const appointment = this.props.data.getAppointmentWithID(this.props.roomID, appointmentKey);
@@ -481,9 +449,17 @@ export default class RoomRow extends Component {
             const colWidth = this.props.config.width / this.props.config.cols; // Dynamic calculation based on grid width
             const x = Math.floor((e.clientX - gridRect.left) / colWidth);
 
-            if (this.isInDateColumns(x, 1)) {
-                var startDate = this.getDateBasedOnLayoutPosition(x);
-                var endDate = this.getDateBasedOnLayoutPosition(x + 1);
+            if (isInDateColumns(x, 1, this.props.config)) {
+                var startDate = getDateBasedOnLayoutPosition(
+                    x,
+                    this.props.data.date, 
+                    this.props.config
+                );
+                var endDate = getDateBasedOnLayoutPosition(
+                    x + 1,
+                    this.props.data.date, 
+                    this.props.config
+                );
 
                 this.setState({
                     draggingAppointment: {
@@ -523,6 +499,8 @@ export default class RoomRow extends Component {
     }
 
     onMouseMove(e) {
+        console.log("onMouseMove");
+
         if (this.state.isCreatingAppointment && this.state.draggingAppointment) {
             const gridRect = this.gridRef.current.getBoundingClientRect();
             const colWidth = this.props.config.width / this.props.config.cols;
@@ -530,9 +508,17 @@ export default class RoomRow extends Component {
             const newWidth = Math.abs(currentX - this.state.draggingAppointment.startX) + 1;
             const newX = Math.min(this.state.draggingAppointment.startX, currentX);
 
-            if (this.isInDateColumns(newX, newWidth)) {
-                var startDate = this.getDateBasedOnLayoutPosition(newX);
-                var endDate = this.getDateBasedOnLayoutPosition(newX + newWidth);
+            if (isInDateColumns(newX, newWidth, this.props.config)) {
+                var startDate = getDateBasedOnLayoutPosition(
+                    newX,
+                    this.props.data.date, 
+                    this.props.config
+                );
+                var endDate = getDateBasedOnLayoutPosition(
+                    newX + newWidth,
+                    this.props.data.date, 
+                    this.props.config
+                );
 
                 this.setState((prevState) => ({
                     draggingAppointment: {
@@ -549,10 +535,12 @@ export default class RoomRow extends Component {
     }
 
     async insertAppointmentInDB (tempDraggingAppointment, convertedAppointment) {
+        console.log("insertAppointmentInDB");
+
         try {
             var url = '/api/calendar-page/drag-table/appointment';
-
             const result = await ApiService.post(url, convertedAppointment);
+
             tempDraggingAppointment.id = result;
     
             const newAppointment = {
@@ -581,12 +569,15 @@ export default class RoomRow extends Component {
     }
 
     onMouseUp() {
+        console.log("onMouseUp");
+
         if (this.state.isCreatingAppointment && this.state.draggingAppointment) {
-            var inDateColumns = this.isInDateColumns(
+            var inDateColumns = isInDateColumns(
                 this.state.draggingAppointment.x, 
-                this.state.draggingAppointment.w
+                this.state.draggingAppointment.w,
+                this.props.config
             );
-            var overlapping = this.isOverlapping(
+            var overlapping = isOverlapping(
                 this.state.draggingAppointment, 
                 this.state.room.appointments, 
                 'appointment-temp'
@@ -609,13 +600,18 @@ export default class RoomRow extends Component {
     }
 
     handleAppointmentDoubleClick(appointment) {
+        console.log("handleAppointmentDoubleClick");
+
         this.props.setSelectedAppointment(appointment);
     }
 
     render() {
+        console.log("render");
+
         const { data, roomID, config } = this.props;
         const { room, draggingAppointment, refresh } = this.state;
-        const lastColumnStart = config.columnWidths.slice(0, config.columnWidths.length - 2).reduce((acc, width) => acc + width, 0);
+
+        const lastColumnStart = config.getDateColumnsEnd();
 
         return (
             <div
@@ -633,22 +629,14 @@ export default class RoomRow extends Component {
                             y: 0,
                             w: config.columnWidths[0],
                             h: 1,
-                            static: true,
-                        },
-                        {
-                            i: `name-input-${roomID}`,
-                            x: config.columnWidths[0],
-                            y: 0,
-                            w: config.columnWidths[1],
-                            h: 1,
-                            static: true,
+                            static: true
                         },
                         ...room.appointments.map((appointment) => ({
                             ...appointment,
                             i: String(appointment.i),
                             h: 1,
                             x: Math.min(
-                                Math.max(appointment.x, config.columnWidths[0] + config.columnWidths[1]), 
+                                Math.max(appointment.x, config.columnWidths[0]),
                                 lastColumnStart - appointment.w
                             ),
                         })),
@@ -660,7 +648,7 @@ export default class RoomRow extends Component {
                                       x: Math.min(
                                             Math.max(
                                                 draggingAppointment.x, 
-                                                config.columnWidths[0] + config.columnWidths[1]
+                                                config.columnWidths[0]
                                             ),
                                             lastColumnStart - draggingAppointment.w
                                       ),
@@ -671,18 +659,10 @@ export default class RoomRow extends Component {
                             i: 'sum-value',
                             x: lastColumnStart,
                             y: 0,
-                            w: config.columnWidths[config.columnWidths.length - 2],
-                            h: 1,
-                            static: true,
-                        },
-                        {
-                            i: 'hotel-input',
-                            x: lastColumnStart + config.columnWidths[config.columnWidths.length - 2],
-                            y: 0,
                             w: config.columnWidths[config.columnWidths.length - 1],
                             h: 1,
                             static: true,
-                        },
+                        }
                     ]}
                     key={refresh}
                     cols={config.cols}
@@ -704,26 +684,26 @@ export default class RoomRow extends Component {
                         <input type="text" defaultValue={room.room_num} style={{ width: '100%' }} />
                     </div>
 
-                    <div key={`name-input-${roomID}`}>
-                        <input type="text" defaultValue={room.appointments[0]?.patient.pat_name} style={{ width: '100%' }} />
-                    </div>
-
-                    {room.appointments.map((appointment) => (
-                        <div className="appointment" key={appointment.i}>
-                            <div className="room-row__appointment-name no-select">{appointment.i}</div>
-
-                            {appointment.extendsToPreviousMonth && 
-                                <div className="room-row__appointment-extend-previous">
-                                    ...
+                    {room.appointments.map((appointment) => {
+                        return (
+                            <div className="appointment" key={appointment.i}>
+                                <div className="room-row__appointment-name no-select">
+                                    {appointment.i}
                                 </div>
-                            }
-                            {appointment.extendsToNextMonth && 
-                                <div className="room-row__appointment-extend-next">
-                                    ...
-                                </div>
-                            }
-                        </div>
-                    ))}
+
+                                {appointment.extendsToPreviousMonth && 
+                                    <div className="room-row__appointment-extend-previous">
+                                        ...
+                                    </div>
+                                }
+                                {appointment.extendsToNextMonth && 
+                                    <div className="room-row__appointment-extend-next">
+                                        ...
+                                    </div>
+                                }
+                            </div>
+                        );
+                    })}
 
                     {draggingAppointment && 
                         <div className="appointment" key={draggingAppointment.i}>
@@ -732,9 +712,6 @@ export default class RoomRow extends Component {
 
                     <div key="sum-value" className="grid-cell">
                         1
-                    </div>
-                    <div key="hotel-input" className="grid-cell">
-                        <input type="text" defaultValue={'T'} style={{ width: '100%' }} />
                     </div>
                 </GridLayout>
             </div>

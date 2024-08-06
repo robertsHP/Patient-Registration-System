@@ -4,7 +4,7 @@ import ApiService from '../../../../services/ApiService';
 
 import {
     convertAppointmentForLayoutSupport
-} from '../utils/dragTableConversionUtilities'
+} from '../utils/dragTableUtilities'
 
 export default function useDragTableDataFetch(floorID, tempDate) {
     const [date, setDate] = useState(tempDate);
@@ -20,26 +20,26 @@ export default function useDragTableDataFetch(floorID, tempDate) {
         setSingleDataUpdateTrigger(prev => prev + 1);
     };
 
-    const convertRoomDataToLayout = (curRooms) => {
+    const convertRoomDataToLayout = (curRooms, config) => {
         if (!curRooms) {
             return;
         }
         const newRooms = curRooms.map((room) => ({
             ...room,
             appointments: room.appointments.map(appointment => (
-                convertAppointmentForLayoutSupport(appointment, date)
+                convertAppointmentForLayoutSupport(appointment, date, config)
             ))
         }));
         return newRooms;
     };
 
-    const loadRooms = async (tempDate) => {
+    const loadRooms = async (tempDate, config) => {
         const params = `floorId=${floorID}&year=${tempDate.getFullYear()}&month=${tempDate.getMonth()}`;
         try {
             const result = await ApiService.get(`/api/calendar-page/drag-table/get-rooms?${params}`);
 
             const data = result.data[0].rooms;
-            const finalData = convertRoomDataToLayout(data);
+            const finalData = convertRoomDataToLayout(data, config);
     
             setRooms(finalData);
             triggerFullDataUpdate();
@@ -49,8 +49,8 @@ export default function useDragTableDataFetch(floorID, tempDate) {
         }
     };
 
-    const refreshRooms = () => {
-        loadRooms(date);
+    const refreshRooms = (config) => {
+        loadRooms(date, config);
     };
 
     const getRoomWithID = (id) => {
@@ -98,10 +98,6 @@ export default function useDragTableDataFetch(floorID, tempDate) {
         });
         triggerSingleDataUpdate();
     };
-
-    useEffect(() => {
-        loadRooms(date);
-    }, [date]);
 
     return { 
         date, setDate,

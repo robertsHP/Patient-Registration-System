@@ -16,9 +16,6 @@ export default function BedsPage () {
 
     const data = useDragTableDataFetch(0, new LVDate(2024, 8, 1));
 
-    console.log(getDaysOfMonth(data.date.getFullYear(), data.date.getMonth()).length);
-    console.log(data.date.getObject());
-
     return (
         <>
             <DragTable data={data} />

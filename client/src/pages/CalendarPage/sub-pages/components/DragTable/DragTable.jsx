@@ -22,6 +22,10 @@ export default function DragTable ({ data }) {
 
     const pageRefreshed = usePageRefresh();
 
+    useEffect(() => {
+        data.loadRooms(data.date, config);
+    }, [data.date]);
+
     return (
         <div className="drag-table">
             <GridUI 

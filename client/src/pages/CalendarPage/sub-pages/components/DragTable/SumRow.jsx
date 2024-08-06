@@ -62,33 +62,17 @@ export default function SumRow({ data, config }) {
                     h: 1, 
                     static: true 
                 },
-                { 
-                    i: 'name-gap', 
-                    x: config.columnWidths[0], 
-                    y: 0, 
-                    w: config.columnWidths[1], 
-                    h: 1, 
-                    static: true 
-                },
                 ...config.dateLayout.map((item, index) => ({
                     ...item,
-                    x: config.columnWidths.slice(0, index + 2).reduce((acc, width) => acc + width, 0),
+                    x: config.columnWidths.slice(0, index + 1).reduce((acc, width) => acc + width, 0),
                     y: 0,
-                    w: config.columnWidths[index + 2],
+                    w: config.columnWidths[index + 1],
                     h: 1,
                     static: true
                 })),
                 { 
                     i: 'sum-gap', 
                     x: config.getDateColumnsEnd(),
-                    y: 0, 
-                    w: config.columnWidths[config.columnWidths.length - 2], 
-                    h: 1, 
-                    static: true 
-                },
-                { 
-                    i: 'hotel-gap', 
-                    x: config.getDateColumnsEnd() + config.columnWidths[config.columnWidths.length - 2], 
                     y: 0, 
                     w: config.columnWidths[config.columnWidths.length - 1], 
                     h: 1, 
@@ -102,14 +86,15 @@ export default function SumRow({ data, config }) {
             isResizable={false}
         >
             <div key="room-gap"></div>
-            <div key="name-gap"></div>
+
             {config.dateLayout.map((item, index) => (
                 <div key={item.i}>
                     {dateSums[index]}
                 </div>
             ))}
+            
             <div key="sum-gap">{totalSum}</div>
-            <div key="hotel-gap"></div>
         </GridLayout>
     );
 }
+

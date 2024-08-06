@@ -21,19 +21,11 @@ export default function ColumnRow({ config }) {
                         h: 1, 
                         static: true 
                     },
-                    {
-                        i: 'name-column', 
-                        x: config.columnWidths[0], 
-                        y: 0, 
-                        w: config.columnWidths[1], 
-                        h: 1, 
-                        static: true 
-                    },
                     ...config.dateLayout.map((item, index) => ({
                         ...item,
-                        x: config.columnWidths.slice(0, index + 2).reduce((acc, width) => acc + width, 0),
+                        x: config.columnWidths.slice(0, index + 1).reduce((acc, width) => acc + width, 0),
                         y: 0,
-                        w: config.columnWidths[index + 2],
+                        w: config.columnWidths[index + 1],
                         h: 1,
                         static: true
                     })),
@@ -41,14 +33,6 @@ export default function ColumnRow({ config }) {
                     { 
                         i: 'sum-column', 
                         x: config.getDateColumnsEnd(), 
-                        y: 0, 
-                        w: config.columnWidths[config.columnWidths.length - 2], 
-                        h: 1, 
-                        static: true 
-                    },
-                    { 
-                        i: 'hotel-column', 
-                        x: config.getDateColumnsEnd() + config.columnWidths[config.columnWidths.length - 2], 
                         y: 0, 
                         w: config.columnWidths[config.columnWidths.length - 1], 
                         h: 1, 
@@ -62,7 +46,6 @@ export default function ColumnRow({ config }) {
                 isResizable={false}
             >
                 <div key="room-column">Telpa</div>
-                <div key="name-column">Vārds</div>
 
                 {config.dateLayout.map((date) => (
                     <div key={date.i}>
@@ -71,7 +54,6 @@ export default function ColumnRow({ config }) {
                 ))}
 
                 <div key="sum-column"></div>
-                <div key="hotel-column">Viesnīca</div>
             </GridLayout>
         </>
     );
