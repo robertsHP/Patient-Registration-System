@@ -220,7 +220,15 @@ export default function DayTable({ monthName, dayName, date, appointments }) {
                                 <input 
                                     type="text" 
                                     className="day-table__input" 
-                                    value={row.patient ? row.patient.phone_num : ''}
+                                    value={
+                                        row.patient != null ? 
+                                            row.patient.phone_num != null ?
+                                                row.patient.phone_num
+                                                :
+                                                ''
+                                            : 
+                                            ''
+                                    }
                                     onChange={(e) => handleChange(rowIndex, 'patient', { ...row.patient, phone_num: e.target.value })} 
                                 />
                             </td>

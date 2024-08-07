@@ -24,7 +24,6 @@ export default function AppointmentInputForm({ data, selectedAppointment, setSel
     const [appointmentTypes, setAppointmentTypes] = useState([]);
 
     useEffect(() => {
-        // Fetch doctors and patients data when component mounts
         const fetchData = async () => {
             try {
                 const [doctorsData, patientsData, typesData] = await Promise.all([
@@ -40,6 +39,8 @@ export default function AppointmentInputForm({ data, selectedAppointment, setSel
                 console.error('Failed to fetch data:', error);
             }
         };
+
+        console.log(formData);
 
         fetchData();
     }, []);
@@ -65,6 +66,7 @@ export default function AppointmentInputForm({ data, selectedAppointment, setSel
         try {
             const result = await ApiService.post(`/api/${label}`, newValue);
             newValue.id = result;
+            
             if (label === 'doctor') {
                 setDoctors([...doctors, newValue]);
             } else if (label === 'patient') {
@@ -195,8 +197,13 @@ export default function AppointmentInputForm({ data, selectedAppointment, setSel
                                 <InputSelector
                                     options={patients}
                                     nameColumn={'pat_name'}
-                                    value={formData.patient != null ? formData.patient.pat_name : ''}
-                                    handleOnChange={(patient) => { onChange(patient, 'patient'); }}
+                                    value={
+                                        formData.patient != null ? 
+                                            formData.patient.pat_name 
+                                            : 
+                                            ''
+                                    }
+                                    handleOnChange={(patient) => onChange(patient, 'patient')}
                                     handleAddOption={(value) => onAddOption(value, 'patient')}
                                     handleDeleteOption={(value) => onDeleteOption(value, 'patient')}
                                     placeholder="Ievadi pacienta vārdu un uzvārdu"
@@ -208,7 +215,15 @@ export default function AppointmentInputForm({ data, selectedAppointment, setSel
                                     type="text"
                                     id="patient_phone"
                                     name="patient_phone"
-                                    value={formData.patient ? formData.patient.phone_num : ''}
+                                    value={
+                                        formData.patient != null ? 
+                                            formData.patient.phone_num != null ?
+                                                formData.patient.phone_num
+                                                :
+                                                ''
+                                            : 
+                                            ''
+                                    }
                                     onChange={onInputChange}
                                 />
                             </div>
@@ -244,7 +259,12 @@ export default function AppointmentInputForm({ data, selectedAppointment, setSel
                                         type="datetime-local"
                                         id="hotel_stay_start"
                                         name="hotel_stay_start"
-                                        value={formData.hotel_stay_start.getDateStringForHTMLTag()}
+                                        value={
+                                            formData.hotel_stay_start ?
+                                                formData.hotel_stay_start.getDateStringForHTMLTag()
+                                                :
+                                                ''
+                                        }
                                         onChange={onInputChange}
                                     />
                                 </div>
@@ -254,7 +274,12 @@ export default function AppointmentInputForm({ data, selectedAppointment, setSel
                                         type="datetime-local"
                                         id="hotel_stay_end"
                                         name="hotel_stay_end"
-                                        value={formData.hotel_stay_end.getDateStringForHTMLTag()}
+                                        value={
+                                            formData.hotel_stay_end ?
+                                                formData.hotel_stay_end.getDateStringForHTMLTag()
+                                                :
+                                                ''
+                                        }
                                         onChange={onInputChange}
                                     />
                                 </div>
@@ -267,7 +292,12 @@ export default function AppointmentInputForm({ data, selectedAppointment, setSel
                                 <textarea
                                     id="notes"
                                     name="notes"
-                                    value={formData.notes}
+                                    value={
+                                        formData.notes ?
+                                            formData.notes 
+                                            :
+                                            ''
+                                    }
                                     onChange={onInputChange}
                                     required
                                 />
@@ -280,7 +310,12 @@ export default function AppointmentInputForm({ data, selectedAppointment, setSel
                                 <InputSelector
                                     options={doctors}
                                     nameColumn={'doc_name'}
-                                    value={formData.doctor != null ? formData.doctor.doc_name : ''}
+                                    value={
+                                        formData.doctor != null ? 
+                                            formData.doctor.doc_name 
+                                            : 
+                                            ''
+                                    }
                                     handleOnChange={(value) => { onChange(value, 'doctor'); }}
                                     handleAddOption={(value) => onAddOption(value, 'doctor')}
                                     handleDeleteOption={(value) => onDeleteOption(value, 'doctor')}

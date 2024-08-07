@@ -10,3 +10,4 @@ router.put('/global/:tableName/:id', controller.updateInTable);
 router.delete('/global/:tableName/:id', controller.deleteFromTable);
 
 module.exports = router;
+

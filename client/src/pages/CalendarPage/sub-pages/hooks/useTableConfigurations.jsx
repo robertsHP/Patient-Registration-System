@@ -17,20 +17,6 @@ export default function useTableConfigurations (date) {
         num: index + 1
     }));
 
-
-    // const dateColumnsStart = config.columnWidths.slice(0, 2).reduce((acc, width) => acc + width, 0);
-    // const dateColumnsEnd = config.columnWidths.slice(2, config.columnWidths.length - 2)
-    //     .reduce((acc, width) => acc + width, dateColumnsStart);
-
-    // const dateColumnsStart = config.columnWidths.slice(0, 2).reduce((acc, width) => acc + width, 0);
-    // const dateColumnsEnd = dateColumnsStart + config.columnWidths.slice(2, config.columnWidths.length - 2)
-    //     .reduce((acc, width) => acc + width, 0);
-
-
-    // const dateColumnsStart = config.columnWidths.slice(0, 2).reduce((acc, width) => acc + width, 0);
-    // const dateColumnsEnd = dateColumnsStart + config.columnWidths.slice(2, config.columnWidths.length - 2)
-    //     .reduce((acc, width) => acc + width, 0);
-
     const getDateColumnsStart = () => {
         return columnWidths.slice(0, 1).reduce((acc, width) => acc + width, 0);
     };

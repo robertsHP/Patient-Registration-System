@@ -40,7 +40,7 @@ exports.insertAppointmentAndOtherData = async (req, res) => {
 
         res.json(result.rows[0].id);
     } catch (err) {
-        res.status(500).json({ error: 'Internal Server Error (insertAppointment) - ' + err.message });
+        res.status(500).json({ error: 'Internal Server Error (insertAppointmentAndOtherData) - ' + err.message });
     }
 };
 
@@ -61,7 +61,7 @@ exports.updateAppointmentAndOtherData = async (req, res) => {
         );
         res.json(result.rows[0]);
     } catch (err) {
-        res.status(500).json({ error: 'Internal Server Error (updateAppointment) - ' + err.message });
+        res.status(500).json({ error: 'Internal Server Error (updateAppointmentAndOtherData) - ' + err.message });
     }
 };
 

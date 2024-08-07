@@ -2,6 +2,8 @@ import React, { useState, useEffect, useContext } from 'react';
 
 import usePageRefresh from '../../../../../hooks/usePageRefresh.jsx';
 
+import ApiService from '../../../../../services/ApiService';
+
 import GridUI from './GridUI.jsx';
 import ColumnRow from './ColumnRow.jsx';
 import RoomRow from './RoomRow.jsx';
@@ -20,6 +22,33 @@ export default function DragTable ({ data, config }) {
 
     const pageRefreshed = usePageRefresh();
 
+    const addRoom = () => {
+        const saveRoomToDB = async (newRoom) => {
+            var newRoom = {
+                room_num: "",
+                id_floor: data.floorID
+            };
+
+            try {
+                const result = await ApiService.post(`/api/global/room`, newRoom);
+                newRoom.id = result;
+                newRoom.appointments = [];
+
+                if(newRoom.id != null) {
+                    data.setRooms([...data.rooms, newRoom]);
+                }
+            } catch (error) {
+                console.log(`DragTable (addRoom) POST error: `, error);
+            }
+        };
+
+        saveRoomToDB();
+    };
+
+    useEffect(() => {
+        console.log(data.rooms);
+    }, [data.rooms]);
+
     return (
         <div className="drag-table">
             <GridUI 
@@ -28,26 +57,29 @@ export default function DragTable ({ data, config }) {
             <ColumnRow config={config} />
             {typeof data.rooms !== 'undefined' && data.rooms != null &&
                 (data.rooms.length !== 0 &&
-                    data.rooms.map((room) => 
-                        room && (
-                            <div 
-                                key={`room-${room.id}`} 
-                                style={{ gridColumn: `span ${config.cols}` }}
-                            >
+                    data.rooms.map((room) => {
+                        // console.log("BALLSS");
+                        // console.log(room);
+                        return (
+                            <div key={`room-${room.id}`}>
                                 <RoomRow
                                     data={data}
                                     roomID={room.id}
                                     config={config}
                                     selectedAppointment={selectedAppointment}
                                     setSelectedAppointment={setSelectedAppointment}
-
                                     pageRefreshed={pageRefreshed}
                                 />
                             </div>
-                        )
-                    )
+                        );
+                    })
                 )
             }
+
+            <button onClick={addRoom} className="add-room-button">
+                Pievienot telpu
+            </button>
+
             <SumRow data={data} config={config} />
             {selectedAppointment && 
                 <AppointmentInputForm 
@@ -59,3 +91,4 @@ export default function DragTable ({ data, config }) {
         </div>
     );
 }
+

@@ -113,15 +113,6 @@ export function getPositionBasedOnDate (tempDate, date, config) {
     return finalPos;
 }
 
-function getDayIndex (date, monthStart) {
-    const currentDate = new LVDate(date);
-    const startDate = new LVDate(monthStart.getFullYear(), monthStart.getMonth(), 1);
-
-    var result = Math.floor((currentDate.getObject() - startDate.getObject()) / (1000 * 60 * 60 * 24));
-
-    return result;
-}
-
 export function convertAppointmentForLayoutSupport (appointment, date, config) {
     var beginDate = new LVDate(appointment.begin_date);
     var endDate = new LVDate(appointment.end_date);

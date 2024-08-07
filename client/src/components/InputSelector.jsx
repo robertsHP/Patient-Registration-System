@@ -1,29 +1,23 @@
 import React, { useState, useRef } from 'react';
-
 import './InputSelector.css';
 
 export default function InputSelector({ 
-    options, nameColumn, value, handleOnChange, handleAddOption, handleDeleteOption, className, placeholder 
+    options, nameColumn, value, handleOnChange, handleDeleteOption, className, placeholder 
 }) {
     const [isOpen, setIsOpen] = useState(false);
-    const [inputValue, setInputValue] = useState('');
+    const [inputValue, setInputValue] = useState(value || '');
     const dropdownRef = useRef(null);
 
     const onInputChange = (e) => {
         setInputValue(e.target.value);
+        handleOnChange(e.target.value);
+        setIsOpen(true);
     };
 
     const onSelectOption = (option) => {
-        handleOnChange(option);
+        handleOnChange(option[nameColumn]);
+        setInputValue(option[nameColumn]);
         setIsOpen(false);
-    };
-
-    const onAddOption = () => {
-        if (inputValue.trim() !== '') {
-            handleAddOption(inputValue);
-            setInputValue('');
-            setIsOpen(false);
-        }
     };
 
     const onToggleDropdown = () => {
@@ -53,7 +47,7 @@ export default function InputSelector({
             <div className="input-selector__input">
                 <input
                     type="text"
-                    value={value || inputValue}
+                    value={inputValue}
                     onClick={onToggleDropdown}
                     onChange={onInputChange}
                     placeholder={placeholder}
@@ -63,23 +57,10 @@ export default function InputSelector({
             <div className="input-selector__dropdown" ref={dropdownRef}>
                 {isOpen && (
                     <div className="input-selector__dropdown-container">
-                        <div className="input-selector__input-container">
-                            <input
-                                type="text"
-                                value={inputValue}
-                                onChange={onInputChange}
-                                placeholder="Type to add or select"
-                                className="input-selector__input-field"
-                            />
-                            <button 
-                                className="input-selector__add-button" 
-                                onClick={onAddOption}
-                            >
-                                Set
-                            </button>
-                        </div>
                         <ul className="input-selector__options">
-                            {options.map((option) => (
+                            {options.filter(option => 
+                                option[nameColumn].toLowerCase().includes(inputValue.toLowerCase())
+                            ).map((option) => (
                                 <li 
                                     key={option.id} 
                                     className="input-selector__option" 
