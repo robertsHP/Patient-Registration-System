@@ -10,6 +10,8 @@ const router = express.Router();
 ///api/calendar-page/drag-table/get-rooms?floorId=1
 ///api/calendar-page/drag-table/get-rooms?floorId=1&year=2024&month=6
 router.get('/calendar-page/drag-table/get-rooms', dragTableController.getRooms);
+router.delete('/calendar-page/drag-table/delete-room/:id', dragTableController.deleteRoom);
+
 router.post('/calendar-page/drag-table/appointment', dragTableController.insertAppointmentAndOtherData);
 router.put('/calendar-page/drag-table/appointment/:id', dragTableController.updateAppointmentAndOtherData);
 router.delete('/calendar-page/drag-table/appointment/:id', dragTableController.deleteAppointment);

@@ -1,3 +1,5 @@
+const pool = require('../../utils/db.connect.js');
+
 const globalServices = require('../globalServices.js');
 
 const dragAppointmentTableName = globalServices.sanitizeTableName('drag_table_appointment');
@@ -7,7 +9,6 @@ const doctorTableName = globalServices.sanitizeTableName('doctor');
 const roomTableName = globalServices.sanitizeTableName('room');
 const floorTableName = globalServices.sanitizeTableName('floor');
 const appointmentTypeTableName = globalServices.sanitizeTableName('appointment_type');
-
 
 function prepareGetRoomsClauses(year, month, floorId, params) {
     let yearAndMonthCond = '';
@@ -118,6 +119,12 @@ exports.buildGetRoomsQuery = (year, month, floorId, limit, offset) => {
         params
     };
 };
+
+exports.deleteAppointmentsForRoom = async (id) => {
+    const query = `DELETE FROM ${dragAppointmentTableName} WHERE id_room = $1`;
+    const values = [id];
+    await pool.query(query, values);
+}
 
 exports.alterAndUpdateAppointmentObjects = async (data) => {
     // Helper function to update table and set ID

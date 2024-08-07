@@ -45,10 +45,6 @@ export default function DragTable ({ data, config }) {
         saveRoomToDB();
     };
 
-    useEffect(() => {
-        console.log(data.rooms);
-    }, [data.rooms]);
-
     return (
         <div className="drag-table">
             <GridUI 
@@ -58,8 +54,6 @@ export default function DragTable ({ data, config }) {
             {typeof data.rooms !== 'undefined' && data.rooms != null &&
                 (data.rooms.length !== 0 &&
                     data.rooms.map((room) => {
-                        // console.log("BALLSS");
-                        // console.log(room);
                         return (
                             <div key={`room-${room.id}`}>
                                 <RoomRow

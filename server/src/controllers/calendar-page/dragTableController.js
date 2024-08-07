@@ -25,6 +25,18 @@ exports.getRooms = async (req, res) => {
     }
 };
 
+exports.deleteRoom = async (req, res) => {
+    const { id } = req.params;
+    try {
+        await dragTableServices.deleteAppointmentsForRoom(id);
+        await globalServices.deleteFromTable('room', id);
+        res.send('Row deleted');
+    } catch (err) {
+        console.error(err.message);
+        res.status(500).send('Server error: ' + err.message);
+    }
+};
+
 exports.insertAppointmentAndOtherData = async (req, res) => {
     var data = req.body; // Assuming JSON body with keys matching table columns
     try {

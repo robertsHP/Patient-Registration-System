@@ -100,6 +100,12 @@ export default function useDragTableDataFetch(tempFloorID, tempDate, config) {
         triggerSingleDataUpdate();
     };
 
+    const getSumOfAllAppointmentDays = (roomID) => {
+        const room = getRoomWithID(roomID);
+
+        return room.appointments.reduce((sum, appointment) => sum + appointment.w, 0);
+    };
+
     useEffect(() => {
         loadRooms(date, config);
     }, [date]);
@@ -115,6 +121,8 @@ export default function useDragTableDataFetch(tempFloorID, tempDate, config) {
         loadRooms, refreshRooms,
 
         getRoomWithID, setRoomWithID, removeRoomWithID,
-        getAppointmentWithID, setAppointmentWithID, removeAppointmentWithID
+        getAppointmentWithID, setAppointmentWithID, removeAppointmentWithID,
+
+        getSumOfAllAppointmentDays
     };
 }

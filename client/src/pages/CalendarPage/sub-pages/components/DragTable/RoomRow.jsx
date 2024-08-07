@@ -711,7 +711,7 @@ export default class RoomRow extends Component {
                     }
 
                     <div key="sum-value" className="grid-cell">
-                        1
+                        {data.getSumOfAllAppointmentDays(roomID)}
                     </div>
                 </GridLayout>
             </div>

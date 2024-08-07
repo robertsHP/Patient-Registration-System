@@ -30,9 +30,7 @@ export default function SumRow({ data, config }) {
             setDateSums([]);
             setTotalSum(0);
         } else {
-            console.log("SUM ROW");
-
-            const updatedDateSums = config.dateLayout.map(dateItem => {
+            const newHorizontalSums = config.dateLayout.map(dateItem => {
                 const year = data.date.getFullYear();
                 const month = data.date.getMonth();
                 const date = new LVDate(year, month, dateItem.num);
@@ -43,10 +41,17 @@ export default function SumRow({ data, config }) {
                     }, 0);
                 }, 0);
             });
-            setDateSums(updatedDateSums);
+
+            setDateSums(newHorizontalSums);
     
-            const updatedTotalSum = updatedDateSums.reduce((sum, dateSum) => sum + dateSum, 0);
-            setTotalSum(updatedTotalSum);
+            const finalHorizontalSums = newHorizontalSums.reduce((sum, dateSum) => sum + dateSum, 0);
+
+            const finalVerticalSums = Object.values(data.rooms).reduce((sum, room) => {
+                const roomSum = data.getSumOfAllAppointmentDays(room.id);
+                return sum + roomSum;
+            }, 0);
+
+            setTotalSum(finalHorizontalSums + finalVerticalSums);
         }
     }, [data.fullDataUpdateTrigger, data.singleDataUpdateTrigger]);
 
