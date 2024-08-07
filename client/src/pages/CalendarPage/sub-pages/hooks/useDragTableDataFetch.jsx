@@ -6,7 +6,7 @@ import {
     convertAppointmentForLayoutSupport
 } from '../utils/dragTableUtilities'
 
-export default function useDragTableDataFetch(floorID, tempDate) {
+export default function useDragTableDataFetch(floorID, tempDate, config) {
     const [date, setDate] = useState(tempDate);
     const [rooms, setRooms] = useState(null);
 
@@ -98,6 +98,10 @@ export default function useDragTableDataFetch(floorID, tempDate) {
         });
         triggerSingleDataUpdate();
     };
+
+    useEffect(() => {
+        loadRooms(date, config);
+    }, [date]);
 
     return { 
         date, setDate,

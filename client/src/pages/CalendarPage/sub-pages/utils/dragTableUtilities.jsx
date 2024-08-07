@@ -130,7 +130,7 @@ export function convertAppointmentForLayoutSupport (appointment, date, config) {
     var hotel_stay_end = new LVDate(appointment.hotel_stay_end);
 
     var x = getPositionBasedOnDate(beginDate, date, config);
-    var w = getPositionBasedOnDate(endDate, date, config);
+    var w = endDate.getDate() - beginDate.getDate() + 1;
 
     return {
         ...appointment,

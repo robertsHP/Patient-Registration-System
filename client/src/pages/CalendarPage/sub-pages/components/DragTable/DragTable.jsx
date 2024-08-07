@@ -1,6 +1,5 @@
 import React, { useState, useEffect, useContext } from 'react';
 
-import useTableConfigurations from '../../hooks/useTableConfigurations.jsx';
 import usePageRefresh from '../../../../../hooks/usePageRefresh.jsx';
 
 import GridUI from './GridUI.jsx';
@@ -16,15 +15,10 @@ import 'react-resizable/css/styles.css';
 
 import './DragTable.css';
 
-export default function DragTable ({ data }) {
-    const config = useTableConfigurations(data.date);
+export default function DragTable ({ data, config }) {
     const [selectedAppointment, setSelectedAppointment] = useState(null);
 
     const pageRefreshed = usePageRefresh();
-
-    useEffect(() => {
-        data.loadRooms(data.date, config);
-    }, [data.date]);
 
     return (
         <div className="drag-table">

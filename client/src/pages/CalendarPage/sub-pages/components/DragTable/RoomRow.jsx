@@ -685,6 +685,8 @@ export default class RoomRow extends Component {
                     </div>
 
                     {room.appointments.map((appointment) => {
+                        console.log(appointment);
+                        
                         return (
                             <div className="appointment" key={appointment.i}>
                                 <div className="room-row__appointment-name no-select">
