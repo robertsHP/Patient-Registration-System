@@ -82,6 +82,7 @@ export default function AppointmentInputForm({ data, selectedAppointment, setSel
     const onDeleteOption = async (option, label) => {
         try {
             await ApiService.delete(`/api/${label}/${option.id}`);
+
             if (label === 'doctor') {
                 setDoctors(doctors.filter(doc => doc.id !== option.id));
             } else if (label === 'patient') {
@@ -170,7 +171,6 @@ export default function AppointmentInputForm({ data, selectedAppointment, setSel
                     var url = `/api/calendar-page/drag-table/appointment/${id}`;
 
                     await ApiService.delete(url);
-                    console.log('Deleted appointment');
                     onWindowClose();
                 } catch (error) {
                     console.log(`AppointmentInputForm (onDelete) DELETE error: `);

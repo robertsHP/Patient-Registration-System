@@ -22,7 +22,7 @@ export default function DragTable ({ data, config }) {
 
     const pageRefreshed = usePageRefresh();
 
-    const addRoom = () => {
+    const addRoom = async () => {
         const saveRoomToDB = async (newRoom) => {
             var newRoom = {
                 room_num: "",
@@ -45,6 +45,18 @@ export default function DragTable ({ data, config }) {
         saveRoomToDB();
     };
 
+    const deleteRoomRow = async (roomID) => {
+        console.log("DELETE ROOM ROW");
+
+        try {
+            const params = `/api/calendar-page/drag-table/delete-room/${roomID}`;
+            await ApiService.delete(params);
+        } catch (error) {
+            console.log("DragTable (deleteRoomRow) error: ");
+            console.log(error);
+        }
+    };
+
     return (
         <div className="drag-table">
             <GridUI 
@@ -63,6 +75,7 @@ export default function DragTable ({ data, config }) {
                                     selectedAppointment={selectedAppointment}
                                     setSelectedAppointment={setSelectedAppointment}
                                     pageRefreshed={pageRefreshed}
+                                    deleteRoomRow={deleteRoomRow}
                                 />
                             </div>
                         );
