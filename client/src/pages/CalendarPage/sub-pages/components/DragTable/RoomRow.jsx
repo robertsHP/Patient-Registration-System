@@ -144,17 +144,12 @@ export default class RoomRow extends Component {
     onLayoutChange(newLayout) {
         console.log("onLayoutChange");
 
-        // console.log("gridItemDragged");
-        // console.log(this.state.gridItemDragged);
-        // console.log("gridItemResized");
-        // console.log(this.state.gridItemResized);
-        // console.log("manualRefresh");
-        // console.log(this.state.manualRefresh);
-
         if (this.state.gridItemDragged || this.state.gridItemResized || this.state.manualRefresh) {
             if (this.state.gridItemDragged) {
+                this.updateLayout(newLayout);
                 this.setState({ gridItemDragged: false });
             } else if (this.state.gridItemResized) {
+                this.updateLayout(newLayout);
                 this.setState({ gridItemResized: false });
             } else if (this.state.manualRefresh) {
                 this.updateLayout(newLayout);
@@ -162,17 +157,6 @@ export default class RoomRow extends Component {
             }
         }
     }
-
-    onDrag (layout, oldItem, newItem, placeholder, e, element) {
-        console.log("onDrag");
-        // const newLayout = layout.map((item) => {
-        //     if (item.i === newItem.i) {
-        //         return { ...item, w: newItem.w, h: newItem.h };
-        //     }
-        //     return item;
-        // });
-        // setLayout(newLayout);
-    };
 
     onDragStop(layout, oldItem, newItem, placeholder, e, element) {
         console.log("onDragStop");
@@ -223,7 +207,7 @@ export default class RoomRow extends Component {
                     );
                     finalExtendsToPreviousMonth = false;
                 }
-    
+
                 // Calculate if the appointment extends into the next month
                 if (newEndDatePos > dateColumnsEnd) {
                     const endLoss = newEndDatePos - dateColumnsEnd;
@@ -241,24 +225,26 @@ export default class RoomRow extends Component {
                     );
                     finalExtendsToNextMonth = false;
                 }
-    
+
                 // Handle dragging back into the current month from previous month
                 if (appointment.extendsToPreviousMonth && newStartDatePos >= dateColumnsStart) {
                     const daysDraggedIntoCurrentMonth = newStartDatePos - dateColumnsStart;
-                    const prevMonthStart = appointment.begin_date.getDate();
+                    const startGains = daysCountInPrevMonth - appointment.begin_date.getDate();
+
                     finalBeginDate = new LVDate(
                         this.props.data.date.getFullYear(),
                         this.props.data.date.getMonth(),
-                        daysDraggedIntoCurrentMonth + 1
+                        daysDraggedIntoCurrentMonth - startGains + 1
                     );
                     finalEndDate = new LVDate(
                         this.props.data.date.getFullYear(),
                         this.props.data.date.getMonth(),
-                        daysDraggedIntoCurrentMonth + (appointment.end_date.getDate() - prevMonthStart) + 1
+                        daysDraggedIntoCurrentMonth + appointment.end_date.getDate()
                     );
+
                     finalExtendsToPreviousMonth = false;
                 }
-    
+
                 // Handle dragging back into the current month from next month
                 if (appointment.extendsToNextMonth && newEndDatePos <= dateColumnsEnd) {
                     const daysDraggedIntoCurrentMonth = dateColumnsEnd - newEndDatePos;
@@ -275,20 +261,25 @@ export default class RoomRow extends Component {
                     );
                     finalExtendsToNextMonth = false;
                 }
-    
+
                 // Handle expanding appointments when dragging within the same month
                 if (finalExtendsToPreviousMonth && finalBeginDate.getMonth() < this.props.data.date.getMonth()) {
                     const startLoss = dateColumnsStart - newStartDatePos;
                     const dayOfMonth = finalBeginDate.getDate() - startLoss;
                     finalBeginDate.setDate(dayOfMonth);
                 }
-    
+
                 if (finalExtendsToNextMonth && finalEndDate.getMonth() > this.props.data.date.getMonth()) {
                     const endLoss = newEndDatePos - dateColumnsEnd;
                     const dayOfMonth = finalEndDate.getDate() + endLoss;
                     finalEndDate.setDate(dayOfMonth);
                 }
-    
+
+                console.log("finalBeginDate");
+                console.log(finalBeginDate.getObject());
+                console.log("finalEndDate");
+                console.log(finalEndDate.getObject());
+
                 // Calculate the new start and end positions (x and w) based on the resulting start and end dates
                 const adjustedStartDatePos = getPositionBasedOnDate(
                     finalBeginDate, 
@@ -308,25 +299,28 @@ export default class RoomRow extends Component {
                 appointment.begin_date = finalBeginDate;
                 appointment.extendsToNextMonth = finalExtendsToNextMonth;
                 appointment.end_date = finalEndDate;
-    
-                return appointment;
             }
             return appointment;
         });
     
         this.setState((prevState) => ({
             room: { ...prevState.room, appointments: updatedAppointments },
+            
             gridItemDragged: true,
+            gridItemResized: false,
             manualRefresh: false,
         }));
-        this.updateLayout(layout);
-    }    
+    }
 
     onResizeStop(layout, oldItem, newItem, placeholder, e, element) {
         console.log("onResizeStop");
 
-        this.updateLayout(layout);
-        this.setState({ gridItemResized: true, manualRefresh: false });
+        // this.updateLayout(layout);
+        this.setState({ 
+            gridItemDragged: false,
+            gridItemResized: true, 
+            manualRefresh: false 
+        });
     }
 
     onMouseDown(e) {
@@ -607,7 +601,6 @@ export default class RoomRow extends Component {
                     rowHeight={config.rowHeight}
                     width={config.width}
                     onLayoutChange={this.onLayoutChange}
-                    onDrag={this.onDrag}
                     onDragStop={this.onDragStop}
                     onResizeStop={this.onResizeStop}
                     isDraggable
