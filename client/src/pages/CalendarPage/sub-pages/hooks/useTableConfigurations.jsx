@@ -5,7 +5,7 @@ import LVDate from '../../../../models/LVDate.jsx';
 
 export default function useTableConfigurations (date) {
     const daysOfMonth = getDaysOfMonth(date.getFullYear(), date.getMonth());
-    const columnWidths = [4, ...daysOfMonth.map(() => 1), 3];
+    const columnWidths = [4, ...daysOfMonth.map(() => 1), 1, 5];
 
     const dateLayout = daysOfMonth.map((day, index) => ({
         i: `day-${index + 1}`, 
@@ -24,7 +24,7 @@ export default function useTableConfigurations (date) {
     const getDateColumnsEnd = () => {
         const dateColumnsStart = getDateColumnsStart();
 
-        return dateColumnsStart + columnWidths.slice(1, columnWidths.length - 1)
+        return dateColumnsStart + columnWidths.slice(1, columnWidths.length - 2)
             .reduce((acc, width) => acc + width, 0);
     };
 

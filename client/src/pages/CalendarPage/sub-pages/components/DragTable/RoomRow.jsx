@@ -45,7 +45,6 @@ export default class RoomRow extends Component {
         this.updateAppointmentInDB = this.updateAppointmentInDB.bind(this);
         this.updateLayout = this.updateLayout.bind(this);
         this.onLayoutChange = this.onLayoutChange.bind(this);
-        this.onDrag = this.onDrag.bind(this);
         this.onDragStop = this.onDragStop.bind(this);
         this.onResizeStop = this.onResizeStop.bind(this);
         this.onMouseDown = this.onMouseDown.bind(this);
@@ -160,7 +159,7 @@ export default class RoomRow extends Component {
 
     onDragStop(layout, oldItem, newItem, placeholder, e, element) {
         console.log("onDragStop");
-    
+
         const updatedAppointments = this.state.room.appointments.map((appointment) => {
             if (appointment.i === newItem.i) {
                 const newStartDatePos = newItem.x;
@@ -173,7 +172,7 @@ export default class RoomRow extends Component {
                 let finalExtendsToPreviousMonth = false;
                 let finalEndDate = null;
                 let finalExtendsToNextMonth = false;
-    
+
                 const daysCountInPrevMonth = getDaysOfMonth(
                     this.props.data.date.getFullYear(),
                     this.props.data.date.getMonth() - 1
@@ -182,11 +181,6 @@ export default class RoomRow extends Component {
                 const daysCountInCurrentMonth = getDaysOfMonth(
                     this.props.data.date.getFullYear(),
                     this.props.data.date.getMonth()
-                ).length;
-    
-                const daysCountInNextMonth = getDaysOfMonth(
-                    this.props.data.date.getFullYear(),
-                    this.props.data.date.getMonth() + 1
                 ).length;
 
                 // Calculate if the appointment extends into the previous month
@@ -249,6 +243,7 @@ export default class RoomRow extends Component {
                 if (appointment.extendsToNextMonth && newEndDatePos <= dateColumnsEnd) {
                     const daysDraggedIntoCurrentMonth = dateColumnsEnd - newEndDatePos;
                     const nextMonthEnd = appointment.end_date.getDate();
+
                     finalEndDate = new LVDate(
                         this.props.data.date.getFullYear(),
                         this.props.data.date.getMonth(),
@@ -302,7 +297,7 @@ export default class RoomRow extends Component {
             }
             return appointment;
         });
-    
+
         this.setState((prevState) => ({
             room: { ...prevState.room, appointments: updatedAppointments },
             
@@ -583,15 +578,15 @@ export default class RoomRow extends Component {
                             i: 'sum-value',
                             x: lastColumnStart,
                             y: 0,
-                            w: config.columnWidths[config.columnWidths.length - 1],
+                            w: config.columnWidths[config.columnWidths.length - 2],
                             h: 1,
                             static: true,
                         },
                         {
                             i: 'delete-button',
-                            x: config.cols - 1, // Position it at the end
+                            x: lastColumnStart + config.columnWidths[config.columnWidths.length - 2],
                             y: 0,
-                            w: 1,
+                            w: config.columnWidths[config.columnWidths.length - 1],
                             h: 1,
                             static: true,
                         }

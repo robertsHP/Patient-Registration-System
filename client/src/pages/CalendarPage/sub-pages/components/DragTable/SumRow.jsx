@@ -79,6 +79,14 @@ export default function SumRow({ data, config }) {
                     i: 'sum-gap', 
                     x: config.getDateColumnsEnd(),
                     y: 0, 
+                    w: config.columnWidths[config.columnWidths.length - 2], 
+                    h: 1, 
+                    static: true 
+                },
+                { 
+                    i: 'delete-gap', 
+                    x: config.getDateColumnsEnd() + config.columnWidths[config.columnWidths.length - 2],
+                    y: 0, 
                     w: config.columnWidths[config.columnWidths.length - 1], 
                     h: 1, 
                     static: true 
@@ -99,6 +107,7 @@ export default function SumRow({ data, config }) {
             ))}
             
             <div key="sum-gap">{totalSum}</div>
+            <div key="delete-gap"></div>
         </GridLayout>
     );
 }

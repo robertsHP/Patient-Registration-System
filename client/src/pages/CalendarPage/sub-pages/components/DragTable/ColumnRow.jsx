@@ -1,4 +1,4 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 
 import GridLayout from 'react-grid-layout';
 
@@ -29,10 +29,17 @@ export default function ColumnRow({ config }) {
                         h: 1,
                         static: true
                     })),
-                    // Add the two additional columns at the end
                     { 
                         i: 'sum-column', 
                         x: config.getDateColumnsEnd(), 
+                        y: 0, 
+                        w: config.columnWidths[config.columnWidths.length - 2], 
+                        h: 1, 
+                        static: true 
+                    },
+                    { 
+                        i: 'delete-gap', 
+                        x: config.getDateColumnsEnd() + config.columnWidths[config.columnWidths.length - 2],
                         y: 0, 
                         w: config.columnWidths[config.columnWidths.length - 1], 
                         h: 1, 
@@ -54,6 +61,7 @@ export default function ColumnRow({ config }) {
                 ))}
 
                 <div key="sum-column"></div>
+                <div key="delete-gap"></div>
             </GridLayout>
         </>
     );
