@@ -42,6 +42,8 @@ export default class RoomRow extends Component {
         this.gridRef = createRef();
         this.refreshRow = this.refreshRow.bind(this);
         this.updateAppointmentInDB = this.updateAppointmentInDB.bind(this);
+        this.appointmentDragUpdate = this.appointmentDragUpdate.bind(this);
+        this.appointmentResizeUpdate = this.appointmentResizeUpdate.bind(this);
         this.updateLayout = this.updateLayout.bind(this);
         this.onLayoutChange = this.onLayoutChange.bind(this);
         this.onDragStop = this.onDragStop.bind(this);
@@ -62,10 +64,6 @@ export default class RoomRow extends Component {
 
         if (fullDataUpdate) {
             this.room = this.props.data.getRoomWithID(this.props.roomID);
-
-            // this.setState({
-            //     room: this.props.data.getRoomWithID(this.props.roomID),
-            // });
             this.refreshRow();
         }
         // if(this.props.data.singleDataUpdateTrigger !== prevProps.data.singleDataUpdateTrigger) {
@@ -96,6 +94,173 @@ export default class RoomRow extends Component {
         }
     }
 
+    appointmentDragUpdate(appointment, newStartDatePos, newEndDatePos) {
+        const dateColumnsStart = this.props.config.getDateColumnsStart();
+        const dateColumnsEnd = this.props.config.getDateColumnsEnd();
+
+        let finalBeginDate = null;
+        let finalExtendsToPreviousMonth = false;
+        let finalEndDate = null;
+        let finalExtendsToNextMonth = false;
+
+        const daysCountInPrevMonth = getDaysOfMonth(
+            this.props.data.date.getFullYear(),
+            this.props.data.date.getMonth() - 1
+        ).length;
+
+        const daysCountInCurrentMonth = getDaysOfMonth(
+            this.props.data.date.getFullYear(),
+            this.props.data.date.getMonth()
+        ).length;
+
+        // Calculate if the appointment extends into the previous month
+        if (newStartDatePos < dateColumnsStart) {
+            const startLoss = dateColumnsStart - newStartDatePos;
+            const dayOfMonth = daysCountInPrevMonth - startLoss + 1;
+
+            finalBeginDate = new LVDate(
+                this.props.data.date.getFullYear(),
+                this.props.data.date.getMonth() - 1,
+                dayOfMonth
+            );
+            finalExtendsToPreviousMonth = true;
+        } else {
+            finalBeginDate = getDateBasedOnLayoutPosition(
+                newStartDatePos,
+                this.props.data.date,
+                this.props.config
+            );
+            finalExtendsToPreviousMonth = false;
+        }
+
+        // Calculate if the appointment extends into the next month
+        if (newEndDatePos > dateColumnsEnd) {
+            const endLoss = newEndDatePos - dateColumnsEnd;
+            finalEndDate = new LVDate(
+                this.props.data.date.getFullYear(),
+                this.props.data.date.getMonth() + 1,
+                endLoss
+            );
+            finalExtendsToNextMonth = true;
+        } else {
+            finalEndDate = getDateBasedOnLayoutPosition(
+                newEndDatePos,
+                this.props.data.date,
+                this.props.config
+            );
+            finalExtendsToNextMonth = false;
+        }
+
+        // Handle dragging back into the current month from previous month
+        if (appointment.extendsToPreviousMonth && newStartDatePos >= dateColumnsStart) {
+            const daysDraggedIntoCurrentMonth = newStartDatePos - dateColumnsStart;
+            const startGains = daysCountInPrevMonth - appointment.begin_date.getDate();
+
+            finalBeginDate = new LVDate(
+                this.props.data.date.getFullYear(),
+                this.props.data.date.getMonth(),
+                daysDraggedIntoCurrentMonth - startGains + 1
+            );
+            finalEndDate = new LVDate(
+                this.props.data.date.getFullYear(),
+                this.props.data.date.getMonth(),
+                daysDraggedIntoCurrentMonth + appointment.end_date.getDate()
+            );
+
+            finalExtendsToPreviousMonth = false;
+        }
+
+        // Handle dragging back into the current month from next month
+        if (appointment.extendsToNextMonth && newEndDatePos <= dateColumnsEnd) {
+            const daysDraggedIntoCurrentMonth = dateColumnsEnd - newEndDatePos;
+            const nextMonthEnd = appointment.end_date.getDate();
+
+            finalEndDate = new LVDate(
+                this.props.data.date.getFullYear(),
+                this.props.data.date.getMonth(),
+                daysCountInCurrentMonth - daysDraggedIntoCurrentMonth
+            );
+            finalBeginDate = new LVDate(
+                this.props.data.date.getFullYear(),
+                this.props.data.date.getMonth(),
+                daysCountInCurrentMonth - daysDraggedIntoCurrentMonth - (nextMonthEnd - appointment.begin_date.getDate())
+            );
+            finalExtendsToNextMonth = false;
+        }
+
+        // Handle expanding appointments when dragging within the same month
+        if (finalExtendsToPreviousMonth && finalBeginDate.getMonth() < this.props.data.date.getMonth()) {
+            const startLoss = dateColumnsStart - newStartDatePos;
+            const dayOfMonth = finalBeginDate.getDate() - startLoss;
+            finalBeginDate.setDate(dayOfMonth);
+        }
+
+        if (finalExtendsToNextMonth && finalEndDate.getMonth() > this.props.data.date.getMonth()) {
+            const endLoss = newEndDatePos - dateColumnsEnd;
+            const dayOfMonth = finalEndDate.getDate() + endLoss;
+            finalEndDate.setDate(dayOfMonth);
+        }
+
+        console.log("finalBeginDate");
+        console.log(finalBeginDate.getObject());
+        console.log("finalEndDate");
+        console.log(finalEndDate.getObject());
+
+        // Calculate the new start and end positions (x and w) 
+        // based on the resulting start and end dates
+        const adjustedStartDatePos = getPositionBasedOnDate(
+            finalBeginDate, 
+            this.props.data.date, 
+            this.props.config
+        );
+        const adjustedEndDatePos = getPositionBasedOnDate(
+            finalEndDate, 
+            this.props.data.date, 
+            this.props.config
+        );
+
+        // Update appointment with new dates and positions
+        appointment.x = adjustedStartDatePos;
+        appointment.w = adjustedEndDatePos - adjustedStartDatePos + 1;
+        appointment.extendsToPreviousMonth = finalExtendsToPreviousMonth;
+        appointment.begin_date = finalBeginDate;
+        appointment.extendsToNextMonth = finalExtendsToNextMonth;
+        appointment.end_date = finalEndDate;
+
+        return appointment;
+    }
+
+    appointmentResizeUpdate (appointment, newStartDatePos, newEndDatePos) {
+        appointment.begin_date = getDateBasedOnLayoutPosition(
+            newStartDatePos, 
+            this.props.data.date, 
+            this.props.config
+        );
+        appointment.end_date = getDateBasedOnLayoutPosition(
+            newEndDatePos, 
+            this.props.data.date, 
+            this.props.config
+        );
+
+        console.log("appointment.begin_date");
+        console.log(appointment.begin_date.getObject());
+        console.log("appointment.end_date");
+        console.log(appointment.end_date.getObject());
+
+        appointment.x = getPositionBasedOnDate(
+            appointment.begin_date, 
+            this.props.data.date, 
+            this.props.config
+        );
+        appointment.w = getPositionBasedOnDate(
+            appointment.end_date, 
+            this.props.data.date, 
+            this.props.config
+        );
+
+        return appointment;
+    }
+
     updateLayout(newLayout) {
         console.log("updateLayout");
 
@@ -103,36 +268,12 @@ export default class RoomRow extends Component {
             const newAppointmentLayout = newLayout.find((l) => l.i === String(appointment.i));
 
             if (newAppointmentLayout) {
-                const validPosition = isValidAppointmentPosition(newAppointmentLayout, this.props.config);
-                const notOverlapping = !isOverlapping(
-                    newAppointmentLayout, 
-                    this.room.appointments, 
-                    appointment.i
-                );
-
-                if (validPosition && notOverlapping) {
-                    var startDatePos = newAppointmentLayout.x;
-                    var endDatePos = newAppointmentLayout.x + newAppointmentLayout.w - 1;
-
-                    appointment.begin_date = getDateBasedOnLayoutPosition(
-                        startDatePos, 
-                        this.props.data.date, 
-                        this.props.config
+                if (this.pageRefreshed && !this.state.isCreatingAppointment) {
+                    var convertedAppointment = convertAppointmentForSendingToDB(
+                        this.room, 
+                        appointment
                     );
-                    appointment.end_date = getDateBasedOnLayoutPosition(
-                        endDatePos, 
-                        this.props.data.date, 
-                        this.props.config
-                    );
-
-                    appointment.x = newAppointmentLayout.x;
-                    appointment.w = newAppointmentLayout.w;
-
-                    if (this.pageRefreshed && !this.state.isCreatingAppointment) {
-                        var convertedAppointment = convertAppointmentForSendingToDB(this.room, appointment);
-
-                        this.updateAppointmentInDB(appointment.id, convertedAppointment);
-                    }
+                    this.updateAppointmentInDB(appointment.id, convertedAppointment);
                 }
             }
             return appointment;
@@ -150,183 +291,56 @@ export default class RoomRow extends Component {
         // console.log("manualRefresh");
         // console.log(this.manualRefresh);
 
-        if (this.gridItemDragged || this.gridItemResized || this.manualRefresh) {
-            if (this.gridItemDragged) {
-                this.updateLayout(newLayout);
-                this.gridItemDragged = false;
-            } else if (this.gridItemResized) {
-                this.updateLayout(newLayout);
-                this.gridItemResized = false;
-            } else if (this.manualRefresh) {
-                this.updateLayout(newLayout);
-                this.manualRefresh = false;
-            }
+        if (this.gridItemDragged) {
+            this.updateLayout(newLayout);
+            this.gridItemDragged = false;
+        } else if (this.gridItemResized) {
+            this.updateLayout(newLayout);
+            this.gridItemResized = false;
+        } else if (this.manualRefresh) {
+            this.updateLayout(newLayout);
+            this.manualRefresh = false;
         }
     }
 
     onDragStop(layout, oldItem, newItem, placeholder, e, element) {
         console.log("onDragStop");
 
-        const updatedAppointments = this.room.appointments.map((appointment) => {
+        this.room.appointments.map((appointment) => {
             if (appointment.i === newItem.i) {
                 const newStartDatePos = newItem.x;
                 const newEndDatePos = newItem.x + newItem.w - 1;
-    
-                const dateColumnsStart = this.props.config.getDateColumnsStart();
-                const dateColumnsEnd = this.props.config.getDateColumnsEnd();
-    
-                let finalBeginDate = null;
-                let finalExtendsToPreviousMonth = false;
-                let finalEndDate = null;
-                let finalExtendsToNextMonth = false;
 
-                const daysCountInPrevMonth = getDaysOfMonth(
-                    this.props.data.date.getFullYear(),
-                    this.props.data.date.getMonth() - 1
-                ).length;
-    
-                const daysCountInCurrentMonth = getDaysOfMonth(
-                    this.props.data.date.getFullYear(),
-                    this.props.data.date.getMonth()
-                ).length;
-
-                // Calculate if the appointment extends into the previous month
-                if (newStartDatePos < dateColumnsStart) {
-                    const startLoss = dateColumnsStart - newStartDatePos;
-                    const dayOfMonth = daysCountInPrevMonth - startLoss + 1;
-                    finalBeginDate = new LVDate(
-                        this.props.data.date.getFullYear(),
-                        this.props.data.date.getMonth() - 1,
-                        dayOfMonth
-                    );
-                    finalExtendsToPreviousMonth = true;
-                } else {
-                    finalBeginDate = getDateBasedOnLayoutPosition(
-                        newStartDatePos,
-                        this.props.data.date,
-                        this.props.config
-                    );
-                    finalExtendsToPreviousMonth = false;
-                }
-
-                // Calculate if the appointment extends into the next month
-                if (newEndDatePos > dateColumnsEnd) {
-                    const endLoss = newEndDatePos - dateColumnsEnd;
-                    finalEndDate = new LVDate(
-                        this.props.data.date.getFullYear(),
-                        this.props.data.date.getMonth() + 1,
-                        endLoss
-                    );
-                    finalExtendsToNextMonth = true;
-                } else {
-                    finalEndDate = getDateBasedOnLayoutPosition(
-                        newEndDatePos,
-                        this.props.data.date,
-                        this.props.config
-                    );
-                    finalExtendsToNextMonth = false;
-                }
-
-                // Handle dragging back into the current month from previous month
-                if (appointment.extendsToPreviousMonth && newStartDatePos >= dateColumnsStart) {
-                    const daysDraggedIntoCurrentMonth = newStartDatePos - dateColumnsStart;
-                    const startGains = daysCountInPrevMonth - appointment.begin_date.getDate();
-
-                    finalBeginDate = new LVDate(
-                        this.props.data.date.getFullYear(),
-                        this.props.data.date.getMonth(),
-                        daysDraggedIntoCurrentMonth - startGains + 1
-                    );
-                    finalEndDate = new LVDate(
-                        this.props.data.date.getFullYear(),
-                        this.props.data.date.getMonth(),
-                        daysDraggedIntoCurrentMonth + appointment.end_date.getDate()
-                    );
-
-                    finalExtendsToPreviousMonth = false;
-                }
-
-                // Handle dragging back into the current month from next month
-                if (appointment.extendsToNextMonth && newEndDatePos <= dateColumnsEnd) {
-                    const daysDraggedIntoCurrentMonth = dateColumnsEnd - newEndDatePos;
-                    const nextMonthEnd = appointment.end_date.getDate();
-
-                    finalEndDate = new LVDate(
-                        this.props.data.date.getFullYear(),
-                        this.props.data.date.getMonth(),
-                        daysCountInCurrentMonth - daysDraggedIntoCurrentMonth
-                    );
-                    finalBeginDate = new LVDate(
-                        this.props.data.date.getFullYear(),
-                        this.props.data.date.getMonth(),
-                        daysCountInCurrentMonth - daysDraggedIntoCurrentMonth - (nextMonthEnd - appointment.begin_date.getDate())
-                    );
-                    finalExtendsToNextMonth = false;
-                }
-
-                // Handle expanding appointments when dragging within the same month
-                if (finalExtendsToPreviousMonth && finalBeginDate.getMonth() < this.props.data.date.getMonth()) {
-                    const startLoss = dateColumnsStart - newStartDatePos;
-                    const dayOfMonth = finalBeginDate.getDate() - startLoss;
-                    finalBeginDate.setDate(dayOfMonth);
-                }
-
-                if (finalExtendsToNextMonth && finalEndDate.getMonth() > this.props.data.date.getMonth()) {
-                    const endLoss = newEndDatePos - dateColumnsEnd;
-                    const dayOfMonth = finalEndDate.getDate() + endLoss;
-                    finalEndDate.setDate(dayOfMonth);
-                }
-
-                console.log("finalBeginDate");
-                console.log(finalBeginDate.getObject());
-                console.log("finalEndDate");
-                console.log(finalEndDate.getObject());
-
-                // Calculate the new start and end positions (x and w) 
-                // based on the resulting start and end dates
-                const adjustedStartDatePos = getPositionBasedOnDate(
-                    finalBeginDate, 
-                    this.props.data.date, 
-                    this.props.config
+                appointment = this.appointmentDragUpdate(
+                    appointment, 
+                    newStartDatePos, 
+                    newEndDatePos
                 );
-                const adjustedEndDatePos = getPositionBasedOnDate(
-                    finalEndDate, 
-                    this.props.data.date, 
-                    this.props.config
-                );
-
-                // Update appointment with new dates and positions
-                appointment.x = adjustedStartDatePos;
-                appointment.w = adjustedEndDatePos - adjustedStartDatePos + 1;
-                appointment.extendsToPreviousMonth = finalExtendsToPreviousMonth;
-                appointment.begin_date = finalBeginDate;
-                appointment.extendsToNextMonth = finalExtendsToNextMonth;
-                appointment.end_date = finalEndDate;
             }
             return appointment;
         });
-
-        this.room = { ...this.room, appointments: updatedAppointments }
-        // this.setState((prevState) => ({
-        //     room: { ...prevState.room, appointments: updatedAppointments }
-        // }));
         
         this.gridItemDragged = true;
         this.gridItemResized = false;
         this.manualRefresh = false;
-
-        this.updateLayout(layout);
     }
 
     onResizeStop(layout, oldItem, newItem, placeholder, e, element) {
         console.log("onResizeStop");
 
-        // this.updateLayout(layout);
-        // this.setState({ 
-        //     gridItemDragged: false,
-        //     gridItemResized: true, 
-        //     manualRefresh: false 
-        // });
+        this.room.appointments.map((appointment) => {
+            if (appointment.i === newItem.i) {
+                const newStartDatePos = newItem.x;
+                const newEndDatePos = newItem.x + newItem.w - 1;
+
+                appointment = this.appointmentResizeUpdate(
+                    appointment,
+                    newStartDatePos,
+                    newEndDatePos
+                );
+            }
+            return appointment;
+        });
 
         this.gridItemDragged = false;
         this.gridItemResized = true;
