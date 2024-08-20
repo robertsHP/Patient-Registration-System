@@ -25,18 +25,17 @@ export default class RoomRow extends Component {
     constructor(props) {
         super(props);
 
-        var room = props.data.getRoomWithID(props.roomID);
+        this.room = props.data.getRoomWithID(props.roomID);
+        this.gridItemDragged = false;
+        this.gridItemResized = false;
+        this.manualRefresh = false;
 
         this.state = {
-            manualRefresh: false,
             refresh: 0,
-            gridItemDragged: false,
-            gridItemResized: false,
-            room: room,
             draggingAppointment: null,
             isCreatingAppointment: false,
             lastClickTime: 0,
-            roomNumber: room.room_num
+            roomNumber: this.room.room_num
         };
 
         this.pageRefreshed = props.pageRefreshed;
@@ -62,9 +61,11 @@ export default class RoomRow extends Component {
         // var singleDataUpdate = this.props.data.singleDataUpdateTrigger !== prevProps.data.singleDataUpdateTrigger;
 
         if (fullDataUpdate) {
-            this.setState({
-                room: this.props.data.getRoomWithID(this.props.roomID),
-            });
+            this.room = this.props.data.getRoomWithID(this.props.roomID);
+
+            // this.setState({
+            //     room: this.props.data.getRoomWithID(this.props.roomID),
+            // });
             this.refreshRow();
         }
         // if(this.props.data.singleDataUpdateTrigger !== prevProps.data.singleDataUpdateTrigger) {
@@ -97,16 +98,15 @@ export default class RoomRow extends Component {
 
     updateLayout(newLayout) {
         console.log("updateLayout");
-        const room = this.state.room;
 
-        room.appointments.forEach((appointment) => {
+        this.room.appointments.forEach((appointment) => {
             const newAppointmentLayout = newLayout.find((l) => l.i === String(appointment.i));
 
             if (newAppointmentLayout) {
                 const validPosition = isValidAppointmentPosition(newAppointmentLayout, this.props.config);
                 const notOverlapping = !isOverlapping(
                     newAppointmentLayout, 
-                    room.appointments, 
+                    this.room.appointments, 
                     appointment.i
                 );
 
@@ -129,7 +129,7 @@ export default class RoomRow extends Component {
                     appointment.w = newAppointmentLayout.w;
 
                     if (this.pageRefreshed && !this.state.isCreatingAppointment) {
-                        var convertedAppointment = convertAppointmentForSendingToDB(room, appointment);
+                        var convertedAppointment = convertAppointmentForSendingToDB(this.room, appointment);
 
                         this.updateAppointmentInDB(appointment.id, convertedAppointment);
                     }
@@ -137,22 +137,29 @@ export default class RoomRow extends Component {
             }
             return appointment;
         });
-        this.props.data.setRoomWithID(room.id, room);
+        this.props.data.setRoomWithID(this.room.id, this.room);
     }
 
     onLayoutChange(newLayout) {
         console.log("onLayoutChange");
 
-        if (this.state.gridItemDragged || this.state.gridItemResized || this.state.manualRefresh) {
-            if (this.state.gridItemDragged) {
+        // console.log("gridItemDragged");
+        // console.log(this.gridItemDragged);
+        // console.log("gridItemResized");
+        // console.log(this.gridItemResized);
+        // console.log("manualRefresh");
+        // console.log(this.manualRefresh);
+
+        if (this.gridItemDragged || this.gridItemResized || this.manualRefresh) {
+            if (this.gridItemDragged) {
                 this.updateLayout(newLayout);
-                this.setState({ gridItemDragged: false });
-            } else if (this.state.gridItemResized) {
+                this.gridItemDragged = false;
+            } else if (this.gridItemResized) {
                 this.updateLayout(newLayout);
-                this.setState({ gridItemResized: false });
-            } else if (this.state.manualRefresh) {
+                this.gridItemResized = false;
+            } else if (this.manualRefresh) {
                 this.updateLayout(newLayout);
-                this.setState({ manualRefresh: false });
+                this.manualRefresh = false;
             }
         }
     }
@@ -160,7 +167,7 @@ export default class RoomRow extends Component {
     onDragStop(layout, oldItem, newItem, placeholder, e, element) {
         console.log("onDragStop");
 
-        const updatedAppointments = this.state.room.appointments.map((appointment) => {
+        const updatedAppointments = this.room.appointments.map((appointment) => {
             if (appointment.i === newItem.i) {
                 const newStartDatePos = newItem.x;
                 const newEndDatePos = newItem.x + newItem.w - 1;
@@ -275,7 +282,8 @@ export default class RoomRow extends Component {
                 console.log("finalEndDate");
                 console.log(finalEndDate.getObject());
 
-                // Calculate the new start and end positions (x and w) based on the resulting start and end dates
+                // Calculate the new start and end positions (x and w) 
+                // based on the resulting start and end dates
                 const adjustedStartDatePos = getPositionBasedOnDate(
                     finalBeginDate, 
                     this.props.data.date, 
@@ -298,24 +306,31 @@ export default class RoomRow extends Component {
             return appointment;
         });
 
-        this.setState((prevState) => ({
-            room: { ...prevState.room, appointments: updatedAppointments },
-            
-            gridItemDragged: true,
-            gridItemResized: false,
-            manualRefresh: false,
-        }));
+        this.room = { ...this.room, appointments: updatedAppointments }
+        // this.setState((prevState) => ({
+        //     room: { ...prevState.room, appointments: updatedAppointments }
+        // }));
+        
+        this.gridItemDragged = true;
+        this.gridItemResized = false;
+        this.manualRefresh = false;
+
+        this.updateLayout(layout);
     }
 
     onResizeStop(layout, oldItem, newItem, placeholder, e, element) {
         console.log("onResizeStop");
 
         // this.updateLayout(layout);
-        this.setState({ 
-            gridItemDragged: false,
-            gridItemResized: true, 
-            manualRefresh: false 
-        });
+        // this.setState({ 
+        //     gridItemDragged: false,
+        //     gridItemResized: true, 
+        //     manualRefresh: false 
+        // });
+
+        this.gridItemDragged = false;
+        this.gridItemResized = true;
+        this.manualRefresh = false;
     }
 
     onMouseDown(e) {
@@ -452,12 +467,16 @@ export default class RoomRow extends Component {
                 extendsToNextMonth: false,
             };
     
-            this.setState((prevState) => ({
-                room: {
-                    ...prevState.room,
-                    appointments: [...prevState.room.appointments, newAppointment],
-                },
-            }));
+            this.room = {
+                ...this.room,
+                appointments: [...this.room.appointments, newAppointment],
+            };
+            // this.setState((prevState) => ({
+            //     room: {
+            //         ...prevState.room,
+            //         appointments: [...prevState.room.appointments, newAppointment],
+            //     },
+            // }));
     
             this.refreshRow();
         } catch (error) {
@@ -477,14 +496,14 @@ export default class RoomRow extends Component {
             );
             var overlapping = isOverlapping(
                 this.state.draggingAppointment, 
-                this.state.room.appointments, 
+                this.room.appointments, 
                 'appointment-temp'
             );
 
             if (inDateColumns && !overlapping) {
                 var tempDraggingAppointment = this.state.draggingAppointment;
                 var convertedAppointment = convertAppointmentForSendingToDB(
-                    this.state.room, 
+                    this.room, 
                     this.state.draggingAppointment
                 );
 
@@ -503,16 +522,16 @@ export default class RoomRow extends Component {
 
     async roomNumberUpdate (event) {
         try {
-            this.state.room.room_num = event.target.value;
+            this.room.room_num = event.target.value;
 
             this.props.data.setRoomWithID(
-                this.state.room.id, 
-                this.state.room
+                this.room.id, 
+                this.room
             );
 
             var finalRoom = {
-                id: this.state.room.id,
-                room_num: this.state.room.room_num,
+                id: this.room.id,
+                room_num: this.room.room_num,
                 id_floor: this.props.data.floorID
             };
 
@@ -528,7 +547,7 @@ export default class RoomRow extends Component {
         console.log("render");
 
         const { data, roomID, config } = this.props;
-        const { room, draggingAppointment, refresh } = this.state;
+        const { draggingAppointment, refresh } = this.state;
 
         const lastColumnStart = config.getDateColumnsEnd();
 
@@ -550,7 +569,7 @@ export default class RoomRow extends Component {
                             h: 1,
                             static: true
                         },
-                        ...room.appointments.map((appointment) => ({
+                        ...this.room.appointments.map((appointment) => ({
                             ...appointment,
                             i: String(appointment.i),
                             h: 1,
@@ -617,7 +636,7 @@ export default class RoomRow extends Component {
                         />
                     </div>
 
-                    {room.appointments.map((appointment) => {
+                    {this.room.appointments.map((appointment) => {
                         return (
                             <div className="appointment" key={appointment.i}>
                                 <div className="room-row__appointment-name no-select">
