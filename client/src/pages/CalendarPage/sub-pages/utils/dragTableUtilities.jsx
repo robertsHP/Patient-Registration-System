@@ -3,7 +3,7 @@ import { getDaysOfMonth } from '../utils/monthUtilities.jsx';
 
 import LVDate from '../../../../models/LVDate.jsx';
 
-export function isValidAppointmentPosition (layoutItem, config) {
+const isValidAppointmentPosition = (layoutItem, config) => {
     const dateColumnsStart = config.getDateColumnsStart();
     const dateColumnsEnd = config.getDateColumnsEnd();
 
@@ -14,7 +14,7 @@ export function isValidAppointmentPosition (layoutItem, config) {
     );
 };
 
-export function isOverlapping (newLayout, appointments, currentAppointmentId) {
+const isOverlapping = (newLayout, appointments, currentAppointmentId) => {
     const overlapping = (appointment1, appointment2) => {
         // Check if y-coordinates are the same
         if (appointment1.y !== appointment2.y) {
@@ -42,14 +42,14 @@ export function isOverlapping (newLayout, appointments, currentAppointmentId) {
     );
 };
 
-export function isInDateColumns (x, w, config) {
+const isInDateColumns = (x, w, config) => {
     const dateColumnsStart = config.getDateColumnsStart();
     const dateColumnsEnd = config.getDateColumnsEnd();
 
     return x >= dateColumnsStart && (x + w) <= dateColumnsEnd;
 }
 
-export function getDateBasedOnLayoutPosition (pos, date, config) {
+const getDateBasedOnLayoutPosition = (pos, date, config) => {
     var finalDate = null;
 
     const dateColumnsStart = config.getDateColumnsStart();
@@ -89,7 +89,7 @@ export function getDateBasedOnLayoutPosition (pos, date, config) {
     return finalDate;
 }
 
-export function getPositionBasedOnDate (tempDate, date, config) {
+const getPositionBasedOnDate = (tempDate, date, config) => {
     var finalPos = null;
 
     const dateColumnsStart = config.getDateColumnsStart();
@@ -113,7 +113,7 @@ export function getPositionBasedOnDate (tempDate, date, config) {
     return finalPos;
 }
 
-export function convertAppointmentForLayoutSupport (appointment, date, config) {
+const convertAppointmentForLayoutSupport = (appointment, date, config) => {
     var beginDate = new LVDate(appointment.begin_date);
     var endDate = new LVDate(appointment.end_date);
 
@@ -139,7 +139,7 @@ export function convertAppointmentForLayoutSupport (appointment, date, config) {
     };
 }
 
-export function convertAppointmentForSendingToDB (room, appointment) {
+const convertAppointmentForSendingToDB = (room, appointment) => {
     var hotel_stay_start = hotel_stay_start != null ? appointment.hotel_stay_start.toDateString() : null;
     var hotel_stay_end = hotel_stay_end != null ? appointment.hotel_stay_end.toDateString() : null;
 
@@ -155,3 +155,13 @@ export function convertAppointmentForSendingToDB (room, appointment) {
         appointment_type: appointment.appointment_type
     };
 }
+
+export {
+    isValidAppointmentPosition,
+    isOverlapping,
+    isInDateColumns,
+    getDateBasedOnLayoutPosition,
+    getPositionBasedOnDate,
+    convertAppointmentForLayoutSupport,
+    convertAppointmentForSendingToDB
+};

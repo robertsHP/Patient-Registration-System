@@ -4,7 +4,7 @@ import GridUI from './GridUI.jsx';
 import DayTable from './DayTable.jsx';
 import LVDate from '../../../../../models/LVDate.jsx';
 
-import { getDaysOfMonth, getMonthName, getDayName } from '../../utils/monthUtilities.jsx';
+import * as monthUtilities from '../../utils/monthUtilities.jsx';
 
 import './InputTable.css';
 
@@ -13,13 +13,13 @@ export default function InputTable({ data }) {
 
     useEffect(() => {
         if (data.appointments != null) {
-            const daysInMonth = getDaysOfMonth(data.date.getFullYear(), data.date.getMonth()).length;
-            const monthName = getMonthName(data.date.getMonth());
+            const daysInMonth = monthUtilities.getDaysOfMonth(data.date.getFullYear(), data.date.getMonth()).length;
+            const monthName = monthUtilities.getMonthName(data.date.getMonth());
 
             const generatedTables = Array.from({ length: daysInMonth }, (_, index) => {
                 const dateNumber = index + 1;
                 const date = new LVDate(data.date.getFullYear(), data.date.getMonth(), dateNumber);
-                const dayName = getDayName(date);
+                const dayName = monthUtilities.getDayName(date);
 
                 const appointmentsForDay = data.appointments.filter(appointment => {
                     appointment.begin_date = new LVDate(appointment.begin_date);

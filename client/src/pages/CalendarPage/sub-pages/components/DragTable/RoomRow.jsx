@@ -1,17 +1,8 @@
 import React, { Component, createRef } from 'react';
 import GridLayout from 'react-grid-layout';
 
-import { 
-    convertAppointmentForSendingToDB,
-    isValidAppointmentPosition,
-    isOverlapping,
-    isInDateColumns,
-    getDateBasedOnLayoutPosition,
-    getPositionBasedOnDate,
-
-} from '../../utils/dragTableUtilities.jsx';
-
-import { getDaysOfMonth } from '../../utils/monthUtilities.jsx';
+import * as dragTableUtilities from '../../utils/dragTableUtilities.jsx';
+import * as monthUtilities from '../../utils/monthUtilities.jsx';
 
 import ApiService from '../../../../../services/ApiService.js';
 import LVDate from '../../../../../models/LVDate.jsx';
@@ -103,12 +94,12 @@ export default class RoomRow extends Component {
         let finalEndDate = null;
         let finalExtendsToNextMonth = false;
 
-        const daysCountInPrevMonth = getDaysOfMonth(
+        const daysCountInPrevMonth = monthUtilities.getDaysOfMonth(
             this.props.data.date.getFullYear(),
             this.props.data.date.getMonth() - 1
         ).length;
 
-        const daysCountInCurrentMonth = getDaysOfMonth(
+        const daysCountInCurrentMonth = monthUtilities.getDaysOfMonth(
             this.props.data.date.getFullYear(),
             this.props.data.date.getMonth()
         ).length;
@@ -125,7 +116,7 @@ export default class RoomRow extends Component {
             );
             finalExtendsToPreviousMonth = true;
         } else {
-            finalBeginDate = getDateBasedOnLayoutPosition(
+            finalBeginDate = dragTableUtilities.getDateBasedOnLayoutPosition(
                 newStartDatePos,
                 this.props.data.date,
                 this.props.config
@@ -136,6 +127,7 @@ export default class RoomRow extends Component {
         // Calculate if the appointment extends into the next month
         if (newEndDatePos > dateColumnsEnd) {
             const endLoss = newEndDatePos - dateColumnsEnd;
+
             finalEndDate = new LVDate(
                 this.props.data.date.getFullYear(),
                 this.props.data.date.getMonth() + 1,
@@ -143,7 +135,7 @@ export default class RoomRow extends Component {
             );
             finalExtendsToNextMonth = true;
         } else {
-            finalEndDate = getDateBasedOnLayoutPosition(
+            finalEndDate = dragTableUtilities.getDateBasedOnLayoutPosition(
                 newEndDatePos,
                 this.props.data.date,
                 this.props.config
@@ -173,17 +165,23 @@ export default class RoomRow extends Component {
         // Handle dragging back into the current month from next month
         if (appointment.extendsToNextMonth && newEndDatePos <= dateColumnsEnd) {
             const daysDraggedIntoCurrentMonth = dateColumnsEnd - newEndDatePos;
-            const nextMonthEnd = appointment.end_date.getDate();
+            const endGains = appointment.end_date.getDate();
+
+            console.log("daysDraggedIntoCurrentMonth");
+            console.log(daysDraggedIntoCurrentMonth);
+            console.log("endGains");
+            console.log(endGains);
+
+            finalBeginDate = new LVDate(
+                this.props.data.date.getFullYear(),
+                this.props.data.date.getMonth(),
+                newStartDatePos
+            );
 
             finalEndDate = new LVDate(
                 this.props.data.date.getFullYear(),
                 this.props.data.date.getMonth(),
-                daysCountInCurrentMonth - daysDraggedIntoCurrentMonth
-            );
-            finalBeginDate = new LVDate(
-                this.props.data.date.getFullYear(),
-                this.props.data.date.getMonth(),
-                daysCountInCurrentMonth - daysDraggedIntoCurrentMonth - (nextMonthEnd - appointment.begin_date.getDate())
+                daysCountInCurrentMonth - daysDraggedIntoCurrentMonth + endGains + 1
             );
             finalExtendsToNextMonth = false;
         }
@@ -201,19 +199,14 @@ export default class RoomRow extends Component {
             finalEndDate.setDate(dayOfMonth);
         }
 
-        console.log("finalBeginDate");
-        console.log(finalBeginDate.getObject());
-        console.log("finalEndDate");
-        console.log(finalEndDate.getObject());
-
         // Calculate the new start and end positions (x and w) 
         // based on the resulting start and end dates
-        const adjustedStartDatePos = getPositionBasedOnDate(
+        const adjustedStartDatePos = dragTableUtilities.getPositionBasedOnDate(
             finalBeginDate, 
             this.props.data.date, 
             this.props.config
         );
-        const adjustedEndDatePos = getPositionBasedOnDate(
+        const adjustedEndDatePos = dragTableUtilities.getPositionBasedOnDate(
             finalEndDate, 
             this.props.data.date, 
             this.props.config
@@ -227,36 +220,44 @@ export default class RoomRow extends Component {
         appointment.extendsToNextMonth = finalExtendsToNextMonth;
         appointment.end_date = finalEndDate;
 
+        console.log("appointment.begin_date.getObject()");
+        console.log(appointment.begin_date.getObject());
+        console.log("appointment.end_date.getObject()");
+        console.log(appointment.end_date.getObject());
+
+        console.log("appointment.x");
+        console.log(appointment.x);
+        console.log("appointment.w");
+        console.log(appointment.w);
+
         return appointment;
     }
 
     appointmentResizeUpdate (appointment, newStartDatePos, newEndDatePos) {
-        appointment.begin_date = getDateBasedOnLayoutPosition(
+        appointment.begin_date = dragTableUtilities.getDateBasedOnLayoutPosition(
             newStartDatePos, 
             this.props.data.date, 
             this.props.config
         );
-        appointment.end_date = getDateBasedOnLayoutPosition(
+        appointment.end_date = dragTableUtilities.getDateBasedOnLayoutPosition(
             newEndDatePos, 
             this.props.data.date, 
             this.props.config
         );
 
-        console.log("appointment.begin_date");
-        console.log(appointment.begin_date.getObject());
-        console.log("appointment.end_date");
-        console.log(appointment.end_date.getObject());
-
-        appointment.x = getPositionBasedOnDate(
+        const adjustedStartDatePos = dragTableUtilities.getPositionBasedOnDate(
             appointment.begin_date, 
             this.props.data.date, 
             this.props.config
         );
-        appointment.w = getPositionBasedOnDate(
+        const adjustedEndDatePos = dragTableUtilities.getPositionBasedOnDate(
             appointment.end_date, 
             this.props.data.date, 
             this.props.config
         );
+
+        appointment.x = adjustedStartDatePos;
+        appointment.w = adjustedEndDatePos - adjustedStartDatePos + 1;
 
         return appointment;
     }
@@ -269,7 +270,7 @@ export default class RoomRow extends Component {
 
             if (newAppointmentLayout) {
                 if (this.pageRefreshed && !this.state.isCreatingAppointment) {
-                    var convertedAppointment = convertAppointmentForSendingToDB(
+                    var convertedAppointment = dragTableUtilities.convertAppointmentForSendingToDB(
                         this.room, 
                         appointment
                     );
@@ -378,13 +379,13 @@ export default class RoomRow extends Component {
             const colWidth = this.props.config.width / this.props.config.cols; // Dynamic calculation based on grid width
             const x = Math.floor((e.clientX - gridRect.left) / colWidth);
 
-            if (isInDateColumns(x, 1, this.props.config)) {
-                var startDate = getDateBasedOnLayoutPosition(
+            if (dragTableUtilities.isInDateColumns(x, 1, this.props.config)) {
+                var startDate = dragTableUtilities.getDateBasedOnLayoutPosition(
                     x,
                     this.props.data.date, 
                     this.props.config
                 );
-                var endDate = getDateBasedOnLayoutPosition(
+                var endDate = dragTableUtilities.getDateBasedOnLayoutPosition(
                     x + 1,
                     this.props.data.date, 
                     this.props.config
@@ -435,13 +436,13 @@ export default class RoomRow extends Component {
             const newWidth = Math.abs(currentX - this.state.draggingAppointment.startX) + 1;
             const newX = Math.min(this.state.draggingAppointment.startX, currentX);
 
-            if (isInDateColumns(newX, newWidth, this.props.config)) {
-                var startDate = getDateBasedOnLayoutPosition(
+            if (dragTableUtilities.isInDateColumns(newX, newWidth, this.props.config)) {
+                var startDate = dragTableUtilities.getDateBasedOnLayoutPosition(
                     newX,
                     this.props.data.date, 
                     this.props.config
                 );
-                var endDate = getDateBasedOnLayoutPosition(
+                var endDate = dragTableUtilities.getDateBasedOnLayoutPosition(
                     newX + newWidth,
                     this.props.data.date, 
                     this.props.config
@@ -503,12 +504,12 @@ export default class RoomRow extends Component {
         console.log("onMouseUp");
 
         if (this.state.isCreatingAppointment && this.state.draggingAppointment) {
-            var inDateColumns = isInDateColumns(
+            var inDateColumns = dragTableUtilities.isInDateColumns(
                 this.state.draggingAppointment.x, 
                 this.state.draggingAppointment.w,
                 this.props.config
             );
-            var overlapping = isOverlapping(
+            var overlapping = dragTableUtilities.isOverlapping(
                 this.state.draggingAppointment, 
                 this.room.appointments, 
                 'appointment-temp'
@@ -516,7 +517,7 @@ export default class RoomRow extends Component {
 
             if (inDateColumns && !overlapping) {
                 var tempDraggingAppointment = this.state.draggingAppointment;
-                var convertedAppointment = convertAppointmentForSendingToDB(
+                var convertedAppointment = dragTableUtilities.convertAppointmentForSendingToDB(
                     this.room, 
                     this.state.draggingAppointment
                 );
