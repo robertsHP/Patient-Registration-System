@@ -88,31 +88,39 @@ export default class RoomRow extends Component {
     appointmentDragUpdate(appointment, newStartDatePos, newEndDatePos) {
         const dateColumnsStart = this.props.config.getDateColumnsStart();
         const dateColumnsEnd = this.props.config.getDateColumnsEnd();
-
+    
         let finalBeginDate = null;
         let finalExtendsToPreviousMonth = false;
         let finalEndDate = null;
         let finalExtendsToNextMonth = false;
-
+    
+        const prevMonth = new Date(this.props.data.date.getFullYear(), this.props.data.date.getMonth() - 1);
+        const nextMonth = new Date(this.props.data.date.getFullYear(), this.props.data.date.getMonth() + 1);
+    
         const daysCountInPrevMonth = monthUtilities.getDaysOfMonth(
-            this.props.data.date.getFullYear(),
-            this.props.data.date.getMonth() - 1
+            prevMonth.getFullYear(),
+            prevMonth.getMonth()
         ).length;
-
+    
         const daysCountInCurrentMonth = monthUtilities.getDaysOfMonth(
             this.props.data.date.getFullYear(),
             this.props.data.date.getMonth()
         ).length;
-
-        // Calculate if the appointment extends into the previous month
+    
+        const daysCountInNextMonth = monthUtilities.getDaysOfMonth(
+            nextMonth.getFullYear(),
+            nextMonth.getMonth()
+        ).length;
+    
+        // Calculate if the appointment extends further into the previous month
         if (newStartDatePos < dateColumnsStart) {
             const startLoss = dateColumnsStart - newStartDatePos;
-            const dayOfMonth = daysCountInPrevMonth - startLoss + 1;
-
+            const date = daysCountInPrevMonth - startLoss;
+    
             finalBeginDate = new LVDate(
-                this.props.data.date.getFullYear(),
-                this.props.data.date.getMonth() - 1,
-                dayOfMonth
+                prevMonth.getFullYear(),
+                prevMonth.getMonth(),
+                Math.max(1, date)
             );
             finalExtendsToPreviousMonth = true;
         } else {
@@ -123,16 +131,17 @@ export default class RoomRow extends Component {
             );
             finalExtendsToPreviousMonth = false;
         }
-
-        // Calculate if the appointment extends into the next month
+    
+        // Calculate if the appointment extends further into the next month
         if (newEndDatePos > dateColumnsEnd) {
             const endLoss = newEndDatePos - dateColumnsEnd;
-
+    
             finalEndDate = new LVDate(
-                this.props.data.date.getFullYear(),
-                this.props.data.date.getMonth() + 1,
-                endLoss
+                nextMonth.getFullYear(),
+                nextMonth.getMonth(),
+                Math.min(daysCountInNextMonth, endLoss)
             );
+    
             finalExtendsToNextMonth = true;
         } else {
             finalEndDate = dragTableUtilities.getDateBasedOnLayoutPosition(
@@ -141,72 +150,73 @@ export default class RoomRow extends Component {
                 this.props.config
             );
             finalExtendsToNextMonth = false;
-
-            console.log("?????????????????");
-            console.log(finalEndDate);
         }
-
+    
         // Handle dragging back into the current month from previous month
         if (appointment.extendsToPreviousMonth && newStartDatePos >= dateColumnsStart) {
-            const daysDraggedIntoCurrentMonth = newStartDatePos - dateColumnsStart;
             const startGains = daysCountInPrevMonth - appointment.begin_date.getDate();
-
+    
+            const beginDate = newStartDatePos - dateColumnsStart - startGains;
+            const endDate = newStartDatePos - dateColumnsStart + appointment.end_date.getDate();
+    
             finalBeginDate = new LVDate(
                 this.props.data.date.getFullYear(),
                 this.props.data.date.getMonth(),
-                daysDraggedIntoCurrentMonth - startGains + 1
+                beginDate + 1
             );
             finalEndDate = new LVDate(
                 this.props.data.date.getFullYear(),
                 this.props.data.date.getMonth(),
-                daysDraggedIntoCurrentMonth + appointment.end_date.getDate()
+                endDate
             );
-
+    
             finalExtendsToPreviousMonth = false;
         }
-
+    
+        // Handle dragging further into the previous month
+        if (appointment.extendsToPreviousMonth && newStartDatePos < dateColumnsStart) {
+            const additionalDrag = dateColumnsStart - newStartDatePos;
+            const newBeginDateInPrevMonth = appointment.begin_date.getDate() - additionalDrag;
+    
+            finalBeginDate = new LVDate(
+                prevMonth.getFullYear(),
+                prevMonth.getMonth(),
+                Math.max(1, newBeginDateInPrevMonth)
+            );
+        }
+    
         // Handle dragging back into the current month from next month
         if (appointment.extendsToNextMonth && newEndDatePos <= dateColumnsEnd) {
             const daysDraggedIntoCurrentMonth = dateColumnsEnd - newEndDatePos;
             const endGains = appointment.end_date.getDate();
-
-            console.log("daysDraggedIntoCurrentMonth");
-            console.log(daysDraggedIntoCurrentMonth);
-            console.log("endGains");
-            console.log(endGains);
-
+    
             finalBeginDate = dragTableUtilities.getDateBasedOnLayoutPosition(
                 newStartDatePos,
                 this.props.data.date,
                 this.props.config
             );
-
+    
             finalEndDate = new LVDate(
                 this.props.data.date.getFullYear(),
                 this.props.data.date.getMonth(),
-                daysCountInCurrentMonth - daysDraggedIntoCurrentMonth + endGains + 1
+                daysCountInCurrentMonth - daysDraggedIntoCurrentMonth + endGains
             );
+    
             finalExtendsToNextMonth = false;
         }
-
-        // Handle expanding appointments when dragging within the same month
-        if (finalExtendsToPreviousMonth && finalBeginDate.getMonth() < this.props.data.date.getMonth()) {
-            const startLoss = dateColumnsStart - newStartDatePos;
-            const dayOfMonth = finalBeginDate.getDate() - startLoss;
-            finalBeginDate.setDate(dayOfMonth);
+    
+        // Handle dragging further into the next month
+        if (appointment.extendsToNextMonth && newEndDatePos > dateColumnsEnd) {
+            const additionalDrag = newEndDatePos - dateColumnsEnd;
+            const newEndDateInNextMonth = appointment.end_date.getDate() + additionalDrag;
+    
+            finalEndDate = new LVDate(
+                nextMonth.getFullYear(),
+                nextMonth.getMonth(),
+                Math.min(daysCountInNextMonth, newEndDateInNextMonth)
+            );
         }
-
-        if (finalExtendsToNextMonth && finalEndDate.getMonth() > this.props.data.date.getMonth()) {
-            const endLoss = newEndDatePos - dateColumnsEnd;
-            const dayOfMonth = finalEndDate.getDate() + endLoss;
-            finalEndDate.setDate(dayOfMonth);
-        }
-
-        console.log("finalBeginDate");
-        console.log(finalBeginDate);
-        console.log("adjustedEndDatePos");
-        console.log(finalEndDate);
-
+    
         // Calculate the new start and end positions (x and w) 
         // based on the resulting start and end dates
         const adjustedStartDatePos = dragTableUtilities.getPositionBasedOnDate(
@@ -219,7 +229,7 @@ export default class RoomRow extends Component {
             this.props.data.date, 
             this.props.config
         );
-
+    
         // Update appointment with new dates and positions
         appointment.x = adjustedStartDatePos;
         appointment.w = adjustedEndDatePos - adjustedStartDatePos + 1;
@@ -227,19 +237,20 @@ export default class RoomRow extends Component {
         appointment.begin_date = finalBeginDate;
         appointment.extendsToNextMonth = finalExtendsToNextMonth;
         appointment.end_date = finalEndDate;
-
+    
         console.log("appointment.begin_date.getObject()");
         console.log(appointment.begin_date.getObject());
         console.log("appointment.end_date.getObject()");
         console.log(appointment.end_date.getObject());
-
+    
         console.log("appointment.x");
         console.log(appointment.x);
         console.log("appointment.w");
         console.log(appointment.w);
-
+    
         return appointment;
     }
+    
 
     appointmentResizeUpdate(appointment, newStartDatePos, newEndDatePos) {
         const dateColumnsStart = this.props.config.getDateColumnsStart();
