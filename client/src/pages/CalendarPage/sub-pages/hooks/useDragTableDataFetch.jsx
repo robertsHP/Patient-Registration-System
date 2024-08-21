@@ -2,9 +2,7 @@ import React, { useEffect, useState, useContext } from 'react';
 
 import ApiService from '../../../../services/ApiService';
 
-import {
-    convertAppointmentForLayoutSupport
-} from '../utils/dragTableUtilities'
+import * as dragTableUtilities from '../utils/dragTableUtilities';
 
 export default function useDragTableDataFetch(tempFloorID, tempDate, config) {
     const [date, setDate] = useState(tempDate);
@@ -28,16 +26,22 @@ export default function useDragTableDataFetch(tempFloorID, tempDate, config) {
         const newRooms = curRooms.map((room) => ({
             ...room,
             appointments: room.appointments.map(appointment => (
-                convertAppointmentForLayoutSupport(appointment, date, config)
+                dragTableUtilities.convertAppointmentForLayoutSupport(
+                    appointment, 
+                    date, 
+                    config
+                )
             ))
         }));
         return newRooms;
     };
 
     const loadRooms = async (tempDate, config) => {
-        const params = `floorId=${floorID}&year=${tempDate.getFullYear()}&month=${tempDate.getMonth()}`;
         try {
-            const result = await ApiService.get(`/api/calendar-page/drag-table/get-rooms?${params}`);
+            const params = `floorId=${floorID}&year=${tempDate.getFullYear()}&month=${tempDate.getMonth()}`;
+            const result = await ApiService.get(
+                `/api/calendar-page/drag-table/get-rooms?${params}`
+            );
 
             const data = result.data[0].rooms;
             const finalData = convertRoomDataToLayout(data, config);

@@ -1,5 +1,5 @@
 
-import { getDaysOfMonth } from '../utils/monthUtilities.jsx';
+import * as monthUtilities from '../utils/monthUtilities.jsx';
 
 import LVDate from '../../../../models/LVDate.jsx';
 
@@ -47,7 +47,7 @@ const isInDateColumns = (x, w, config) => {
     const dateColumnsEnd = config.getDateColumnsEnd();
 
     return x >= dateColumnsStart && (x + w) <= dateColumnsEnd;
-}
+};
 
 const getDateBasedOnLayoutPosition = (pos, date, config) => {
     var finalDate = null;
@@ -55,8 +55,15 @@ const getDateBasedOnLayoutPosition = (pos, date, config) => {
     const dateColumnsStart = config.getDateColumnsStart();
     const dateColumnsEnd = config.getDateColumnsEnd();
 
+    console.log("----pos");
+    console.log(pos);
+    console.log("----dateColumnsStart");
+    console.log(dateColumnsStart);
+    console.log("----dateColumnsEnd");
+    console.log(dateColumnsEnd);
+
     if (pos < dateColumnsStart) {
-        const daysCountInPrevMonth = getDaysOfMonth(
+        const daysCountInPrevMonth = monthUtilities.getDaysOfMonth(
             date.getFullYear(),
             date.getMonth() - 1
         ).length;
@@ -67,7 +74,7 @@ const getDateBasedOnLayoutPosition = (pos, date, config) => {
             date.getMonth() - 1,
             dateNum
         );
-    } else if (pos > dateColumnsEnd) {
+    } else if (pos > dateColumnsEnd - 1) {
         const dateNum = dateColumnsEnd - pos;
 
         finalDate = new LVDate(
@@ -77,7 +84,11 @@ const getDateBasedOnLayoutPosition = (pos, date, config) => {
         );
     } else {
         config.dateLayout.forEach((dateLayout) => {
-            if (pos === dateLayout.x) {
+
+            console.log(dateLayout.x);
+            console.log(dateLayout.num);
+            
+            if (pos == dateLayout.x) {
                 finalDate = new LVDate(
                     date.getFullYear(),
                     date.getMonth(),
@@ -87,7 +98,7 @@ const getDateBasedOnLayoutPosition = (pos, date, config) => {
         });
     }
     return finalDate;
-}
+};
 
 const getPositionBasedOnDate = (tempDate, date, config) => {
     var finalPos = null;
@@ -111,7 +122,7 @@ const getPositionBasedOnDate = (tempDate, date, config) => {
     }
 
     return finalPos;
-}
+};
 
 const convertAppointmentForLayoutSupport = (appointment, date, config) => {
     var beginDate = new LVDate(appointment.begin_date);
@@ -120,8 +131,28 @@ const convertAppointmentForLayoutSupport = (appointment, date, config) => {
     var hotel_stay_start = new LVDate(appointment.hotel_stay_start);
     var hotel_stay_end = new LVDate(appointment.hotel_stay_end);
 
-    var x = getPositionBasedOnDate(beginDate, date, config);
-    var w = endDate.getDate() - beginDate.getDate() + 1;
+    const dateColumnsStart = config.getDateColumnsStart();
+    const dateColumnsEnd = config.getDateColumnsEnd();
+
+    // Determine if the appointment extends into the previous or next month
+    let extendsToPreviousMonth = beginDate.getMonth() < date.getMonth() || 
+                                  beginDate.getFullYear() < date.getFullYear();
+    let extendsToNextMonth = endDate.getMonth() > date.getMonth() || 
+                             endDate.getFullYear() > date.getFullYear();
+
+    // Calculate x position and width w
+    let x, w;
+
+    if (extendsToPreviousMonth) {
+        x = dateColumnsStart;  // Start at the beginning of the current month
+        w = getPositionBasedOnDate(endDate, date, config) - x + 1;
+    } else if (extendsToNextMonth) {
+        x = getPositionBasedOnDate(beginDate, date, config);
+        w = dateColumnsEnd - x + 1;  // Extend to the end of the current month
+    } else {
+        x = getPositionBasedOnDate(beginDate, date, config);
+        w = endDate.getDate() - beginDate.getDate() + 1;
+    }
 
     return {
         ...appointment,
@@ -134,10 +165,11 @@ const convertAppointmentForLayoutSupport = (appointment, date, config) => {
         y: 0,
         w: w,
         h: 1,
-        extendsToPreviousMonth: false,
-        extendsToNextMonth: false,
+        extendsToPreviousMonth: extendsToPreviousMonth,
+        extendsToNextMonth: extendsToNextMonth,
     };
-}
+};
+
 
 const convertAppointmentForSendingToDB = (room, appointment) => {
     var hotel_stay_start = hotel_stay_start != null ? appointment.hotel_stay_start.toDateString() : null;
@@ -154,7 +186,7 @@ const convertAppointmentForSendingToDB = (room, appointment) => {
         hotel_stay_end: hotel_stay_end,
         appointment_type: appointment.appointment_type
     };
-}
+};
 
 export {
     isValidAppointmentPosition,

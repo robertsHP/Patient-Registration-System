@@ -55,6 +55,8 @@ export default function SumRow({ data, config }) {
         }
     }, [data.fullDataUpdateTrigger, data.singleDataUpdateTrigger]);
 
+    const postDateColumnsStart = config.getDateColumnsEnd() + 1;
+
     return (
         <GridLayout
             className="sum-row"
@@ -77,7 +79,7 @@ export default function SumRow({ data, config }) {
                 })),
                 { 
                     i: 'sum-gap', 
-                    x: config.getDateColumnsEnd(),
+                    x: postDateColumnsStart,
                     y: 0, 
                     w: config.columnWidths[config.columnWidths.length - 2], 
                     h: 1, 
@@ -85,7 +87,7 @@ export default function SumRow({ data, config }) {
                 },
                 { 
                     i: 'delete-gap', 
-                    x: config.getDateColumnsEnd() + config.columnWidths[config.columnWidths.length - 2],
+                    x: postDateColumnsStart + config.columnWidths[config.columnWidths.length - 2],
                     y: 0, 
                     w: config.columnWidths[config.columnWidths.length - 1], 
                     h: 1, 

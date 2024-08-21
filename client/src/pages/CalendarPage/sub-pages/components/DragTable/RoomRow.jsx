@@ -141,6 +141,9 @@ export default class RoomRow extends Component {
                 this.props.config
             );
             finalExtendsToNextMonth = false;
+
+            console.log("?????????????????");
+            console.log(finalEndDate);
         }
 
         // Handle dragging back into the current month from previous month
@@ -172,10 +175,10 @@ export default class RoomRow extends Component {
             console.log("endGains");
             console.log(endGains);
 
-            finalBeginDate = new LVDate(
-                this.props.data.date.getFullYear(),
-                this.props.data.date.getMonth(),
-                newStartDatePos
+            finalBeginDate = dragTableUtilities.getDateBasedOnLayoutPosition(
+                newStartDatePos,
+                this.props.data.date,
+                this.props.config
             );
 
             finalEndDate = new LVDate(
@@ -198,6 +201,11 @@ export default class RoomRow extends Component {
             const dayOfMonth = finalEndDate.getDate() + endLoss;
             finalEndDate.setDate(dayOfMonth);
         }
+
+        console.log("finalBeginDate");
+        console.log(finalBeginDate);
+        console.log("adjustedEndDatePos");
+        console.log(finalEndDate);
 
         // Calculate the new start and end positions (x and w) 
         // based on the resulting start and end dates
@@ -233,7 +241,13 @@ export default class RoomRow extends Component {
         return appointment;
     }
 
-    appointmentResizeUpdate (appointment, newStartDatePos, newEndDatePos) {
+    appointmentResizeUpdate(appointment, newStartDatePos, newEndDatePos) {
+        const dateColumnsStart = this.props.config.getDateColumnsStart();
+        const dateColumnsEnd = this.props.config.getDateColumnsEnd();
+        const currentMonth = this.props.data.date.getMonth();
+        const currentYear = this.props.data.date.getFullYear();
+    
+        // Update begin_date and end_date based on new positions
         appointment.begin_date = dragTableUtilities.getDateBasedOnLayoutPosition(
             newStartDatePos, 
             this.props.data.date, 
@@ -244,21 +258,40 @@ export default class RoomRow extends Component {
             this.props.data.date, 
             this.props.config
         );
-
-        const adjustedStartDatePos = dragTableUtilities.getPositionBasedOnDate(
-            appointment.begin_date, 
-            this.props.data.date, 
-            this.props.config
-        );
-        const adjustedEndDatePos = dragTableUtilities.getPositionBasedOnDate(
-            appointment.end_date, 
-            this.props.data.date, 
-            this.props.config
-        );
-
+    
+        // Determine if the appointment extends into the previous or next month
+        appointment.extendsToPreviousMonth = appointment.begin_date.getMonth() < currentMonth ||
+                                              appointment.begin_date.getFullYear() < currentYear;
+        appointment.extendsToNextMonth = appointment.end_date.getMonth() > currentMonth ||
+                                         appointment.end_date.getFullYear() > currentYear;
+    
+        // Calculate adjusted positions
+        let adjustedStartDatePos, adjustedEndDatePos;
+    
+        if (appointment.extendsToPreviousMonth) {
+            adjustedStartDatePos = dateColumnsStart; // Start at the beginning of the current month
+        } else {
+            adjustedStartDatePos = dragTableUtilities.getPositionBasedOnDate(
+                appointment.begin_date, 
+                this.props.data.date, 
+                this.props.config
+            );
+        }
+    
+        if (appointment.extendsToNextMonth) {
+            adjustedEndDatePos = dateColumnsEnd; // End at the last day of the current month
+        } else {
+            adjustedEndDatePos = dragTableUtilities.getPositionBasedOnDate(
+                appointment.end_date, 
+                this.props.data.date, 
+                this.props.config
+            );
+        }
+    
+        // Update position and width
         appointment.x = adjustedStartDatePos;
         appointment.w = adjustedEndDatePos - adjustedStartDatePos + 1;
-
+    
         return appointment;
     }
 
@@ -564,7 +597,7 @@ export default class RoomRow extends Component {
         const { data, roomID, config } = this.props;
         const { draggingAppointment, refresh } = this.state;
 
-        const lastColumnStart = config.getDateColumnsEnd();
+        const lastColumnStart = config.getDateColumnsEnd() + 1;
 
         return (
             <div

@@ -8,6 +8,8 @@ import 'react-resizable/css/styles.css';
 import './ColumnRow.css';
 
 export default function ColumnRow({ config }) {
+    const postDateColumnsStart = config.getDateColumnsEnd() + 1;
+
     return (
         <>
             <GridLayout
@@ -31,7 +33,7 @@ export default function ColumnRow({ config }) {
                     })),
                     { 
                         i: 'sum-column', 
-                        x: config.getDateColumnsEnd(), 
+                        x: postDateColumnsStart, 
                         y: 0, 
                         w: config.columnWidths[config.columnWidths.length - 2], 
                         h: 1, 
@@ -39,7 +41,7 @@ export default function ColumnRow({ config }) {
                     },
                     { 
                         i: 'delete-gap', 
-                        x: config.getDateColumnsEnd() + config.columnWidths[config.columnWidths.length - 2],
+                        x: postDateColumnsStart + config.columnWidths[config.columnWidths.length - 2],
                         y: 0, 
                         w: config.columnWidths[config.columnWidths.length - 1], 
                         h: 1, 

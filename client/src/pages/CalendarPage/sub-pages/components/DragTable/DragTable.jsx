@@ -47,10 +47,17 @@ export default function DragTable ({ data, config }) {
 
     const deleteRoomRow = async (roomID) => {
         console.log("DELETE ROOM ROW");
-
+    
         try {
             const params = `/api/calendar-page/drag-table/delete-room/${roomID}`;
             await ApiService.delete(params);
+    
+            // Update the data.rooms by filtering out the deleted room
+            const updatedRooms = data.rooms.filter((room) => room.id !== roomID);
+            
+            // Update the state with the new room list
+            data.setRooms(updatedRooms);
+    
         } catch (error) {
             console.log("DragTable (deleteRoomRow) error: ");
             console.log(error);

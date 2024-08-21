@@ -24,8 +24,10 @@ export default function useTableConfigurations (date) {
     const getDateColumnsEnd = () => {
         const dateColumnsStart = getDateColumnsStart();
 
-        return dateColumnsStart + columnWidths.slice(1, columnWidths.length - 2)
-            .reduce((acc, width) => acc + width, 0);
+        const result = dateColumnsStart + columnWidths.slice(1, columnWidths.length - 2)
+            .reduce((acc, width) => acc + width, 0) - 1;
+
+        return result;
     };
 
     const getSumOfAllColumns = () => {
