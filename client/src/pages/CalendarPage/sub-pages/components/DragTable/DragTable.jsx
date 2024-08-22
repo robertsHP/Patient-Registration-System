@@ -18,9 +18,10 @@ import 'react-resizable/css/styles.css';
 import './DragTable.css';
 
 export default function DragTable ({ data, config }) {
-    const [selectedAppointment, setSelectedAppointment] = useState(null);
-
     const pageRefreshed = usePageRefresh();
+
+    const [selectedAppointmentData, setSelectedAppointmentData] = useState(null);
+    const [rowRefreshCounters, setRowRefreshCounters] = useState({});
 
     const addRoom = async () => {
         const saveRoomToDB = async (newRoom) => {
@@ -64,6 +65,13 @@ export default function DragTable ({ data, config }) {
         }
     };
 
+    const refreshRoom = (roomID) => {
+        setRowRefreshCounters(prevState => ({
+            ...prevState,
+            [roomID]: (prevState[roomID] || 0) + 1
+        }));
+    };
+
     return (
         <div className="drag-table">
             <GridUI 
@@ -79,10 +87,11 @@ export default function DragTable ({ data, config }) {
                                     data={data}
                                     roomID={room.id}
                                     config={config}
-                                    selectedAppointment={selectedAppointment}
-                                    setSelectedAppointment={setSelectedAppointment}
+                                    selectedAppointmentData={selectedAppointmentData}
+                                    setSelectedAppointmentData={setSelectedAppointmentData}
                                     pageRefreshed={pageRefreshed}
                                     deleteRoomRow={deleteRoomRow}
+                                    refreshRoom={refreshRoom}
                                 />
                             </div>
                         );
@@ -95,11 +104,12 @@ export default function DragTable ({ data, config }) {
             </button>
 
             <SumRow data={data} config={config} />
-            {selectedAppointment && 
+            {selectedAppointmentData && 
                 <AppointmentInputForm 
                     data={data}
-                    selectedAppointment={selectedAppointment} 
-                    setSelectedAppointment={setSelectedAppointment} 
+                    selectedAppointmentData={selectedAppointmentData} 
+                    setSelectedAppointmentData={setSelectedAppointmentData} 
+                    refreshRoom={refreshRoom}
                 />
             }
         </div>

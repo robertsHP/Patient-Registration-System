@@ -33,7 +33,6 @@ export default class RoomRow extends Component {
 
         this.pageRefreshed = props.pageRefreshed;
         this.gridRef = createRef();
-        this.refreshRow = this.refreshRow.bind(this);
         this.updateAppointmentInDB = this.updateAppointmentInDB.bind(this);
         
         this.calculateAppointmentUpdates = this.calculateAppointmentUpdates.bind(this);
@@ -56,26 +55,12 @@ export default class RoomRow extends Component {
         console.log("componentDidUpdate");
 
         var fullDataUpdate = this.props.data.fullDataUpdateTrigger !== prevProps.data.fullDataUpdateTrigger;
-        // var singleDataUpdate = this.props.data.singleDataUpdateTrigger !== prevProps.data.singleDataUpdateTrigger;
+        var singleDataUpdate = this.props.data.singleDataUpdateTrigger !== prevProps.data.singleDataUpdateTrigger;
 
-        if (fullDataUpdate) {
+        if (fullDataUpdate || singleDataUpdate) {
             this.room = this.props.data.getRoomWithID(this.props.roomID);
-            this.refreshRow();
+            this.props.refreshRoom(this.props.roomID);
         }
-        // if(this.props.data.singleDataUpdateTrigger !== prevProps.data.singleDataUpdateTrigger) {
-        //     if(this.props.selectedAppointment.id_room == this.state.room.id) {
-        //         this.state.room
-        //     }
-        // }
-    }
-
-    refreshRow() {
-        console.log("refreshRow");
-
-        this.setState((prevState) => ({
-            manualRefresh: true,
-            refresh: prevState.refresh + 1,
-        }));
     }
 
     async updateAppointmentInDB (id, convertedAppointment) {
@@ -114,7 +99,7 @@ export default class RoomRow extends Component {
         let finalExtendsToPreviousMonth = false;
         let finalEndDate = null;
         let finalExtendsToNextMonth = false;
-    
+
         // Calculate if the appointment extends into the previous month
         if (newStartDatePos < dateColumnsStart) {
             const startLoss = dateColumnsStart - newStartDatePos;
@@ -149,17 +134,11 @@ export default class RoomRow extends Component {
         // Calculate if the appointment extends into the next month
         if (newEndDatePos > dateColumnsEnd) {
             const endLoss = newEndDatePos - dateColumnsEnd;
-    
-            // finalEndDate = new LVDate(
-            //     nextMonth.getFullYear(), 
-            //     nextMonth.getMonth(), 
-            //     Math.min(daysCountInNextMonth, endLoss)
-            // );
 
             if (appointment.extendsToNextMonth) {
                 finalEndDate = new LVDate(
-                    prevMonth.getFullYear(), 
-                    prevMonth.getMonth(), 
+                    nextMonth.getFullYear(), 
+                    nextMonth.getMonth(), 
                     Math.min(daysCountInNextMonth, endLoss)
                 );
             } else {
@@ -189,18 +168,34 @@ export default class RoomRow extends Component {
 
             // Check if the new calculated date is still in the previous month
             if (beginDate + 1 < 1) {
-                finalBeginDate = new LVDate(prevMonth.getFullYear(), prevMonth.getMonth(), daysCountInPrevMonth + beginDate + 1);
+                finalBeginDate = new LVDate(
+                    prevMonth.getFullYear(), 
+                    prevMonth.getMonth(), 
+                    daysCountInPrevMonth + beginDate
+                );
                 finalExtendsToPreviousMonth = true;
             } else {
-                finalBeginDate = new LVDate(currentDate.getFullYear(), currentDate.getMonth(), beginDate + 1);
+                finalBeginDate = new LVDate(
+                    currentDate.getFullYear(), 
+                    currentDate.getMonth(), 
+                    beginDate + 1
+                );
                 finalExtendsToPreviousMonth = false;
             }
 
             if (endDate <= 0) {
-                finalEndDate = new LVDate(prevMonth.getFullYear(), prevMonth.getMonth(), daysCountInPrevMonth + endDate);
+                finalEndDate = new LVDate(
+                    prevMonth.getFullYear(), 
+                    prevMonth.getMonth(), 
+                    daysCountInPrevMonth + endDate
+                );
                 finalExtendsToPreviousMonth = true;
             } else {
-                finalEndDate = new LVDate(currentDate.getFullYear(), currentDate.getMonth(), endDate);
+                finalEndDate = new LVDate(
+                    currentDate.getFullYear(), 
+                    currentDate.getMonth(), 
+                    endDate
+                );
             }
         }
 
@@ -209,29 +204,41 @@ export default class RoomRow extends Component {
             const additionalDrag = dateColumnsStart - newStartDatePos;
             const newBeginDateInPrevMonth = appointment.begin_date.getDate() - additionalDrag;
 
-            finalBeginDate = new LVDate(prevMonth.getFullYear(), prevMonth.getMonth(), Math.max(1, newBeginDateInPrevMonth));
+            finalBeginDate = new LVDate(
+                prevMonth.getFullYear(), 
+                prevMonth.getMonth(), 
+                Math.max(1, newBeginDateInPrevMonth)
+            );
         }
 
-        // Handle dragging back into the current month from next month
+        // Handle dragging back into the current month but still extending into the next month
         if (appointment.extendsToNextMonth && newEndDatePos <= dateColumnsEnd) {
             const daysDraggedIntoCurrentMonth = dateColumnsEnd - newEndDatePos;
-            const endGains = appointment.end_date.getDate();
-    
+            const remainingDaysInNextMonth = appointment.end_date.getDate() - daysDraggedIntoCurrentMonth;
+
             finalBeginDate = dragTableUtilities.getDateBasedOnLayoutPosition(
                 newStartDatePos, 
                 currentDate, 
                 config
             );
-    
-            finalEndDate = new LVDate(
-                currentDate.getFullYear(), 
-                currentDate.getMonth(), 
-                daysCountInCurrentMonth - daysDraggedIntoCurrentMonth + endGains
-            );
-    
-            finalExtendsToNextMonth = false;
+
+            if (remainingDaysInNextMonth > 0) {
+                finalEndDate = new LVDate(
+                    nextMonth.getFullYear(), 
+                    nextMonth.getMonth(), 
+                    remainingDaysInNextMonth
+                );
+                finalExtendsToNextMonth = true;
+            } else {
+                finalEndDate = new LVDate(
+                    currentDate.getFullYear(), 
+                    currentDate.getMonth(), 
+                    daysCountInCurrentMonth + remainingDaysInNextMonth
+                );
+                finalExtendsToNextMonth = false;
+            }
         }
-    
+
         // Handle dragging further into the next month
         if (appointment.extendsToNextMonth && newEndDatePos > dateColumnsEnd) {
             const additionalDrag = newEndDatePos - dateColumnsEnd;
@@ -289,6 +296,15 @@ export default class RoomRow extends Component {
         appointment.begin_date = finalBeginDate;
         appointment.extendsToNextMonth = finalExtendsToNextMonth;
         appointment.end_date = finalEndDate;
+
+        console.log("appointment.x");
+        console.log(appointment.x);
+        console.log("appointment.w");
+        console.log(appointment.w);
+        console.log("appointment.begin_date");
+        console.log(appointment.begin_date.getObject());
+        console.log("appointment.end_date");
+        console.log(appointment.end_date.getObject());
     
         return appointment;
     }
@@ -343,13 +359,6 @@ export default class RoomRow extends Component {
 
     onLayoutChange(newLayout) {
         console.log("onLayoutChange");
-
-        // console.log("gridItemDragged");
-        // console.log(this.gridItemDragged);
-        // console.log("gridItemResized");
-        // console.log(this.gridItemResized);
-        // console.log("manualRefresh");
-        // console.log(this.manualRefresh);
 
         if (this.gridItemDragged) {
             this.updateLayout(newLayout);
@@ -483,7 +492,7 @@ export default class RoomRow extends Component {
                     isCreatingAppointment: true,
                 });
             }
-            this.refreshRow();
+            this.props.refreshRoom(this.props.roomID);
         }
     }
 
@@ -516,7 +525,7 @@ export default class RoomRow extends Component {
                         w: newWidth,
                     },
                 }));
-                this.refreshRow();
+                this.props.refreshRoom(this.props.roomID);
             }
         }
     }
@@ -545,14 +554,8 @@ export default class RoomRow extends Component {
                 ...this.room,
                 appointments: [...this.room.appointments, newAppointment],
             };
-            // this.setState((prevState) => ({
-            //     room: {
-            //         ...prevState.room,
-            //         appointments: [...prevState.room.appointments, newAppointment],
-            //     },
-            // }));
-    
-            this.refreshRow();
+            this.props.data.setRoomWithID(this.room.id, this.room);
+            this.props.refreshRoom(this.props.roomID);
         } catch (error) {
             console.log("RoomRow error: ");
             console.log(error);
@@ -591,7 +594,15 @@ export default class RoomRow extends Component {
     }
 
     handleAppointmentDoubleClick(appointment) {
-        this.props.setSelectedAppointment(appointment);
+        console.log("this.room");
+        console.log(this.room);
+        console.log("getRoomWithID");
+        console.log(this.props.data.getRoomWithID(this.props.roomID));
+
+        this.props.setSelectedAppointmentData({
+            roomID: this.props.roomID,
+            appointment: appointment
+        });
     }
 
     async roomNumberUpdate (event) {

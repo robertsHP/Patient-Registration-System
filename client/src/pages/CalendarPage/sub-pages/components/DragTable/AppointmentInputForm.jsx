@@ -7,16 +7,20 @@ import ApiService from '../../../../../services/ApiService.js';
 
 import './AppointmentInputForm.css';
 
-export default function AppointmentInputForm({ data, selectedAppointment, setSelectedAppointment }) {
+export default function AppointmentInputForm(props) {
+    if(props.selectedAppointmentData.appointment == undefined) {
+        return <></>;
+    }
+
     const [formData, setFormData] = useState({
-        patient: selectedAppointment.patient,
-        begin_date: selectedAppointment.begin_date,
-        end_date: selectedAppointment.end_date,
-        notes: selectedAppointment.notes,
-        doctor: selectedAppointment.doctor,
-        hotel_stay_start: selectedAppointment.hotel_stay_start,
-        hotel_stay_end: selectedAppointment.hotel_stay_end,
-        appointment_type: selectedAppointment.appointment_type
+        patient:            props.selectedAppointmentData.appointment.patient,
+        begin_date:         props.selectedAppointmentData.appointment.begin_date,
+        end_date:           props.selectedAppointmentData.appointment.end_date,
+        notes:              props.selectedAppointmentData.appointment.notes,
+        doctor:             props.selectedAppointmentData.appointment.doctor,
+        hotel_stay_start:   props.selectedAppointmentData.appointment.hotel_stay_start,
+        hotel_stay_end:     props.selectedAppointmentData.appointment.hotel_stay_end,
+        appointment_type:   props.selectedAppointmentData.appointment.appointment_type
     });
     
     const [doctors, setDoctors] = useState([]);
@@ -39,8 +43,6 @@ export default function AppointmentInputForm({ data, selectedAppointment, setSel
                 console.error('Failed to fetch data:', error);
             }
         };
-
-        console.log(formData);
 
         fetchData();
     }, []);
@@ -96,7 +98,7 @@ export default function AppointmentInputForm({ data, selectedAppointment, setSel
     };
 
     const onWindowClose = () => {
-        setSelectedAppointment(null);
+        props.setSelectedAppointmentData(null);
     };
 
     const onCancel = () => {
@@ -105,7 +107,8 @@ export default function AppointmentInputForm({ data, selectedAppointment, setSel
 
     const onSave = (e) => {
         const updateAppointment = async () => {
-            var url = `/api/calendar-page/drag-table/appointment/${selectedAppointment.id}`;
+            const id = props.selectedAppointmentData.appointment.id;
+            const url = `/api/calendar-page/drag-table/appointment/${id}`;
 
             try {
                 await ApiService.put(url, formData);
@@ -163,9 +166,12 @@ export default function AppointmentInputForm({ data, selectedAppointment, setSel
         ConfirmationWindow.show(
             `Vai tiešām vēlaties dzēst pierakstu?`,
             async () => {
-                var id = selectedAppointment.id;
+                var id = props.selectedAppointmentData.appointment.id;
 
-                data.removeAppointmentWithID(id);
+                props.data.removeAppointmentWithID(
+                    props.selectedAppointmentData.roomID,
+                    id
+                );
                 
                 try {
                     var url = `/api/calendar-page/drag-table/appointment/${id}`;

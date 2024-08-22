@@ -55,13 +55,6 @@ const getDateBasedOnLayoutPosition = (pos, date, config) => {
     const dateColumnsStart = config.getDateColumnsStart();
     const dateColumnsEnd = config.getDateColumnsEnd();
 
-    // console.log("----pos");
-    // console.log(pos);
-    // console.log("----dateColumnsStart");
-    // console.log(dateColumnsStart);
-    // console.log("----dateColumnsEnd");
-    // console.log(dateColumnsEnd);
-
     if (pos < dateColumnsStart) {
         const daysCountInPrevMonth = monthUtilities.getDaysOfMonth(
             date.getFullYear(),
@@ -74,8 +67,8 @@ const getDateBasedOnLayoutPosition = (pos, date, config) => {
             date.getMonth() - 1,
             dateNum
         );
-    } else if (pos > dateColumnsEnd - 1) {
-        const dateNum = dateColumnsEnd - pos;
+    } else if (pos > dateColumnsEnd) {
+        const dateNum = pos - dateColumnsEnd;
 
         finalDate = new LVDate(
             date.getFullYear(),
@@ -84,10 +77,6 @@ const getDateBasedOnLayoutPosition = (pos, date, config) => {
         );
     } else {
         config.dateLayout.forEach((dateLayout) => {
-
-            // console.log(dateLayout.x);
-            // console.log(dateLayout.num);
-            
             if (pos == dateLayout.x) {
                 finalDate = new LVDate(
                     date.getFullYear(),
