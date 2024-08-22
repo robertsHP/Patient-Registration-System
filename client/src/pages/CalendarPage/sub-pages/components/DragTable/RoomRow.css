@@ -3,6 +3,10 @@
     width: 100%;
 }
 
+/* .room-row__appointment {
+    z-index: 2;
+} */
+
 .room-row__appointment-name {
     user-select: none; /* Disable text selection */
     -webkit-user-select: none; /* Safari */
