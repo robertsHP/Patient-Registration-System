@@ -1,7 +1,7 @@
 
-import * as monthUtilities from '../utils/monthUtilities.jsx';
+import * as monthUtilities from '../../../utils/monthUtilities.jsx';
 
-import LVDate from '../../../../models/LVDate.jsx';
+import LVDate from '../../../../../../models/LVDate.jsx';
 
 const isValidAppointmentPosition = (layoutItem, config) => {
     const dateColumnsStart = config.getDateColumnsStart();
@@ -40,6 +40,32 @@ const isOverlapping = (newLayout, appointments, currentAppointmentId) => {
     return appointments.some(
         (appointment) => appointment.i !== currentAppointmentId && overlapping(appointment, newLayout)
     );
+};
+
+const areAppointmentsOverlapping = (newAppointment, appointments) => {
+    const overlapping = (appointment1, appointment2) => {
+        if(appointment1.i == appointment2.i) {
+            return false;
+        }
+        
+        // Convert dates to JavaScript Date objects for comparison
+        const start1 = new LVDate(appointment1.begin_date).getObject();
+        const end1 = new LVDate(appointment1.end_date).getObject();
+        const start2 = new LVDate(appointment2.begin_date).getObject();
+        const end2 = new LVDate(appointment2.end_date).getObject();
+
+        // Check for overlap: either appointment2 starts within appointment1 or appointment1 
+        // starts within appointment2
+        const startsOverlap = (start1 <= end2 && start1 >= start2);
+        // Check for overlap: either appointment2 ends within appointment1 or appointment1 
+        // ends within appointment2
+        const endsOverlap = (end1 >= start2 && end1 <= end2);
+
+        // There is an overlap if either starts or ends overlap, or one range entirely covers the other
+        return startsOverlap || endsOverlap || (start1 <= start2 && end1 >= end2) || (start2 <= start1 && end2 >= end1);
+    };
+
+    return appointments.some((appointment) => overlapping(appointment, newAppointment));
 };
 
 const isInDateColumns = (x, w, config) => {
@@ -180,6 +206,7 @@ const convertAppointmentForSendingToDB = (room, appointment) => {
 export {
     isValidAppointmentPosition,
     isOverlapping,
+    areAppointmentsOverlapping,
     isInDateColumns,
     getDateBasedOnLayoutPosition,
     getPositionBasedOnDate,

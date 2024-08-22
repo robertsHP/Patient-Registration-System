@@ -2,7 +2,7 @@ import React, { useEffect, useState, useContext } from 'react';
 
 import ApiService from '../../../../services/ApiService';
 
-import * as dragTableUtilities from '../utils/dragTableUtilities';
+import * as dragTableUtilities from '../components/DragTable/utils/dragTableUtilities';
 
 export default function useDragTableDataFetch(tempFloorID, tempDate, config) {
     const [date, setDate] = useState(tempDate);
