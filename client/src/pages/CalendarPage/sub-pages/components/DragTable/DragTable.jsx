@@ -17,7 +17,7 @@ import 'react-resizable/css/styles.css';
 
 import './DragTable.css';
 
-export default function DragTable ({ data, config }) {
+export default function DragTable ({ data, config, queryParams }) {
     const pageRefreshed = usePageRefresh();
 
     const [selectedAppointmentData, setSelectedAppointmentData] = useState(null);

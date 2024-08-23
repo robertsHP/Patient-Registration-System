@@ -6,7 +6,11 @@ import ApiService from '../../../../services/ApiService';
 //     convertAppointmentForLayoutSupport
 // } from '../utils/dragTableConversionUtilities';
 
+import useNavigation from '../../../../hooks/useNavigation.jsx';
+
 export default function useInputTableDataFetch(tempDate) {
+    const { navigateTo, currentPath } = useNavigation();
+
     const [date, setDate] = useState(tempDate);
     const [appointments, setAppointments] = useState(null);
 
@@ -60,6 +64,11 @@ export default function useInputTableDataFetch(tempDate) {
     };
 
     useEffect(() => {
+        var currentUrlPath = currentPath.split('?')[0];
+
+        currentUrlPath += `?year=${date.getFullYear()}&month=${date.getMonth()}`;
+        navigateTo(currentUrlPath);
+
         loadAppointments(date);
     }, [date]);
 

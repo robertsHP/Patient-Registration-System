@@ -2,6 +2,7 @@ import React, { useEffect } from 'react';
 import { Routes, Route, Outlet } from 'react-router-dom';
 
 import Header from '../../components/Header.jsx';
+
 import useNavigation from '../../hooks/useNavigation.jsx';
 import routes from '../../routes/routes.jsx';
 
@@ -24,13 +25,15 @@ export default function CalendarPage() {
             />
             <main>
                 <Routes>
-                    {Object.entries(calendar.subPages).map(([key, page]) => (
-                        <Route 
-                            key={`${key}_route`} 
-                            path={page.url} 
-                            element={<page.component />} 
-                        />
-                    ))}
+                    {Object.entries(calendar.subPages).map(([key, page]) => {
+                        return (
+                            <Route 
+                                key={`${key}_route`} 
+                                path={page.url} 
+                                element={<page.component />} 
+                            />
+                        );
+                    })}
                 </Routes>
                 <Outlet />
             </main>

@@ -24,16 +24,22 @@ export default function Header ({mainPageUrl, subPages}) {
 
                 {/* Subpage buttons */}
                 {Object.entries(subPages).map(([key, page]) => (
-                    <Link key={key} to={mainPageUrl+page.url}>
+                    <Link 
+                        key={key} 
+                        to={mainPageUrl+page.url+page.getDefaultURLValues()}
+                    >
                         <button
                             className={
-                                `header__subpage-button ${mainPageUrl+page.url === currentPath ? 
-                                    'header__active-button' 
-                                    : 
-                                    ''
+                                `header__subpage-button ${
+                                    currentPath.includes(mainPageUrl+page.url) ?
+                                        'header__active-button' 
+                                        : 
+                                        ''
                                 }`
                             }
-                            onClick={() => handlePageChange(mainPageUrl+page.url)}
+                            onClick={() => handlePageChange(
+                                mainPageUrl+page.url+page.getDefaultURLValues()
+                            )}
                         >
                             {page.title}
                         </button>
@@ -46,3 +52,4 @@ export default function Header ({mainPageUrl, subPages}) {
         </div>
     );
 }
+

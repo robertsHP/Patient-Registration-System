@@ -11,6 +11,15 @@ export default function SearchPage() {
     const [patients, setPatients] = useState([]);
     const [appointments, setAppointments] = useState([]);
 
+    useEffect(() => {
+        const queryParams = new URLSearchParams(window.location.search);
+        const initialSearchText = queryParams.get('search') || '';
+        setSearchText(initialSearchText);
+        if (initialSearchText) {
+            handleSearch(initialSearchText);
+        }
+    }, [window.location.search]);
+
     const handleSearch = async () => {
         if(searchText.length != 0) {
             try {
@@ -41,6 +50,10 @@ export default function SearchPage() {
             console.log("useDataFetch error: ");
             console.log(error);
         }
+    };
+
+    const handleAppointmentSelect = async (appointment) => {
+    
     };
 
     const handleInputChange = (e) => {
@@ -98,7 +111,10 @@ export default function SearchPage() {
                     <ul className="search-page__details-list">
                         {appointments.map((appointment, index) => (
                             <li key={index}>
-                                <button className="search-page__detail-button">
+                                <button 
+                                    onClick={() => handleAppointmentSelect(appointment)}
+                                    className="search-page__detail-button"
+                                >
                                     <h3>{appointment.source_table}</h3>
                                     <p>ID: {appointment.id}</p>
                                     <p>Patient ID: {appointment.id_patient}</p>

@@ -1,4 +1,6 @@
 
+import LVDate from '../models/LVDate.jsx';
+
 import LoginPage from '../pages/LoginPage/LoginPage.jsx';
 import RegisterPage from '../pages/RegisterPage/RegisterPage.jsx';
 
@@ -35,21 +37,27 @@ const routes = {
                     search: {
                         title: "Datu meklēšana",
                         url: "/search",
+                        getDefaultURLValues () {
+                            return '';
+                        },
                         component: SearchPage
                     },
                     beds: {
                         title: "Gultas",
-                        url: "/beds",
+                        url: '/beds',
+                        getDefaultURLValues () {
+                            const date = new LVDate();
+                            return `?year=${date.getFullYear()}&month=${date.getMonth()}`;
+                        },
                         component: BedsPage
-                    },
-                    beds4: {
-                        title: "Gultas 4. stāvs",
-                        url: "/beds4",
-                        component: Beds4Page
                     },
                     sauna: {
                         title: "Pirts",
                         url: "/sauna",
+                        getDefaultURLValues () {
+                            const date = new LVDate();
+                            return `?year=${date.getFullYear()}&month=${date.getMonth()}`;
+                        },
                         component: SaunaPage
                     }
                 }

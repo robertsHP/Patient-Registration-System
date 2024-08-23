@@ -1,8 +1,13 @@
+
 export default class LVDate {
     #date
 
     constructor(...args) {
-        this.setObject(...args);
+        if (args.length === 0) {
+            this.#date = new Date();
+        } else {
+            this.setObject(...args);
+        }
     }
 
     setObject(...args) {

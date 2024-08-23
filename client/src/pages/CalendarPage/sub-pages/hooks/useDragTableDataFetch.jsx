@@ -4,7 +4,11 @@ import ApiService from '../../../../services/ApiService';
 
 import * as dragTableUtilities from '../components/DragTable/utils/dragTableUtilities';
 
+import useNavigation from '../../../../hooks/useNavigation.jsx';
+
 export default function useDragTableDataFetch(tempFloorID, tempDate, config) {
+    const { navigateTo, currentPath } = useNavigation();
+
     const [date, setDate] = useState(tempDate);
     const [rooms, setRooms] = useState(null);
     const floorID = tempFloorID;
@@ -111,6 +115,11 @@ export default function useDragTableDataFetch(tempFloorID, tempDate, config) {
     };
 
     useEffect(() => {
+        var currentUrlPath = currentPath.split('?')[0];
+
+        currentUrlPath += `?year=${date.getFullYear()}&month=${date.getMonth()}`;
+        navigateTo(currentUrlPath);
+
         loadRooms(date, config);
     }, [date]);
 
