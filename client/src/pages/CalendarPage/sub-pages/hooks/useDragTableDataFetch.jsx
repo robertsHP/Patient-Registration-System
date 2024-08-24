@@ -115,11 +115,20 @@ export default function useDragTableDataFetch(tempFloorID, tempDate, config) {
     };
 
     useEffect(() => {
-        var currentUrlPath = currentPath.split('?')[0];
+        var newCurrentPath = currentPath.split('?')[0];
 
-        currentUrlPath += `?year=${date.getFullYear()}&month=${date.getMonth()}`;
-        navigateTo(currentUrlPath);
+        console.log("DEEZ NUTZ");
+        console.log(date.getFullYear());
+        console.log(date.getMonth());
 
+        newCurrentPath += `?year=${date.getFullYear()}&month=${date.getMonth()}`;
+        newCurrentPath.trim();
+
+        if(newCurrentPath !== currentPath) {
+            console.log("DEEZ NUTZ");
+
+            navigateTo(newCurrentPath);
+        }
         loadRooms(date, config);
     }, [date]);
 
