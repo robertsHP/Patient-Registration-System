@@ -4,9 +4,14 @@ import { FaSearch } from 'react-icons/fa';
 
 import ApiService from '../../../services/ApiService.js';
 
+import useNavigation from '../../../hooks/useNavigation.jsx';
+import routes from '../../../routes/routes.jsx';
+
 import './SearchPage.css';
 
 export default function SearchPage() {
+    const { navigateTo } = useNavigation();
+
     const [searchText, setSearchText] = useState('');
     const [patients, setPatients] = useState([]);
     const [appointments, setAppointments] = useState([]);
@@ -19,6 +24,11 @@ export default function SearchPage() {
             handleSearch(initialSearchText);
         }
     }, [window.location.search]);
+
+    useEffect(() => {
+        console.log("appointments");
+        console.log(appointments);
+    }, [appointments]);
 
     const handleSearch = async () => {
         if(searchText.length != 0) {
@@ -53,7 +63,17 @@ export default function SearchPage() {
     };
 
     const handleAppointmentSelect = async (appointment) => {
-    
+        if (appointment.source_table == "drag_table") {
+            var calendar = routes.system.pages.calendar;
+            var beds = calendar.subPages.beds;
+
+            navigateTo(calendar.url+beds.url+beds.getDefaultURLValues());
+        } else if (appointment.source_table == "input_table") {
+            var calendar = routes.system.pages.calendar;
+            var sauna = calendar.subPages.sauna;
+
+            navigateTo(calendar.url+sauna.url+sauna.getDefaultURLValues());
+        }
     };
 
     const handleInputChange = (e) => {
