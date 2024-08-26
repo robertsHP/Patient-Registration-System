@@ -143,6 +143,8 @@ const convertAppointmentForLayoutSupport = (appointment, date, config) => {
     var beginDate = new LVDate(appointment.begin_date);
     var endDate = new LVDate(appointment.end_date);
 
+    console.log(appointment.hotel_stay_start);
+
     var hotel_stay_start = new LVDate(appointment.hotel_stay_start);
     var hotel_stay_end = new LVDate(appointment.hotel_stay_end);
 
@@ -185,20 +187,27 @@ const convertAppointmentForLayoutSupport = (appointment, date, config) => {
     };
 };
 
-
-const convertAppointmentForSendingToDB = (room, appointment) => {
-    var hotel_stay_start = hotel_stay_start != null ? appointment.hotel_stay_start.toDateString() : null;
-    var hotel_stay_end = hotel_stay_end != null ? appointment.hotel_stay_end.toDateString() : null;
+const convertAppointmentForSendingToDB = (roomID, appointment) => {
+    const getDateValue = (date) => {
+        if (date instanceof LVDate) {
+            if (date.getObject() == null) {
+                date = null;
+            } else {
+                date = date.toDateString();
+            }
+        }
+        return date;
+    };
 
     return {
-        id_room: room.id,
+        id_room: roomID,
         patient: appointment.patient,
-        begin_date: appointment.begin_date.toDateString(),
-        end_date: appointment.end_date.toDateString(),
+        begin_date: getDateValue(appointment.begin_date),
+        end_date: getDateValue(appointment.end_date),
         notes: appointment.notes,
         doctor: appointment.doctor,
-        hotel_stay_start: hotel_stay_start,
-        hotel_stay_end: hotel_stay_end,
+        hotel_stay_start: getDateValue(appointment.hotel_stay_start),
+        hotel_stay_end: getDateValue(appointment.hotel_stay_end),
         appointment_type: appointment.appointment_type
     };
 };

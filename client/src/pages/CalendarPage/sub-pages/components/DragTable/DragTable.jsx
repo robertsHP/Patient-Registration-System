@@ -107,6 +107,7 @@ export default function DragTable ({ data, config }) {
             {selectedAppointmentData && 
                 <AppointmentInputForm 
                     data={data}
+                    config={config}
                     selectedAppointmentData={selectedAppointmentData} 
                     setSelectedAppointmentData={setSelectedAppointmentData} 
                     refreshRoom={refreshRoom}

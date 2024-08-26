@@ -52,28 +52,38 @@ exports.insertAppointmentAndOtherData = async (req, res) => {
 
         res.json(result.rows[0].id);
     } catch (err) {
-        res.status(500).json({ error: 'Internal Server Error (insertAppointmentAndOtherData) - ' + err.message });
+        res.status(500).json(
+            { error: 'Internal Server Error (insertAppointmentAndOtherData) - ' + err.message }
+        );
     }
 };
 
 exports.updateAppointmentAndOtherData = async (req, res) => {
     const { id } = req.params;
     var data = req.body; // Assuming JSON body with keys matching table columns
-    
+
+    var result = null;
+
     try {
         if(data.id != undefined || data.id != null) {
             delete data.id;
         }
         data = await dragTableServices.alterAndUpdateAppointmentObjects(data);
         
-        const result = await globalServices.updateInTable(
+        result = await globalServices.updateInTable(
             'drag_table_appointment', 
             id, 
             data
         );
         res.json(result.rows[0]);
+
+        // res.json({"balls": result});
     } catch (err) {
-        res.status(500).json({ error: 'Internal Server Error (updateAppointmentAndOtherData) - ' + err.message });
+        res.status(500).json({ 
+            error: 'Internal Server Error (updateAppointmentAndOtherData) - ' + err.message,
+            // result: result,
+            // data: data
+        });
     }
 };
 

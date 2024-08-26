@@ -3,12 +3,16 @@ import React, { useState, useEffect } from 'react';
 import ConfirmationWindow from '../../../../../components/ConfirmationWindow.jsx';
 import InputSelector from '../../../../../components/InputSelector.jsx';
 
+import LVDate from '../../../../../models/LVDate.jsx';
+
 import ApiService from '../../../../../services/ApiService.js';
+
+import * as dragTableUtilities from './utils/dragTableUtilities.jsx';
 
 import './AppointmentInputForm.css';
 
 export default function AppointmentInputForm(props) {
-    if(props.selectedAppointmentData.appointment == undefined) {
+    if (props.selectedAppointmentData.appointment == undefined) {
         return <></>;
     }
 
@@ -22,10 +26,11 @@ export default function AppointmentInputForm(props) {
         hotel_stay_end:     props.selectedAppointmentData.appointment.hotel_stay_end,
         appointment_type:   props.selectedAppointmentData.appointment.appointment_type
     });
-    
+
     const [doctors, setDoctors] = useState([]);
     const [patients, setPatients] = useState([]);
     const [appointmentTypes, setAppointmentTypes] = useState([]);
+    const [errors, setErrors] = useState({});
 
     useEffect(() => {
         const fetchData = async () => {
@@ -50,17 +55,12 @@ export default function AppointmentInputForm(props) {
     const onInputChange = (e) => {
         const { name, value } = e.target;
         setFormData({ ...formData, [name]: value });
+
+        console.log(formData);
     };
 
     const onChange = (value, label) => {
-        if (label === 'patient') {
-            setFormData({ 
-                ...formData, 
-                patient: value,
-            });
-        } else {
-            setFormData({ ...formData, [label]: value });
-        }
+        setFormData({ ...formData, [label]: value });
     };
 
     const onAddOption = async (value, label) => {
@@ -68,7 +68,7 @@ export default function AppointmentInputForm(props) {
         try {
             const result = await ApiService.post(`/api/${label}`, newValue);
             newValue.id = result;
-            
+
             if (label === 'doctor') {
                 setDoctors([...doctors, newValue]);
             } else if (label === 'patient') {
@@ -105,82 +105,104 @@ export default function AppointmentInputForm(props) {
         onWindowClose();
     };
 
+    const validateForm = () => {
+        const getDateValueAsLVObject = (date) => {
+            if (typeof date == 'string') {
+                date = new LVDate(date);
+            }
+            return date;
+        };
+
+        const newErrors = {};
+
+        if (!formData.patient) {
+            newErrors.patient = 'Patient is required.';
+        }
+        if (!formData.begin_date) {
+            newErrors.begin_date = 'Start date is required.';
+        }
+        if (!formData.end_date) {
+            newErrors.end_date = 'End date is required.';
+        }
+        if (formData.begin_date && formData.end_date) {
+            var beginDate = getDateValueAsLVObject(formData.begin_date);
+            var endDate = getDateValueAsLVObject(formData.end_date);
+
+            if(beginDate.getObject() > endDate.getObject()) {
+                newErrors.dateOrder = 'Start date cannot be after the end date.';
+            }
+        }
+        if (formData.hotel_stay_start && formData.hotel_stay_end) {
+            var hotelStayStart = getDateValueAsLVObject(formData.hotel_stay_start);
+            var hotelStayEnd = getDateValueAsLVObject(formData.hotel_stay_end);
+
+            if(hotelStayStart.getObject() > hotelStayEnd.getObject()) {
+                newErrors.hotelDateOrder = 'Hotel stay start date cannot be after the hotel stay end date.';
+            }
+        }
+
+        setErrors(newErrors);
+        
+        return Object.keys(newErrors).length === 0;
+    };
+
     const onSave = (e) => {
         const updateAppointment = async () => {
             const id = props.selectedAppointmentData.appointment.id;
             const url = `/api/calendar-page/drag-table/appointment/${id}`;
-
+    
             try {
-                await ApiService.put(url, formData);
-                console.log('Updated appointment');
+                const roomID = props.selectedAppointmentData.roomID;
+
+                var convertedFormData = dragTableUtilities.convertAppointmentForSendingToDB(
+                    roomID,
+                    formData
+                );
+
+                // console.log(convertedFormData);
+
+                const response = await ApiService.put(url, convertedFormData);
+                console.log('Updated appointment', response);
+
+                var appointment = dragTableUtilities.convertAppointmentForLayoutSupport(
+                    formData,
+                    props.data.date,
+                    props.config
+                );
+
+                props.data.setAppointmentWithID(roomID, appointment);
                 onWindowClose();
             } catch (error) {
-                console.log(`AppointmentInputForm (onSave) PUT error: `);
-                console.log(error);
+                console.log('AppointmentInputForm (onSave) PUT error: ', error);
             }
         };
 
         e.preventDefault();
-        // Custom validation logic here
         const isValid = validateForm();
-        if (isValid) {
-            console.log('Save function called');
 
+        if (isValid) {
             updateAppointment();
         }
     };
 
-    const validateForm = () => {
-        // Custom validation logic here
-        // if (!formData.patient) {
-        //     alert('Patient name is required.');
-        //     return false;
-        // }
-        if (!formData.begin_date) {
-            alert('Start date is required.');
-            return false;
-        }
-        if (!formData.end_date) {
-            alert('End date is required.');
-            return false;
-        }
-        if (!formData.hotel_stay_start) {
-            alert('Hotel start date is required.');
-            return false;
-        }
-        if (!formData.hotel_stay_end) {
-            alert('Hotel end date is required.');
-            return false;
-        }
-        // if (!formData.notes) {
-        //     alert('Notes are required.');
-        //     return false;
-        // }
-        // Add other validation rules as needed
-        return true;
-    };
-
     const onDelete = () => {
-        console.log('Delete function called');
-
         ConfirmationWindow.show(
-            `Vai tiešām vēlaties dzēst pierakstu?`,
+            'Vai tiešām vēlaties dzēst pierakstu?',
             async () => {
-                var id = props.selectedAppointmentData.appointment.id;
+                const id = props.selectedAppointmentData.appointment.id;
 
                 props.data.removeAppointmentWithID(
                     props.selectedAppointmentData.roomID,
                     id
                 );
-                
-                try {
-                    var url = `/api/calendar-page/drag-table/appointment/${id}`;
 
+                try {
+                    const url = `/api/calendar-page/drag-table/appointment/${id}`;
                     await ApiService.delete(url);
+
                     onWindowClose();
                 } catch (error) {
-                    console.log(`AppointmentInputForm (onDelete) DELETE error: `);
-                    console.log(error);
+                    console.log('AppointmentInputForm (onDelete) DELETE error: ', error);
                 }
             },
             () => { }
@@ -214,6 +236,7 @@ export default function AppointmentInputForm(props) {
                                     handleDeleteOption={(value) => onDeleteOption(value, 'patient')}
                                     placeholder="Ievadi pacienta vārdu un uzvārdu"
                                 />
+                                {errors.patient && <div className="error-message">{errors.patient}</div>}
                             </div>
                             <div className="form-group">
                                 <label htmlFor="patient_phone">Patient Phone Number:</label>
@@ -243,10 +266,20 @@ export default function AppointmentInputForm(props) {
                                         type="datetime-local"
                                         id="begin_date"
                                         name="begin_date"
-                                        value={formData.begin_date.getDateStringForHTMLTag()}
+                                        value={
+                                            formData.begin_date instanceof LVDate ? 
+                                                formData.begin_date.getDateStringForHTMLTag()
+                                                :
+                                                formData.begin_date
+                                        }
                                         onChange={onInputChange}
                                         required
                                     />
+                                    {errors.begin_date && 
+                                        <div className="error-message">
+                                            {errors.begin_date}
+                                        </div>
+                                    }
                                 </div>
                                 <div className="form-group">
                                     <label htmlFor="end_date">End Date:</label>
@@ -254,10 +287,17 @@ export default function AppointmentInputForm(props) {
                                         type="datetime-local"
                                         id="end_date"
                                         name="end_date"
-                                        value={formData.end_date.getDateStringForHTMLTag()}
+                                        value={
+                                            formData.end_date instanceof LVDate ? 
+                                                formData.end_date.getDateStringForHTMLTag()
+                                                :
+                                                formData.end_date
+                                        }
                                         onChange={onInputChange}
                                         required
                                     />
+                                    {errors.end_date && <div className="error-message">{errors.end_date}</div>}
+                                    {errors.dateOrder && <div className="error-message">{errors.dateOrder}</div>}
                                 </div>
                                 <div className="form-group">
                                     <label htmlFor="hotel_stay_start">Hotel Stay Start:</label>
@@ -266,13 +306,14 @@ export default function AppointmentInputForm(props) {
                                         id="hotel_stay_start"
                                         name="hotel_stay_start"
                                         value={
-                                            formData.hotel_stay_start ?
+                                            formData.hotel_stay_start instanceof LVDate ? 
                                                 formData.hotel_stay_start.getDateStringForHTMLTag()
                                                 :
-                                                ''
+                                                formData.hotel_stay_start
                                         }
                                         onChange={onInputChange}
                                     />
+                                    {errors.hotelDateOrder && <div className="error-message">{errors.hotelDateOrder}</div>}
                                 </div>
                                 <div className="form-group">
                                     <label htmlFor="hotel_stay_end">Hotel Stay End:</label>
@@ -281,13 +322,14 @@ export default function AppointmentInputForm(props) {
                                         id="hotel_stay_end"
                                         name="hotel_stay_end"
                                         value={
-                                            formData.hotel_stay_end ?
+                                            formData.hotel_stay_end instanceof LVDate ? 
                                                 formData.hotel_stay_end.getDateStringForHTMLTag()
                                                 :
-                                                ''
+                                                formData.hotel_stay_end
                                         }
                                         onChange={onInputChange}
                                     />
+                                    {errors.hotelDateOrder && <div className="error-message">{errors.hotelDateOrder}</div>}
                                 </div>
                             </div>
                         </div>
@@ -322,7 +364,7 @@ export default function AppointmentInputForm(props) {
                                             : 
                                             ''
                                     }
-                                    handleOnChange={(value) => { onChange(value, 'doctor'); }}
+                                    handleOnChange={(value) => onChange(value, 'doctor')}
                                     handleAddOption={(value) => onAddOption(value, 'doctor')}
                                     handleDeleteOption={(value) => onDeleteOption(value, 'doctor')}
                                     placeholder="Ievadi ārsta vārdu un uzvārdu"
@@ -334,12 +376,12 @@ export default function AppointmentInputForm(props) {
                                     options={appointmentTypes}
                                     nameColumn={'type_name'}
                                     value={
-                                        formData.appointment_type != null ? 
+                                        formData.appointment_type ? 
                                             formData.appointment_type.type_name 
                                             : 
                                             ''
                                     }
-                                    handleOnChange={(value) => { onChange(value, 'appointment_type'); }}
+                                    handleOnChange={(value) => onChange(value, 'appointment_type')}
                                     handleAddOption={(value) => onAddOption(value, 'appointment_type')}
                                     handleDeleteOption={(value) => onDeleteOption(value, 'appointment_type')}
                                     placeholder="Ievadi vizītes veidu"

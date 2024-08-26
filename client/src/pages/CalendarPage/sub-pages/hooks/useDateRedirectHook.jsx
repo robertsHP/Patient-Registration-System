@@ -26,9 +26,6 @@ export default function useDateRedirectHook () {
         queryParams.set('year', year);
         queryParams.set('month', month);
 
-        console.log(year);
-        console.log(month);
-
         var newUrlPath = `
             ${newUrlPathWithoutParams}?year=${year}&month=${month}
         `;

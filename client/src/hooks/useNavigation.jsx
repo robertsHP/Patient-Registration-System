@@ -14,11 +14,6 @@ const useNavigation = () => {
     }, [location]);
 
     const navigateTo = (path) => {
-        console.log("----------DOOM------------------");
-        console.log(currentPath);
-        console.log(location.pathname);
-        console.log(path);
-
         navigate(path);
         setCurrentPath(path);
     };

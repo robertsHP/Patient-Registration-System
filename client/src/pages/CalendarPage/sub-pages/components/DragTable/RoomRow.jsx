@@ -130,7 +130,7 @@ export default class RoomRow extends Component {
             if (newAppointmentLayout) {
                 if (this.pageRefreshed && !this.state.isCreatingAppointment) {
                     var convertedAppointment = dragTableUtilities.convertAppointmentForSendingToDB(
-                        this.room, 
+                        this.room.id, 
                         appointment
                     );
                     this.updateAppointmentInDB(appointment.id, convertedAppointment);
@@ -367,7 +367,7 @@ export default class RoomRow extends Component {
             if (inDateColumns && !overlapping) {
                 var tempDraggingAppointment = this.state.draggingAppointment;
                 var convertedAppointment = dragTableUtilities.convertAppointmentForSendingToDB(
-                    this.room, 
+                    this.room.id, 
                     this.state.draggingAppointment
                 );
 

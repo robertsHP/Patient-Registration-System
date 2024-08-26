@@ -84,14 +84,19 @@ export default function useDragTableDataFetch(tempFloorID, tempDate, config) {
         return room.appointments.find(appointment => appointment.id == appointmentID);
     };
 
-    const setAppointmentWithID = (roomID, appointment) => {
+    const setAppointmentWithID = (roomID, appointmentID, newAppointment) => {
         const room = getRoomWithID(roomID);
         if (!room) {
             return;
         }
         setRoomWithID(roomID, {
             ...room,
-            appointments: room.appointments.map(e => e.id == id ? appointment : e)
+            appointments: room.appointments.map(
+                e => e.id == appointmentID ? 
+                    newAppointment 
+                    : 
+                    e
+            )
         });
         triggerSingleDataUpdate();
     };
@@ -117,16 +122,10 @@ export default function useDragTableDataFetch(tempFloorID, tempDate, config) {
     useEffect(() => {
         var newCurrentPath = currentPath.split('?')[0];
 
-        console.log("DEEZ NUTZ");
-        console.log(date.getFullYear());
-        console.log(date.getMonth());
-
         newCurrentPath += `?year=${date.getFullYear()}&month=${date.getMonth()}`;
         newCurrentPath.trim();
 
         if(newCurrentPath !== currentPath) {
-            console.log("DEEZ NUTZ");
-
             navigateTo(newCurrentPath);
         }
         loadRooms(date, config);
