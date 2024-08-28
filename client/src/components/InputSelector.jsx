@@ -15,7 +15,7 @@ export default function InputSelector({
     };
 
     const onSelectOption = (option) => {
-        handleOnChange(option[nameColumn]);
+        handleOnChange(option);
         setInputValue(option[nameColumn]);
         setIsOpen(false);
     };

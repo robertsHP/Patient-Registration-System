@@ -89,7 +89,8 @@ export default function useDragTableDataFetch(tempFloorID, tempDate, config) {
         if (!room) {
             return;
         }
-        setRoomWithID(roomID, {
+
+        var newRoom = {
             ...room,
             appointments: room.appointments.map(
                 e => e.id == appointmentID ? 
@@ -97,7 +98,9 @@ export default function useDragTableDataFetch(tempFloorID, tempDate, config) {
                     : 
                     e
             )
-        });
+        };
+
+        setRoomWithID(roomID, newRoom);
         triggerSingleDataUpdate();
     };
 

@@ -381,11 +381,6 @@ export default class RoomRow extends Component {
     }
 
     handleAppointmentDoubleClick(appointment) {
-        console.log("this.room");
-        console.log(this.room);
-        console.log("getRoomWithID");
-        console.log(this.props.data.getRoomWithID(this.props.roomID));
-
         this.props.setSelectedAppointmentData({
             roomID: this.props.roomID,
             appointment: appointment

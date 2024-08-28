@@ -140,6 +140,13 @@ const getPositionBasedOnDate = (tempDate, date, config) => {
 };
 
 const convertAppointmentForLayoutSupport = (appointment, date, config) => {
+    function getFinalDateValue (date) {
+        if (date.getObject() == null) {
+            date = null;
+        }
+        return date;
+    }
+
     var beginDate = new LVDate(appointment.begin_date);
     var endDate = new LVDate(appointment.end_date);
 
@@ -173,10 +180,10 @@ const convertAppointmentForLayoutSupport = (appointment, date, config) => {
 
     return {
         ...appointment,
-        begin_date: beginDate,
-        end_date: endDate,
-        hotel_stay_start: hotel_stay_start,
-        hotel_stay_end: hotel_stay_end,
+        begin_date: getFinalDateValue(beginDate),
+        end_date: getFinalDateValue(endDate),
+        hotel_stay_start: getFinalDateValue(hotel_stay_start),
+        hotel_stay_end: getFinalDateValue(hotel_stay_end),
         i: `appointment-${appointment.id}`,
         x: x,
         y: 0,
@@ -188,7 +195,7 @@ const convertAppointmentForLayoutSupport = (appointment, date, config) => {
 };
 
 const convertAppointmentForSendingToDB = (roomID, appointment) => {
-    const getDateValue = (date) => {
+    function getFinalDateValue (date) {
         if (date instanceof LVDate) {
             if (date.getObject() == null) {
                 date = null;
@@ -197,17 +204,17 @@ const convertAppointmentForSendingToDB = (roomID, appointment) => {
             }
         }
         return date;
-    };
+    }
 
     return {
         id_room: roomID,
         patient: appointment.patient,
-        begin_date: getDateValue(appointment.begin_date),
-        end_date: getDateValue(appointment.end_date),
+        begin_date: getFinalDateValue(appointment.begin_date),
+        end_date: getFinalDateValue(appointment.end_date),
         notes: appointment.notes,
         doctor: appointment.doctor,
-        hotel_stay_start: getDateValue(appointment.hotel_stay_start),
-        hotel_stay_end: getDateValue(appointment.hotel_stay_end),
+        hotel_stay_start: getFinalDateValue(appointment.hotel_stay_start),
+        hotel_stay_end: getFinalDateValue(appointment.hotel_stay_end),
         appointment_type: appointment.appointment_type
     };
 };

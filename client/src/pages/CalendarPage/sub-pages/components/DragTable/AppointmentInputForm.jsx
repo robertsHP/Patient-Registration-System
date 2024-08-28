@@ -60,8 +60,20 @@ export default function AppointmentInputForm(props) {
     };
 
     const onChange = (value, label) => {
-        setFormData({ ...formData, [label]: value });
-    };
+        if (label === 'patient') {
+            // Find the selected patient from the patients state variable
+            const selectedPatient = patients.find(patient => patient.id == value.id);
+    
+            if (selectedPatient) {
+                setFormData({
+                    ...formData,
+                    patient: selectedPatient
+                });
+            }
+        } else {
+            setFormData({ ...formData, [label]: value });
+        }
+    };    
 
     const onAddOption = async (value, label) => {
         const newValue = { name: value };
@@ -142,7 +154,6 @@ export default function AppointmentInputForm(props) {
         }
 
         setErrors(newErrors);
-        
         return Object.keys(newErrors).length === 0;
     };
 
@@ -154,23 +165,43 @@ export default function AppointmentInputForm(props) {
             try {
                 const roomID = props.selectedAppointmentData.roomID;
 
-                var convertedFormData = dragTableUtilities.convertAppointmentForSendingToDB(
-                    roomID,
-                    formData
-                );
+                var newFormData = {
+                    ...formData,
+                    begin_date: typeof formData.begin_date === "string" ?
+                        new LVDate(formData.begin_date)
+                        :
+                        formData.begin_date,
+                    end_date: typeof formData.end_date === "string" ?
+                        new LVDate(formData.end_date)
+                        :
+                        formData.end_date,
+                    hotel_stay_start: typeof formData.hotel_stay_start === "string" ?
+                        new LVDate(formData.hotel_stay_start)
+                        :
+                        formData.hotel_stay_start,
+                    hotel_stay_end: typeof formData.hotel_stay_end === "string" ?
+                        new LVDate(formData.hotel_stay_end)
+                        :
+                        formData.hotel_stay_end,
+                };
 
-                // console.log(convertedFormData);
-
-                const response = await ApiService.put(url, convertedFormData);
-                console.log('Updated appointment', response);
-
-                var appointment = dragTableUtilities.convertAppointmentForLayoutSupport(
-                    formData,
+                var newAppointment = dragTableUtilities.convertAppointmentForLayoutSupport(
+                    {
+                        ...props.selectedAppointmentData.appointment,
+                        ...newFormData
+                    },
                     props.data.date,
                     props.config
                 );
 
-                props.data.setAppointmentWithID(roomID, appointment);
+                var newAppointmentForDB = dragTableUtilities.convertAppointmentForSendingToDB(
+                    roomID,
+                    newAppointment
+                );
+
+                await ApiService.put(url, newAppointmentForDB);
+
+                props.data.setAppointmentWithID(roomID, id, newAppointment);
                 onWindowClose();
             } catch (error) {
                 console.log('AppointmentInputForm (onSave) PUT error: ', error);
@@ -267,10 +298,13 @@ export default function AppointmentInputForm(props) {
                                         id="begin_date"
                                         name="begin_date"
                                         value={
-                                            formData.begin_date instanceof LVDate ? 
-                                                formData.begin_date.getDateStringForHTMLTag()
+                                            formData.begin_date == null ? 
+                                                ""
                                                 :
-                                                formData.begin_date
+                                                formData.begin_date instanceof LVDate ? 
+                                                    formData.begin_date.getDateStringForHTMLTag()
+                                                    :
+                                                    formData.begin_date
                                         }
                                         onChange={onInputChange}
                                         required
@@ -288,10 +322,13 @@ export default function AppointmentInputForm(props) {
                                         id="end_date"
                                         name="end_date"
                                         value={
-                                            formData.end_date instanceof LVDate ? 
-                                                formData.end_date.getDateStringForHTMLTag()
+                                            formData.end_date == null ? 
+                                                ""
                                                 :
-                                                formData.end_date
+                                                formData.end_date instanceof LVDate ? 
+                                                    formData.end_date.getDateStringForHTMLTag()
+                                                    :
+                                                    formData.end_date
                                         }
                                         onChange={onInputChange}
                                         required
@@ -306,10 +343,13 @@ export default function AppointmentInputForm(props) {
                                         id="hotel_stay_start"
                                         name="hotel_stay_start"
                                         value={
-                                            formData.hotel_stay_start instanceof LVDate ? 
-                                                formData.hotel_stay_start.getDateStringForHTMLTag()
+                                            formData.hotel_stay_start == null ? 
+                                                ""
                                                 :
-                                                formData.hotel_stay_start
+                                                formData.hotel_stay_start instanceof LVDate ? 
+                                                    formData.hotel_stay_start.getDateStringForHTMLTag()
+                                                    :
+                                                    formData.hotel_stay_start
                                         }
                                         onChange={onInputChange}
                                     />
@@ -322,10 +362,13 @@ export default function AppointmentInputForm(props) {
                                         id="hotel_stay_end"
                                         name="hotel_stay_end"
                                         value={
-                                            formData.hotel_stay_end instanceof LVDate ? 
-                                                formData.hotel_stay_end.getDateStringForHTMLTag()
+                                            formData.hotel_stay_end == null ? 
+                                                ""
                                                 :
-                                                formData.hotel_stay_end
+                                                formData.hotel_stay_end instanceof LVDate ? 
+                                                    formData.hotel_stay_end.getDateStringForHTMLTag()
+                                                    :
+                                                    formData.hotel_stay_end
                                         }
                                         onChange={onInputChange}
                                     />
