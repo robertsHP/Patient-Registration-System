@@ -129,17 +129,22 @@ exports.deleteAppointmentsForRoom = async (id) => {
 exports.alterAndUpdateAppointmentObjects = async (data) => {
     // Helper function to update table and set ID
     const updateRecord = async (table, obj, idField) => {
-        if (obj == null || obj.id == null) {
+        if (obj == null) {
             data[idField] = null;
             delete data[table];
-        // } else if (obj.id == null) {
-        //     const result = await globalServices.insertIntoTable(table, obj);
-        //     data[idField] = result.rows[0].id;
-        //     delete data[table];
-        } else {
-            const result = await globalServices.updateInTable(table, obj.id, obj);
-            data[idField] = result.rows[0].id;
-            delete data[table];
+        } else if (obj != null) {
+            if (obj.id == null) {
+                var dbObj = { ...obj };
+                delete dbObj.id;
+
+                const result = await globalServices.insertIntoTable(table, dbObj);
+                data[idField] = result.rows[0].id;
+                delete data[table];
+            } else {
+                const result = await globalServices.updateInTable(table, obj.id, obj);
+                data[idField] = result.rows[0].id;
+                delete data[table];
+            }
         }
     };
 

@@ -109,6 +109,20 @@ export default function DayTable({ monthName, dayName, date, appointments }) {
         setRows(newRows);
     };
 
+    const onChangePatient = (rowIndex, patient) => {
+        const newRows = rows.map((row, index) => 
+            index === rowIndex ? 
+                { 
+                    ...row, 
+                    patient,
+                    hasChanged: true 
+                } 
+                : 
+                row
+        );
+        setRows(newRows);
+    };
+
     const handleSave = async (rowIndex) => {
         let changedRow = null;
     
@@ -122,34 +136,29 @@ export default function DayTable({ monthName, dayName, date, appointments }) {
 
         setRows(newRows);
 
-        console.log(changedRow);
-
         try {
             const finalRow = prepareRowForSendingToDB(changedRow);
 
             if (changedRow.id == null) {
+                console.log("DEATH");
+
                 const params = '/api/calendar-page/input-table/appointment';
                 const result = await ApiService.post(params, finalRow);
 
                 changedRow.id = result;
             } else {
+                console.log("LIFE");
+                console.log(finalRow);
+
                 const params = `/api/calendar-page/input-table/appointment/${finalRow.id}`;
-                await ApiService.put(params, finalRow);
+                const result = await ApiService.put(params, finalRow);
+
+                console.log(result);
             }
         } catch (error) {
             console.log("DayTable error: ");
             console.log(error);
         }
-    };
-
-    const onChangePatient = (rowIndex, patient) => {
-        const newRows = rows.map((row, index) => 
-            index === rowIndex ? 
-                { ...row, patient, patient_phone: patient.phone_num, hasChanged: true } 
-                : 
-                row
-        );
-        setRows(newRows);
     };
 
     const onAddOption = async (value, label) => {
@@ -208,7 +217,17 @@ export default function DayTable({ monthName, dayName, date, appointments }) {
                                 <InputSelector
                                     options={patients}
                                     nameColumn={'pat_name'}
-                                    value={row.patient != null ? row.patient.pat_name : ''}
+                                    value={
+                                        row.patient != null ? 
+                                            row.patient.pat_name 
+                                            : 
+                                            ''
+                                        }
+                                    defaultValue={{
+                                        id: null,
+                                        pat_name: null,
+                                        phone_num: null
+                                    }}
                                     handleOnChange={(patient) => onChangePatient(rowIndex, patient)}
                                     handleAddOption={(value) => onAddOption(value, 'patient')}
                                     handleDeleteOption={(value) => onDeleteOption(value, 'patient')}
@@ -229,7 +248,11 @@ export default function DayTable({ monthName, dayName, date, appointments }) {
                                             : 
                                             ''
                                     }
-                                    onChange={(e) => handleChange(rowIndex, 'patient', { ...row.patient, phone_num: e.target.value })} 
+                                    onChange={(e) => handleChange(
+                                        rowIndex, 
+                                        'patient', 
+                                        { ...row.patient, phone_num: e.target.value }
+                                    )} 
                                 />
                             </td>
                             <td>
@@ -245,6 +268,10 @@ export default function DayTable({ monthName, dayName, date, appointments }) {
                                     options={doctors}
                                     nameColumn={'doc_name'}
                                     value={row.doctor != null ? row.doctor.doc_name : ''}
+                                    defaultValue={{
+                                        id: null,
+                                        doc_name: null
+                                    }}
                                     handleOnChange={(value) => handleChange(rowIndex, 'doctor', value)}
                                     handleAddOption={(value) => onAddOption(value, 'doctor')}
                                     handleDeleteOption={(value) => onDeleteOption(value, 'doctor')}

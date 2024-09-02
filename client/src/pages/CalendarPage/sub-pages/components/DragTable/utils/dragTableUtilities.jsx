@@ -150,8 +150,6 @@ const convertAppointmentForLayoutSupport = (appointment, date, config) => {
     var beginDate = new LVDate(appointment.begin_date);
     var endDate = new LVDate(appointment.end_date);
 
-    console.log(appointment.hotel_stay_start);
-
     var hotel_stay_start = new LVDate(appointment.hotel_stay_start);
     var hotel_stay_end = new LVDate(appointment.hotel_stay_end);
 

@@ -75,6 +75,14 @@ export default function AppointmentInputForm(props) {
         }
     };    
 
+    const onChangePatient = (patient) => {
+        setFormData({
+            ...formData,
+            patient,
+            hasChanged: true
+        });
+    };
+
     const onAddOption = async (value, label) => {
         const newValue = { name: value };
         try {
@@ -199,7 +207,9 @@ export default function AppointmentInputForm(props) {
                     newAppointment
                 );
 
-                await ApiService.put(url, newAppointmentForDB);
+                var result = await ApiService.put(url, newAppointmentForDB);
+
+                console.log(result);
 
                 props.data.setAppointmentWithID(roomID, id, newAppointment);
                 onWindowClose();
@@ -262,7 +272,12 @@ export default function AppointmentInputForm(props) {
                                             : 
                                             ''
                                     }
-                                    handleOnChange={(patient) => onChange(patient, 'patient')}
+                                    defaultValue={{
+                                        id: null,
+                                        pat_name: null,
+                                        phone_num: null
+                                    }}
+                                    handleOnChange={(patient) => onChangePatient(patient)}
                                     handleAddOption={(value) => onAddOption(value, 'patient')}
                                     handleDeleteOption={(value) => onDeleteOption(value, 'patient')}
                                     placeholder="Ievadi pacienta vārdu un uzvārdu"
@@ -407,6 +422,10 @@ export default function AppointmentInputForm(props) {
                                             : 
                                             ''
                                     }
+                                    defaultValue={{
+                                        id: null,
+                                        doc_name: null
+                                    }}
                                     handleOnChange={(value) => onChange(value, 'doctor')}
                                     handleAddOption={(value) => onAddOption(value, 'doctor')}
                                     handleDeleteOption={(value) => onDeleteOption(value, 'doctor')}
@@ -424,6 +443,10 @@ export default function AppointmentInputForm(props) {
                                             : 
                                             ''
                                     }
+                                    defaultValue={{
+                                        id: null,
+                                        type_name: null
+                                    }}
                                     handleOnChange={(value) => onChange(value, 'appointment_type')}
                                     handleAddOption={(value) => onAddOption(value, 'appointment_type')}
                                     handleDeleteOption={(value) => onDeleteOption(value, 'appointment_type')}

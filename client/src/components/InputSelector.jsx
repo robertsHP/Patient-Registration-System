@@ -2,15 +2,22 @@ import React, { useState, useRef } from 'react';
 import './InputSelector.css';
 
 export default function InputSelector({ 
-    options, nameColumn, value, handleOnChange, handleDeleteOption, className, placeholder 
+    options, nameColumn, value, defaultValue, handleOnChange, handleDeleteOption, className, placeholder 
 }) {
     const [isOpen, setIsOpen] = useState(false);
     const [inputValue, setInputValue] = useState(value || '');
     const dropdownRef = useRef(null);
 
     const onInputChange = (e) => {
-        setInputValue(e.target.value);
-        handleOnChange(e.target.value);
+        var option = {
+            ...defaultValue,
+            [nameColumn]: e.target.value
+        };
+
+        console.log(option);
+
+        handleOnChange(option);
+        setInputValue(option[nameColumn]);
         setIsOpen(true);
     };
 
@@ -59,7 +66,10 @@ export default function InputSelector({
                     <div className="input-selector__dropdown-container">
                         <ul className="input-selector__options">
                             {options.filter(option => 
-                                option[nameColumn].toLowerCase().includes(inputValue.toLowerCase())
+                                typeof option[nameColumn] == 'string' ? 
+                                    option[nameColumn].toLowerCase().includes(inputValue.toLowerCase())
+                                    :
+                                    ''
                             ).map((option) => (
                                 <li 
                                     key={option.id} 

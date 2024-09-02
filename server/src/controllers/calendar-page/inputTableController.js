@@ -44,13 +44,15 @@ exports.insertAppointmentAndOtherData = async (req, res) => {
 
 exports.updateAppointmentAndOtherData = async (req, res) => {
     const { id } = req.params;
-    var data = req.body; // Assuming JSON body with keys matching table columns
+    var data = req.body;
     
     try {
         if(data.id != undefined || data.id != null) {
             delete data.id;
         }
         data = await inputTableServices.alterAppointmentObjects(data);
+
+        // res.json(data);
         
         const result = await globalServices.updateInTable(
             'input_table_appointment', 
@@ -59,7 +61,10 @@ exports.updateAppointmentAndOtherData = async (req, res) => {
         );
         res.json(result.rows[0]);
     } catch (err) {
-        res.status(500).json({ error: 'Internal Server Error (updateAppointment) - ' + err.message });
+        res.status(500).json({ 
+            error: 'Internal Server Error (updateAppointment) - ' + err.message,
+            data
+        });
     }
 };
 
@@ -69,7 +74,6 @@ exports.deleteAppointment = async (req, res) => {
         await globalServices.deleteFromTable('input_table_appointment', id);
         res.send('Row deleted');
     } catch (err) {
-        console.error(err.message);
-        res.status(500).send('Server error: ' + err.message);
+        res.status(500).json({ error: 'Internal Server Error (deleteAppointment) - ' + err.message });
     }
 };
