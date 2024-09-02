@@ -76,8 +76,6 @@ exports.updateAppointmentAndOtherData = async (req, res) => {
             data
         );
         res.json(result.rows[0]);
-
-        // res.json({"balls": result});
     } catch (err) {
         res.status(500).json({ 
             error: 'Internal Server Error (updateAppointmentAndOtherData) - ' + err.message,
