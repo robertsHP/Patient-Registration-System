@@ -18,7 +18,21 @@
 }
 
 .input-selector__input {
+    position: relative;
     width: 100%;
+}
+
+.input-selector__clear-button {
+    position: absolute;
+    right: 10px;
+    top: 30%;
+    transform: translateY(-50%);
+    background: none;
+    border: none;
+    color: #f44336;
+    cursor: pointer;
+    font-size: 16px;
+    padding: 4px;
 }
 
 .input-selector__input-field {

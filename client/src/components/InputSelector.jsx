@@ -2,7 +2,10 @@ import React, { useState, useRef } from 'react';
 import './InputSelector.css';
 
 export default function InputSelector({ 
-    options, nameColumn, value, defaultValue, handleOnChange, handleDeleteOption, className, placeholder 
+    options, nameColumn, value, defaultValue, 
+    handleInputChange, handleSelectOption, 
+    handleDeleteOption, 
+    className, placeholder 
 }) {
     const [isOpen, setIsOpen] = useState(false);
     const [inputValue, setInputValue] = useState(value || '');
@@ -14,15 +17,13 @@ export default function InputSelector({
             [nameColumn]: e.target.value
         };
 
-        console.log(option);
-
-        handleOnChange(option);
+        handleInputChange(option);
         setInputValue(option[nameColumn]);
         setIsOpen(true);
     };
 
     const onSelectOption = (option) => {
-        handleOnChange(option);
+        handleSelectOption(option);
         setInputValue(option[nameColumn]);
         setIsOpen(false);
     };
@@ -40,6 +41,10 @@ export default function InputSelector({
         if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
             setIsOpen(false);
         }
+    };
+
+    const onClearInput = () => {
+        setInputValue(defaultValue);
     };
 
     React.useEffect(() => {
@@ -60,6 +65,14 @@ export default function InputSelector({
                     placeholder={placeholder}
                     className={className}
                 />
+                {inputValue && (
+                    <button 
+                        className="input-selector__clear-button" 
+                        onClick={onClearInput}
+                    >
+                        X
+                    </button>
+                )}
             </div>
             <div className="input-selector__dropdown" ref={dropdownRef}>
                 {isOpen && (

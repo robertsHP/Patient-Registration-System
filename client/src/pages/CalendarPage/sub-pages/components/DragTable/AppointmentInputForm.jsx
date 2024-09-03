@@ -52,56 +52,54 @@ export default function AppointmentInputForm(props) {
         fetchData();
     }, []);
 
-    const onInputChange = (e) => {
-        const { name, value } = e.target;
-        setFormData({ ...formData, [name]: value });
-
+    useEffect(() => {
         console.log(formData);
+    }, [formData]);
+
+
+    const onInputChange = (label, value) => {
+        console.log("onInputChange");
+
+        const getFinalValue = (label, data) => {
+            const splitLabel = label.split('.');
+
+            return {
+                ...data,
+                [splitLabel[1]]: value
+            };
+        }
+
+        var finalLabel = label;
+        var finalValue = value;
+
+        if (label.includes('patient')) {
+            finalLabel = 'patient';
+            finalValue = getFinalValue(label, formData[finalLabel]);
+        } else if (label.includes('doctor')) {
+            finalLabel = 'doctor';
+            finalValue = getFinalValue(label, formData[finalLabel]);
+        } else if (label.includes('appointment_type')) {
+            finalLabel = 'appointment_type';
+            finalValue = getFinalValue(label, formData[finalLabel]);
+        }
+
+        setFormData({ 
+            ...formData, 
+            [finalLabel]: finalValue 
+        });
     };
 
-    const onChange = (value, label) => {
-        if (label === 'patient') {
-            // Find the selected patient from the patients state variable
-            const selectedPatient = patients.find(patient => patient.id == value.id);
-    
-            if (selectedPatient) {
-                setFormData({
-                    ...formData,
-                    patient: selectedPatient
-                });
-            }
-        } else {
-            setFormData({ ...formData, [label]: value });
-        }
-    };    
+    const onSelectChange = (label, value) => {
+        console.log("onSelectChange");
 
-    const onChangePatient = (patient) => {
         setFormData({
             ...formData,
-            patient,
+            [label]: value,
             hasChanged: true
         });
     };
 
-    const onAddOption = async (value, label) => {
-        const newValue = { name: value };
-        try {
-            const result = await ApiService.post(`/api/${label}`, newValue);
-            newValue.id = result;
-
-            if (label === 'doctor') {
-                setDoctors([...doctors, newValue]);
-            } else if (label === 'patient') {
-                setPatients([...patients, newValue]);
-            } else if (label === 'appointment_type') {
-                setAppointmentTypes([...appointmentTypes, newValue]);
-            }
-        } catch (error) {
-            console.log(`AppointmentInputForm (${label}) POST error: `, error);
-        }
-    };
-
-    const onDeleteOption = async (option, label) => {
+    const onDeleteOption = async (label, option) => {
         try {
             await ApiService.delete(`/api/${label}/${option.id}`);
 
@@ -269,7 +267,7 @@ export default function AppointmentInputForm(props) {
                                     value={
                                         formData.patient != null ? 
                                             formData.patient.pat_name 
-                                            : 
+                                            :
                                             ''
                                     }
                                     defaultValue={{
@@ -277,19 +275,21 @@ export default function AppointmentInputForm(props) {
                                         pat_name: null,
                                         phone_num: null
                                     }}
-                                    handleOnChange={(patient) => onChangePatient(patient)}
-                                    handleAddOption={(value) => onAddOption(value, 'patient')}
-                                    handleDeleteOption={(value) => onDeleteOption(value, 'patient')}
+                                    handleInputChange={(value) => onInputChange('patient.pat_name', value['pat_name'])}
+                                    handleSelectOption={(value) => onSelectChange('patient', value)}
+
+                                    handleDeleteOption={(value) => onDeleteOption('patient', value)}
                                     placeholder="Ievadi pacienta vārdu un uzvārdu"
                                 />
                                 {errors.patient && <div className="error-message">{errors.patient}</div>}
                             </div>
+                            
                             <div className="form-group">
-                                <label htmlFor="patient_phone">Patient Phone Number:</label>
+                                <label htmlFor="phone_num">Patient Phone Number:</label>
                                 <input
                                     type="text"
-                                    id="patient_phone"
-                                    name="patient_phone"
+                                    id="phone_num"
+                                    name="phone_num"
                                     value={
                                         formData.patient != null ? 
                                             formData.patient.phone_num != null ?
@@ -299,7 +299,7 @@ export default function AppointmentInputForm(props) {
                                             : 
                                             ''
                                     }
-                                    onChange={onInputChange}
+                                    onChange={(e) => onInputChange('patient.phone_num', e.target.value)}
                                 />
                             </div>
                         </div>
@@ -321,7 +321,7 @@ export default function AppointmentInputForm(props) {
                                                     :
                                                     formData.begin_date
                                         }
-                                        onChange={onInputChange}
+                                        onChange={(e) => onInputChange('begin_date', e.target.value)}
                                         required
                                     />
                                     {errors.begin_date && 
@@ -345,7 +345,7 @@ export default function AppointmentInputForm(props) {
                                                     :
                                                     formData.end_date
                                         }
-                                        onChange={onInputChange}
+                                        onChange={(e) => onInputChange('end_date', e.target.value)}
                                         required
                                     />
                                     {errors.end_date && <div className="error-message">{errors.end_date}</div>}
@@ -366,10 +366,15 @@ export default function AppointmentInputForm(props) {
                                                     :
                                                     formData.hotel_stay_start
                                         }
-                                        onChange={onInputChange}
+                                        onChange={(e) => onInputChange('hotel_stay_start', e.target.value)}
                                     />
-                                    {errors.hotelDateOrder && <div className="error-message">{errors.hotelDateOrder}</div>}
+                                    {errors.hotelDateOrder && 
+                                        <div className="error-message">
+                                            {errors.hotelDateOrder}
+                                        </div>
+                                    }
                                 </div>
+
                                 <div className="form-group">
                                     <label htmlFor="hotel_stay_end">Hotel Stay End:</label>
                                     <input
@@ -385,7 +390,7 @@ export default function AppointmentInputForm(props) {
                                                     :
                                                     formData.hotel_stay_end
                                         }
-                                        onChange={onInputChange}
+                                        onChange={(e) => onInputChange('hotel_stay_end', e.target.value)}
                                     />
                                     {errors.hotelDateOrder && <div className="error-message">{errors.hotelDateOrder}</div>}
                                 </div>
@@ -404,7 +409,7 @@ export default function AppointmentInputForm(props) {
                                             :
                                             ''
                                     }
-                                    onChange={onInputChange}
+                                    onChange={(e) => onInputChange('notes', e.target.value)}
                                     required
                                 />
                             </div>
@@ -426,9 +431,10 @@ export default function AppointmentInputForm(props) {
                                         id: null,
                                         doc_name: null
                                     }}
-                                    handleOnChange={(value) => onChange(value, 'doctor')}
-                                    handleAddOption={(value) => onAddOption(value, 'doctor')}
-                                    handleDeleteOption={(value) => onDeleteOption(value, 'doctor')}
+                                    handleInputChange={(value) => onInputChange('doctor.doc_name', value['doc_name'])}
+                                    handleSelectOption={(value) => onSelectChange('doctor', value)}
+
+                                    handleDeleteOption={(value) => onDeleteOption('doctor', value)}
                                     placeholder="Ievadi ārsta vārdu un uzvārdu"
                                 />
                             </div>
@@ -447,9 +453,10 @@ export default function AppointmentInputForm(props) {
                                         id: null,
                                         type_name: null
                                     }}
-                                    handleOnChange={(value) => onChange(value, 'appointment_type')}
-                                    handleAddOption={(value) => onAddOption(value, 'appointment_type')}
-                                    handleDeleteOption={(value) => onDeleteOption(value, 'appointment_type')}
+                                    handleInputChange={(value) => onInputChange('appointment_type.type_name', value['type_name'])}
+                                    handleSelectOption={(value) => onSelectChange('appointment_type', value)}
+
+                                    handleDeleteOption={(value) => onDeleteOption('appointment_type', value)}
                                     placeholder="Ievadi vizītes veidu"
                                 />
                             </div>

@@ -87,6 +87,67 @@ export default function DayTable({ monthName, dayName, date, appointments }) {
         }
     };
 
+    const onInputChange = (rowIndex, label, value) => {
+        const getFinalValue = (label, data) => {
+            const splitLabel = label.split('.');
+
+            return {
+                ...data,
+                [splitLabel[1]]: value
+            };
+        }
+
+        var finalLabel = label;
+        var finalValue = value;
+
+        const newRows = rows.map((row, index) => {
+            if (index === rowIndex) {
+                if (label.includes('patient')) {
+                    finalLabel = 'patient';
+                    finalValue = getFinalValue(label, row[finalLabel]);
+                } else if (label.includes('doctor')) {
+                    finalLabel = 'doctor';
+                    finalValue = getFinalValue(label, row[finalLabel]);
+                } else if (label.includes('appointment_type')) {
+                    finalLabel = 'appointment_type';
+                    finalValue = getFinalValue(label, row[finalLabel]);
+                }
+
+                return {
+                    ...row,
+                    [finalLabel]: finalValue
+                };
+            } else {
+                return row;
+            }
+        });
+
+        setRows(newRows);
+    };
+
+    const onSelectChange = (rowIndex, label, value) => {
+        console.log("onSelectChange");
+
+        const newRows = rows.map((row, index) => {
+            if (index === rowIndex) {
+                return {
+                    ...row,
+                    [label]: value,
+                    hasChanged: true
+                };
+            } else {
+                return row;
+            }
+
+        });
+
+        setRows(newRows);
+    };
+
+
+
+
+
     const handleChange = (rowIndex, field, value) => {
         if (field == "begin_date") {
             if(typeof value === 'string') {
@@ -140,16 +201,11 @@ export default function DayTable({ monthName, dayName, date, appointments }) {
             const finalRow = prepareRowForSendingToDB(changedRow);
 
             if (changedRow.id == null) {
-                console.log("DEATH");
-
                 const params = '/api/calendar-page/input-table/appointment';
                 const result = await ApiService.post(params, finalRow);
 
                 changedRow.id = result;
             } else {
-                console.log("LIFE");
-                console.log(finalRow);
-
                 const params = `/api/calendar-page/input-table/appointment/${finalRow.id}`;
                 const result = await ApiService.put(params, finalRow);
 
@@ -161,22 +217,7 @@ export default function DayTable({ monthName, dayName, date, appointments }) {
         }
     };
 
-    const onAddOption = async (value, label) => {
-        const newValue = { name: value };
-        try {
-            const result = await ApiService.post(`/api/${label}`, newValue);
-            newValue.id = result;
-            if (label === 'doctor') {
-                setDoctors([...doctors, newValue]);
-            } else if (label === 'patient') {
-                setPatients([...patients, newValue]);
-            }
-        } catch (error) {
-            console.log(`DayTable (${label}) POST error: `, error);
-        }
-    };
-
-    const onDeleteOption = async (option, label) => {
+    const onDeleteOption = async (label, option) => {
         try {
             await ApiService.delete(`/api/${label}/${option.id}`);
             if (label === 'doctor') {
@@ -228,9 +269,18 @@ export default function DayTable({ monthName, dayName, date, appointments }) {
                                         pat_name: null,
                                         phone_num: null
                                     }}
-                                    handleOnChange={(patient) => onChangePatient(rowIndex, patient)}
-                                    handleAddOption={(value) => onAddOption(value, 'patient')}
-                                    handleDeleteOption={(value) => onDeleteOption(value, 'patient')}
+                                    handleInputChange={(value) => onInputChange(
+                                        rowIndex,
+                                        'patient.pat_name', 
+                                        value['pat_name']
+                                    )}
+                                    handleSelectOption={(value) => onSelectChange(
+                                        rowIndex,
+                                        'patient', 
+                                        value
+                                    )}
+
+                                    handleDeleteOption={(value) => onDeleteOption('patient', value)}
                                     className="day-table__input"
                                     placeholder=""
                                 />
@@ -272,9 +322,19 @@ export default function DayTable({ monthName, dayName, date, appointments }) {
                                         id: null,
                                         doc_name: null
                                     }}
-                                    handleOnChange={(value) => handleChange(rowIndex, 'doctor', value)}
-                                    handleAddOption={(value) => onAddOption(value, 'doctor')}
-                                    handleDeleteOption={(value) => onDeleteOption(value, 'doctor')}
+
+                                    handleInputChange={(value) => onInputChange(
+                                        rowIndex,
+                                        'doctor.doc_name', 
+                                        value['doc_name']
+                                    )}
+                                    handleSelectOption={(value) => onSelectChange(
+                                        rowIndex,
+                                        'doctor', 
+                                        value
+                                    )}
+
+                                    handleDeleteOption={(value) => onDeleteOption('doctor', value)}
                                     className="day-table__input"
                                     placeholder=""
                                 />

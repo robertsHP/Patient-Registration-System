@@ -324,6 +324,9 @@ export default class RoomRow extends Component {
             var url = '/api/calendar-page/drag-table/appointment';
             const result = await ApiService.post(url, convertedAppointment);
 
+            console.log("BAAAAAALLZZ");
+            console.log(result);
+
             tempDraggingAppointment.id = result;
     
             const newAppointment = {
