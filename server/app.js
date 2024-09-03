@@ -14,7 +14,7 @@ const sessionRoutes = require('./src/routes/sessionRoutes.js');
 
 require('dotenv').config({ path: '../.env' });
 
-const serverPort = process.env.SERVER_PORT;
+const serverPort = process.env.BACKEND_PORT;
 const clientPort = process.env.CLIENT_PORT;
 
 // Use CORS with default settings (allows all origins)

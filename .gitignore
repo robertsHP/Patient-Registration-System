@@ -142,3 +142,15 @@ commands.txt
 .env.test.local
 .env.production.local
 .env.local
+
+#Ignore PHP and composer related files
+vendor/
+composer.lock
+
+# Commit your application's lock file http://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file
+# You may choose to ignore the composer.lock file if your project doesn't have production deployments.
+/composer.phar
+/phpunit.xml
+/phpunit.xml.dist
+/.php_cs.cache
+/.php_cs.dist
