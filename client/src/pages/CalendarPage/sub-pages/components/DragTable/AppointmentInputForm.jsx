@@ -260,7 +260,7 @@ export default function AppointmentInputForm(props) {
                     <div className="window-form">
                         <div className="form-row">
                             <div className="form-group">
-                                <label htmlFor="pat_name">Patient Name:</label>
+                                <label htmlFor="pat_name">Pacienta vārds:</label>
                                 <InputSelector
                                     options={patients}
                                     nameColumn={'pat_name'}
@@ -279,13 +279,13 @@ export default function AppointmentInputForm(props) {
                                     handleSelectOption={(value) => onSelectChange('patient', value)}
 
                                     handleDeleteOption={(value) => onDeleteOption('patient', value)}
-                                    placeholder="Ievadi pacienta vārdu un uzvārdu"
+                                    placeholder=""
                                 />
                                 {errors.patient && <div className="error-message">{errors.patient}</div>}
                             </div>
                             
                             <div className="form-group">
-                                <label htmlFor="phone_num">Patient Phone Number:</label>
+                                <label htmlFor="phone_num">Pacienta tel. nr.:</label>
                                 <input
                                     type="text"
                                     id="phone_num"
@@ -307,7 +307,7 @@ export default function AppointmentInputForm(props) {
                         <div className="form-row">
                             <div className="input-group">
                                 <div className="form-group">
-                                    <label htmlFor="begin_date">Start Date:</label>
+                                    <label htmlFor="begin_date">Sākuma datums:</label>
                                     <input
                                         type="datetime-local"
                                         id="begin_date"
@@ -331,7 +331,7 @@ export default function AppointmentInputForm(props) {
                                     }
                                 </div>
                                 <div className="form-group">
-                                    <label htmlFor="end_date">End Date:</label>
+                                    <label htmlFor="end_date">Beigu datums:</label>
                                     <input
                                         type="datetime-local"
                                         id="end_date"
@@ -352,7 +352,7 @@ export default function AppointmentInputForm(props) {
                                     {errors.dateOrder && <div className="error-message">{errors.dateOrder}</div>}
                                 </div>
                                 <div className="form-group">
-                                    <label htmlFor="hotel_stay_start">Hotel Stay Start:</label>
+                                    <label htmlFor="hotel_stay_start">Viesnīcas sākuma datums:</label>
                                     <input
                                         type="datetime-local"
                                         id="hotel_stay_start"
@@ -376,7 +376,7 @@ export default function AppointmentInputForm(props) {
                                 </div>
 
                                 <div className="form-group">
-                                    <label htmlFor="hotel_stay_end">Hotel Stay End:</label>
+                                    <label htmlFor="hotel_stay_end">Viesnīcas beigu datums:</label>
                                     <input
                                         type="datetime-local"
                                         id="hotel_stay_end"
@@ -399,7 +399,7 @@ export default function AppointmentInputForm(props) {
 
                         <div className="form-row">
                             <div className="form-group full-width">
-                                <label htmlFor="notes">Notes:</label>
+                                <label htmlFor="notes">Piezīmes:</label>
                                 <textarea
                                     id="notes"
                                     name="notes"
@@ -417,7 +417,7 @@ export default function AppointmentInputForm(props) {
 
                         <div className="form-row">
                             <div className="form-group">
-                                <label htmlFor="doc_name">Doctor Name:</label>
+                                <label htmlFor="doc_name">Ārsts:</label>
                                 <InputSelector
                                     options={doctors}
                                     nameColumn={'doc_name'}
@@ -435,11 +435,11 @@ export default function AppointmentInputForm(props) {
                                     handleSelectOption={(value) => onSelectChange('doctor', value)}
 
                                     handleDeleteOption={(value) => onDeleteOption('doctor', value)}
-                                    placeholder="Ievadi ārsta vārdu un uzvārdu"
+                                    placeholder=""
                                 />
                             </div>
                             <div className="form-group">
-                                <label htmlFor="appointment_type">Appointment Type:</label>
+                                <label htmlFor="appointment_type">Pieraksta veids:</label>
                                 <InputSelector
                                     options={appointmentTypes}
                                     nameColumn={'type_name'}
@@ -457,7 +457,7 @@ export default function AppointmentInputForm(props) {
                                     handleSelectOption={(value) => onSelectChange('appointment_type', value)}
 
                                     handleDeleteOption={(value) => onDeleteOption('appointment_type', value)}
-                                    placeholder="Ievadi vizītes veidu"
+                                    placeholder=""
                                 />
                             </div>
                         </div>
