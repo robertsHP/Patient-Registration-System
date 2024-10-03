@@ -135,25 +135,19 @@ export default function SearchPage() {
                                     onClick={() => handleAppointmentSelect(appointment)}
                                     className="search-page__detail-button"
                                 >
-                                    <h3>{appointment.source_table}</h3>
-                                    <p>ID: {appointment.id}</p>
-                                    <p>Patient ID: {appointment.id_patient}</p>
-                                    <p>Begin Date: {new Date(appointment.begin_date).toLocaleString()}</p>
+                                    <p>
+                                        Telpa: {
+                                            appointment.source_table == "drag_table" ? 
+                                                "Gultas" 
+                                                : 
+                                                "Pirts"
+                                        }
+                                    </p>
+                                    <p>Sākuma datums: {new Date(appointment.begin_date).toLocaleString()}</p>
                                     {appointment.end_date && (
-                                        <p>End Date: {new Date(appointment.end_date).toLocaleString()}</p>
+                                        <p>Beigu Datums: {new Date(appointment.end_date).toLocaleString()}</p>
                                     )}
-                                    <p>Notes: {appointment.notes}</p>
-                                    <p>Doctor ID: {appointment.id_doctor}</p>
-                                    {appointment.id_room && <p>Room ID: {appointment.id_room}</p>}
-                                    {appointment.hotel_stay_start && (
-                                        <p>Hotel Stay Start: {new Date(appointment.hotel_stay_start).toLocaleString()}</p>
-                                    )}
-                                    {appointment.hotel_stay_end && (
-                                        <p>Hotel Stay End: {new Date(appointment.hotel_stay_end).toLocaleString()}</p>
-                                    )}
-                                    {appointment.id_appointment_type && (
-                                        <p>Appointment Type ID: {appointment.id_appointment_type}</p>
-                                    )}
+                                    <p>Piezīmes: {appointment.notes}</p>
                                 </button>
                             </li>
                         ))}
