@@ -1,4 +1,5 @@
 import React, { Component, createRef } from 'react';
+
 import GridLayout from 'react-grid-layout';
 
 import * as dragTableUtilities from './utils/dragTableUtilities.jsx';
@@ -324,9 +325,6 @@ export default class RoomRow extends Component {
             var url = '/api/calendar-page/drag-table/appointment';
             const result = await ApiService.post(url, convertedAppointment);
 
-            console.log("BAAAAAALLZZ");
-            console.log(result);
-
             tempDraggingAppointment.id = result;
     
             const newAppointment = {
@@ -508,7 +506,12 @@ export default class RoomRow extends Component {
                         return (
                             <div className={this.appointmentClassName} key={appointment.i}>
                                 <div className="room-row__appointment-name no-select">
-                                    {appointment.i}
+                                    {
+                                        appointment.patient.pat_name != null ? 
+                                            appointment.patient.pat_name
+                                            :
+                                            "Unknown"
+                                    }
                                 </div>
 
                                 {appointment.extendsToPreviousMonth && 
@@ -526,15 +529,15 @@ export default class RoomRow extends Component {
                     })}
 
                     {draggingAppointment && 
-                        <div className="appointment" key={draggingAppointment.i}>
+                        <div className={this.appointmentClassName} key={draggingAppointment.i}>
                         </div>
                     }
 
-                    <div key="sum-value" className="grid-cell">
+                    <div key="sum-value" className="room-row__grid-cell">
                         {data.getSumOfAllAppointmentDays(roomID)}
                     </div>
 
-                    <div key="delete-button" className="grid-cell">
+                    <div key="delete-button" className="room-row__grid-cell">
                         <button 
                             onClick={() => this.props.deleteRoomRow(roomID)} 
                             onMouseDown={(e) => e.stopPropagation()}

@@ -5,7 +5,7 @@ import useNavigation from '../hooks/useNavigation.jsx';
 import routes from '../routes/routes.jsx';
 import AuthService from '../services/AuthService.jsx';
 
-import './Header.css'
+import './LogoutButton.css'
 
 export default function LogoutButton () {
     const { redirect } = useNavigation();

@@ -42,7 +42,7 @@ export default function InputTable({ data }) {
     }, [data.fullDataUpdateTrigger]);
 
     return (
-        <div className="table-container">
+        <div className="input-table">
             <GridUI data={data} />
             <br />
             {tables.map((table, index) => (

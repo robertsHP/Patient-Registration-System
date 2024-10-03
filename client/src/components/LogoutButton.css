@@ -1,4 +1,13 @@
 
 .logout-button {
-    
+    margin-left: 10px; /* Space between sidebar button and subpage buttons */
+    background-color: #444;
+    color: white;
+    border: none;
+    padding: 10px 15px;
+    cursor: pointer;
+}
+
+.logout-button:hover {
+    background-color: #666;
 }

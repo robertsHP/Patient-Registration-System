@@ -1,4 +1,10 @@
 
 .drag-table {
+    width: 1120px;
+    /* border: 1px solid hsl(0, 0%, 87%);
+    border-radius: 8px; */
+}
+
+.drag-table__add-room-button {
     
 }

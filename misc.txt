@@ -1,3 +1,0 @@
-https://www.youtube.com/watch?v=RtLAwnYJOyQ
-
-https://github.com/goldbergyoni/nodebestpractices?tab=readme-ov-file#1-project-architecture-practices

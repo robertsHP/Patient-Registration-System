@@ -77,7 +77,9 @@ export default function DragTable ({ data, config }) {
             <GridUI 
                 data={data} 
             />
-            <ColumnRow config={config} />
+            <ColumnRow 
+                config={config} 
+            />
             {typeof data.rooms !== 'undefined' && data.rooms != null &&
                 (data.rooms.length !== 0 &&
                     data.rooms.map((room) => {
@@ -99,7 +101,7 @@ export default function DragTable ({ data, config }) {
                 )
             }
 
-            <button onClick={addRoom} className="add-room-button">
+            <button onClick={addRoom} className="drag-table__add-room-button">
                 Pievienot telpu
             </button>
 

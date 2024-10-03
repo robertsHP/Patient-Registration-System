@@ -38,12 +38,5 @@
 }
 
 .header__subpage-button.active-button {
-    background-color: #f0f0f0;
-    border: 2px solid blue;
-    color: blue;
-}
-
-.header__active-button {
-    background-color: #222;
-    font-weight: bold;
+    background-color: #646464;
 }

@@ -32,7 +32,7 @@ export default function Header ({mainPageUrl, subPages}) {
                             className={
                                 `header__subpage-button ${
                                     currentPath.includes(mainPageUrl+page.url) ?
-                                        'header__active-button' 
+                                        'active-button' 
                                         : 
                                         ''
                                 }`

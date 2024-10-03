@@ -21,7 +21,12 @@ export default function Sidebar ({sidebarPages}) {
                     </div>
                 ))}
             </aside>
-            <button className="sidebar__button" onClick={sidebarOnClick}>
+            <button 
+                className={
+                    "sidebar__button"
+                } 
+                onClick={sidebarOnClick}
+            >
                 ...
             </button>
         </>

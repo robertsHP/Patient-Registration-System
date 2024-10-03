@@ -22,8 +22,16 @@
 }
 
 .sidebar__button {
-    margin-left: 0; /* Adjust this value to match the width of your sidebar */
-    transition: margin 0.3s ease-in-out;
+    margin-left: 10px; /* Space between sidebar button and subpage buttons */
+    background-color: #444;
+    color: white;
+    border: none;
+    padding: 10px 15px;
+    cursor: pointer;
+}
+
+.sidebar__button:hover {
+    background-color: #666;
 }
 
 .sidebar.open + .sidebar__button {

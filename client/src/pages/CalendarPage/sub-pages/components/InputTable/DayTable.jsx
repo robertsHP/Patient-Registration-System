@@ -144,10 +144,6 @@ export default function DayTable({ monthName, dayName, date, appointments }) {
         setRows(newRows);
     };
 
-
-
-
-
     const handleChange = (rowIndex, field, value) => {
         if (field == "begin_date") {
             if(typeof value === 'string') {
@@ -233,7 +229,7 @@ export default function DayTable({ monthName, dayName, date, appointments }) {
     return (
         <div className="day-table">
             <div className="day-table__table-head">
-                {`${monthName} ${date.getDate()} - ${dayName}`}
+                {`${date.getDate()} - ${dayName}`}
             </div>
             <table className="day-table__table">
                 <thead>
